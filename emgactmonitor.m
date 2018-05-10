@@ -173,20 +173,20 @@ drawnow;
 % 10 Hz hp filter
 [b, a] = butter(4, 10/(sampFreq/2), 'high');
 
-while ~quitFlg,
+while ~quitFlg
 	% get message from server
 	[blockSize, msgType, msgBlock] = getMsgBlock(t);
 %	fprintf('.');
 %	data = fread(t, 1000, 'float32')
 
-	switch msgType,
-		case 0,		%% no socket open, not reading data
-			% do nothing
-		case 1,		%% Start Message
+	switch msgType
+		case 0		%% no socket open, not reading data
+			% no nothing
+		case 1		%% Start Message
 			disp('Detected BrainVision Start Monitoring')
 			chanInfo = doStartMsg(msgBlock);
 
-		case 2,		%% Data Message
+		case 2		%% Data Message
 %			fprintf('\n');
 %			disp('Read a block of data')
 			[data, numPoints, markInfo] = doDataMsg(msgBlock, chanInfo);
@@ -197,7 +197,7 @@ while ~quitFlg,
 			%updateDisplay(hFig, double(data(1,:))*chanInfo.resolution(1), markInfo);
             updateDisplay;	
 
-		case 3,		%% Stop Message
+		case 3		%% Stop Message
 			disp('Detected BrainVision Stop Monitoring')
 
 	end
@@ -234,27 +234,27 @@ disp('done')
 %     disp(val)
 %	set(handles.hPatch, 'YData', [0 0 val val]);
 	set(handles.hLine, 'YData', [0 val]);
-	if ~isempty(markInfo),
+	if ~isempty(markInfo)
         if strcmp(markInfo(1).label, ' ')
             msg = sprintf('Msg: %s; y = %3.1f', markInfo(1).desc, val);
         else
             msg = sprintf('Msg: %s; y = %3.1f', markInfo(1).label, val);
         end
 		set(handles.txtMessage, 'String', msg);
-		if ~isempty(hTxt), 
-			delete(hTxt); 
-			hTxt = [];
-		end
+% 		if ~isempty(hTxt)
+% 			delete(hTxt); 
+% 			hTxt = [];
+% 		end
 		hTxt = text(0.3, val, '*');
 	end
 
-	if peakTracker,
+	if peakTracker
         % save val for sizeof(peakValVec) blocks of data
         
         peakValVec = circshift(peakValVec, [2 1]); % move all elements down
         peakValVec(1) = val;                        % put new val at beginning
         peakVal = mean(peakValVec);
- 		if std(peakValVec) < 50,        % arbitrary threshold
+ 		if std(peakValVec) < 50        % arbitrary threshold
 			%set(handles.peakPatch, 'YData', [peakVal-5 peakVal-5 peakVal peakVal])
 			set(handles.peakLine, 'Color', 'g');
             
@@ -265,17 +265,17 @@ disp('done')
         set(handles.edMvc, 'String', num2str(round(val)));
 	end
 	
-	if monitorFlg,
+	if monitorFlg
 		if val >= (goalPct*peakVal - 0.05*peakVal) && ...
-			val <= (goalPct*peakVal + 0.05*peakVal),		%% in the green
+			val <= (goalPct*peakVal + 0.05*peakVal)		%% in the green
 			set(handles.hLine, 'Color', [40 224 47]/255);
 		elseif val > (goalPct*peakVal + 0.05*peakVal) && ...
-				val <= (goalPct*peakVal + 0.1*peakVal),		%% slightly above (purple)
+				val <= (goalPct*peakVal + 0.1*peakVal)		%% slightly above (purple)
 			set(handles.hLine, 'Color', [170 100 245]/255);
-		elseif val > (goalPct*peakVal + 0.1*peakVal),		%% far above goal (red)
+		elseif val > (goalPct*peakVal + 0.1*peakVal)		%% far above goal (red)
 			set(handles.hLine, 'Color', [209 36 36]/255);
 		elseif val > (goalPct*peakVal - 0.1*peakVal) && ...	%% slightly below (orange)
-			val <= (goalPct*peakVal - 0.05*peakVal),
+			val <= (goalPct*peakVal - 0.05*peakVal)
 			set(handles.hLine, 'Color', [255 193 59]/255)
 		else
 			set(handles.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)
