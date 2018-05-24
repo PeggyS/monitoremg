@@ -68,26 +68,26 @@ else
 	params = defaults;
 end
 % make variables from params cell array
-[ipAddr sampFreq avgPeriod dispChan goalPct] = deal(params{:});
+[ipAddr, sampFreq, avgPeriod, dispChan, goalPct] = deal(params{:});
 
 % create tcpip object 
-t = tcpip(ipAddr, 51234);	%% local machine & 16-bit port (32-bit port: 51244)
+tcp_port = tcpip(ipAddr, 51234);	%% local machine & 16-bit port (32-bit port: 51244)
 
 % configure object -- InputBufferSize
-get(t, 'InputBufferSize');
-set(t, 'InputBufferSize', 2000);
+get(tcp_port, 'InputBufferSize');
+set(tcp_port, 'InputBufferSize', 2000);
 
 % configure object -- byteOrder
-set(t, 'ByteOrder', 'littleEndian');
+set(tcp_port, 'ByteOrder', 'littleEndian');
 
 % connect
-% === DEBUG - comment out to run without communicating with Recorder
-fopen(t);		
-% verify connection status
-if ~strcmp(get(t, 'Status'), 'open'),
-	disp('tcpip socket not open')
-	return
-end
+% % === DEBUG - comment out to run without communicating with Recorder
+% fopen(t);		
+% % verify connection status
+% if ~strcmp(get(t, 'Status'), 'open'),
+% 	disp('tcpip socket not open')
+% 	return
+% end
 % === end DEBUG
 
 tcpipinfo=instrhwinfo('tcpip')
@@ -112,7 +112,7 @@ set(handles.hLine, 'LineWidth', 50);
 
 
 % message display text
-handles.txtMessage = uicontrol('Style', 'text', 'String', 'no message', ...
+handles.txtMessage = uicontrol('Style', 'text', 'String', 'no messae', ...
 	'Position', [20 134 160 20], 'BackgroundColor', [0.8 0.8 0.8]);
 hTxt = [];
 
@@ -175,7 +175,7 @@ drawnow;
 
 while ~quitFlg
 	% get message from server
-	[blockSize, msgType, msgBlock] = getMsgBlock(t);
+	[blockSize, msgType, msgBlock] = getMsgBlock(tcp_port);
 %	fprintf('.');
 %	data = fread(t, 1000, 'float32')
 
@@ -206,11 +206,11 @@ end
 
 % Binary Read Properties -- ValuesReceived
 % The ValuesReceived property is updated by the number of values read from the server.
-disp(['Values read = ' num2str(get(t, 'ValuesReceived'))])
+disp(['Values read = ' num2str(get(tcp_port, 'ValuesReceived'))])
 disp('Closing connection')
 % Cleanup
-fclose(t);
-delete(t);
+fclose(tcp_port);
+delete(tcp_port);
 clear t
 delete(hFig)
 
