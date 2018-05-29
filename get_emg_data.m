@@ -1,5 +1,5 @@
 function get_emg_data(app)
-while app.StartButton.Value
+while app.CheckBoxDisplayMEP.Value
 	% if the emg monitor app is sending new data
 	new_data = app.emg_data_mmap.Data(1).new_data;
 	if new_data
@@ -11,7 +11,7 @@ while app.StartButton.Value
 		app.h_emg_line.YData = emg_data;
 		
 		% adjust y limits
-		app.UIAxes.YLim = [min(emg_data) max(emg_data)];
+		app.h_disp_emg_axes.YLim = [min(emg_data) max(emg_data)];
 		
 		% set new_data to false
 		app.emg_data_mmap.Data(1).new_data = uint8(0);
@@ -28,6 +28,12 @@ while app.StartButton.Value
 		app.rc_data_mmap.Data(1).magstim_val = uint8(magstim_val);
 		app.rc_data_mmap.Data(1).mep_val = mep_val;
 
+		set(app.mep_value_text, 'String', num2str(mep_val))
+		if mep_val >= 200
+			set(app.mep_value_text, 'ForegroundColor', 'r')
+		else
+			set(app.mep_value_text, 'ForegroundColor', 'b')
+		end
 	end
 	pause(0.5)
 end % while true
