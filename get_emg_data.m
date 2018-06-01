@@ -24,15 +24,22 @@ while app.CheckBoxDisplayMEP.Value
 		mep_seg = emg_data(t_emg>t_mep_min & t_emg<t_mep_max);
 		
 		mep_val = max(mep_seg) - min(mep_seg);
-		app.rc_data_mmap.Data(1).new_data = uint8(1);
-		app.rc_data_mmap.Data(1).magstim_val = uint8(magstim_val);
-		app.rc_data_mmap.Data(1).mep_val = mep_val;
+% 		app.rc_data_mmap.Data(1).new_data = uint8(1);
+% 		app.rc_data_mmap.Data(1).magstim_val = uint8(magstim_val);
+% 		app.rc_data_mmap.Data(1).mep_val = mep_val;
 
 		set(app.mep_value_text, 'String', num2str(mep_val))
 		if mep_val >= 200
 			set(app.mep_value_text, 'ForegroundColor', 'r')
 		else
 			set(app.mep_value_text, 'ForegroundColor', 'b')
+		end
+		drawnow
+		
+		% if the rc figure window exists, plot the point
+		rc_fig = findobj(0,'Name', 'Recruitment Curve');
+		if ~isempty(rc_fig)
+			add_point2rc(app.rc_axes, magstim_val, mep_val)
 		end
 	end
 	pause(0.5)
