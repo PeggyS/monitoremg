@@ -9,5 +9,5 @@ switch param
 		
 		get_emg_data(app)
 	case 'stop'
-		delete(app.emg_data_fig)
+		close(app.emg_data_fig)
 end 

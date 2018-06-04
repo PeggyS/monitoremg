@@ -39,7 +39,16 @@ while app.CheckBoxDisplayMEP.Value
 		% if the rc figure window exists, plot the point
 		rc_fig = findobj(0,'Name', 'Recruitment Curve');
 		if ~isempty(rc_fig)
-			add_point2rc(app.rc_axes, magstim_val, mep_val)
+			
+			% add the data to the axes userdata
+			epoch = height(app.rc_axes.UserData) + 1;
+			app.rc_axes.UserData.Epoch(epoch) = epoch;
+			app.rc_axes.UserData.Use(epoch) = 1;
+			app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
+			app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
+			
+			% add point to axes
+			add_point2rc(app.rc_axes, epoch, magstim_val, mep_val)
 		end
 	end
 	pause(0.5)
