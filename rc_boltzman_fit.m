@@ -9,9 +9,9 @@ func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
 % p = parameter vector: [slope m, S50, MEP-max]
 
 % initial parameter guess
-p0 = [str2double(app.rc_fit_info.edSlope.String), ...
-	str2double(app.rc_fit_info.edS50.String), ...
-	str2double(app.rc_fit_info.edMEPmax.String)];
+p0 = [str2double(app.rc_fit_ui.edSlope.String), ...
+	str2double(app.rc_fit_ui.edS50.String), ...
+	str2double(app.rc_fit_ui.edMEPmax.String)];
 
 options = statset('nlinfit');
 options = statset(options, 'MaxIter', 1e4);
@@ -35,15 +35,15 @@ set(hErr, 'Tag', 'errLine');
 % parameter confidence intervals
 pci = nlparci(p, r, 'jacobian', j);
 
-app.rc_fit_info.txtSlope.String = num2str(p(1));
-app.rc_fit_info.txtSlopeCI1.String = ['[' num2str(pci(1,1))];
-app.rc_fit_info.txtSlopeCI2.String = [ num2str(pci(1,2)) ']' ] ;
-app.rc_fit_info.txtS50.String = num2str(p(2));
-app.rc_fit_info.txtS50CI1.String = ['[' num2str(pci(2,1)) ] ;
-app.rc_fit_info.txtS50CI2.String = [ num2str(pci(2,2)) ']' ] ;
-app.rc_fit_info.txtMEPmax.String = num2str(p(3));
-app.rc_fit_info.txtMEPmaxCI1.String = ['[' num2str(pci(3,1))  ] ;
-app.rc_fit_info.txtMEPmaxCI2.String = [ num2str(pci(3,2)) ']' ] ;
+app.rc_fit_ui.txtSlope.String = num2str(p(1));
+app.rc_fit_ui.txtSlopeCI1.String = ['[' num2str(pci(1,1))];
+app.rc_fit_ui.txtSlopeCI2.String = [ num2str(pci(1,2)) ']' ] ;
+app.rc_fit_ui.txtS50.String = num2str(p(2));
+app.rc_fit_ui.txtS50CI1.String = ['[' num2str(pci(2,1)) ] ;
+app.rc_fit_ui.txtS50CI2.String = [ num2str(pci(2,2)) ']' ] ;
+app.rc_fit_ui.txtMEPmax.String = num2str(p(3));
+app.rc_fit_ui.txtMEPmaxCI1.String = ['[' num2str(pci(3,1))  ] ;
+app.rc_fit_ui.txtMEPmaxCI2.String = [ num2str(pci(3,2)) ']' ] ;
 
 % calc R-squared (used method from the polyfit example in matlab)
 SSresid = sum(r.^2);			%% residual sum of squares
@@ -52,7 +52,7 @@ SStotal = (nobs-1) * var(y_data);	%% total sum of squares: variance of y * num o
 Rsq = 1 - SSresid/SStotal;		%% R-squared
 	
 % display R-squared value
-app.rc_fit_info.txtRsq.String = ['Rsq = ' num2str(Rsq)];
+app.rc_fit_ui.txtRsq.String = ['Rsq = ' num2str(Rsq)];
 
 % also compute the mean MEP at each stim level and the area under the mean curve
 stimLevels = unique(x_data);
@@ -70,7 +70,17 @@ hMean = line(stimLevels, meanY, 'Color', 'g', 'Tag', 'meanLine');
 % area under the curve
 auc = polyarea([stimLevels(1); stimLevels; stimLevels(end)], ...
 				[0; meanY; 0]);
-app.rc_fit_info.txtAUC.String = ['AUC = ' num2str(auc)];
+app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(auc)];
 
+% info saved in app struct for easy saving
+app.rc_fit_info.mepMethod = 'p2p';
+app.rc_fit_info.slope = p(1);
+app.rc_fit_info.s50 = p(2);
+app.rc_fit_info.mepMax = p(3);
+app.rc_fit_info.slopeCi = pci(1,1:2);
+app.rc_fit_info.s50Ci = pci(2,1:2);
+app.rc_fit_info.mepMaxCi = pci(3,1:2);
+app.rc_fit_info.Rsq = Rsq;
+app.rc_fit_info.auc = auc;
 
 return
