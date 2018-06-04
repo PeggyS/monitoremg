@@ -1,4 +1,4 @@
-function start_stop(app)
+function emg_data_start_stop(app)
 
 if app.StartButton.Value 
    parameter_file = 'parameters.txt';
