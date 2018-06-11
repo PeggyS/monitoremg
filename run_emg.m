@@ -3,7 +3,7 @@ triggerPos = NaN; % position/index in the datavec when the trigger msg was rec'd
 % index when triggerPos is at correct position to record the proper pre & post amt of data
 triggerInd = app.params.preTriggerTime / 1000 * app.params.sampFreq;
 
-fid = fopen('emg_data.txt', 'w');
+% fid = fopen('emg_data.txt', 'w');
 
 while app.StartButton.Value
    % get message from server
@@ -23,7 +23,12 @@ while app.StartButton.Value
          %disp('Read a block of data')
          [data, numPoints, markInfo] = doDataMsg(msgBlock, app.chanInfo);
          % put new data into the data vectors
-         newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
+		 try
+			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
+		 catch
+			 warning('Problem reading in data. Try to run again.')
+			 app.StartButton.Value = 0;
+		 end
          newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData);
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
          app.emgBarDataVec(1:numPoints) = newHpFiltData;
@@ -50,9 +55,9 @@ while app.StartButton.Value
 				 % data to emg display app
 				 app.emg_data_mmap.Data(1).emg_data = app.emgTriggerDataVec;
 	         	% the data to save & find MEP
-	         	fprintf(fid, '%d,', magstim_val);
-	         	fprintf(fid, '%f,', app.emgTriggerDataVec);
-	         	fprintf(fid, '\n');
+	         	% fprintf(fid, '%d,', magstim_val);
+	         	% fprintf(fid, '%f,', app.emgTriggerDataVec);
+	         	% fprintf(fid, '\n');
 	         	% reset triggerPos
 	         	triggerPos = NaN;
 	         end
@@ -81,6 +86,7 @@ while app.StartButton.Value
 					magstim_val = app.magstim_mmap.Data(1);
 					% put magstim value in emg data memmap
 					app.emg_data_mmap.Data(1).magstim_val = magstim_val;
+					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 20));
 					app.emg_data_mmap.Data(1).new_data = uint8(1);
 				end
 			end
@@ -92,7 +98,7 @@ while app.StartButton.Value
    end
    drawnow;
 end
-fclose(fid);
+% fclose(fid);
 set(app.hLine, 'YData', [0 1]);
 return
 
@@ -144,17 +150,24 @@ len = nChannels * 8;							%% 8 bytes per channel
 chanInfo.resolution = typecast(msg(13:13+len-1), 'double');		%% resolution for each channel
 
 % channel names
-chanInfo.names = cell(nChannels,1);		%% initialize
+% chanInfo.names = cell(nChannels,1);		%% initialize
 p = 13+len;	%% position in byte block
 % parse the names out of the msg block
-for i = 1:nChannels
-   [name, ~] = textscan(char(msg(p:end)), '%s'); %% p is the end of the last scanned character
-   % textscan reads past the null char separating the channel names, so do not uses numCharRead
-   chanInfo.names(i) = name{:};
-   p = p+length(chanInfo.names{i})+1;	%% move past the null byte to the beginning next string
-   % check that we haven't gone too far
-   if p > length(msg), return; end
-end
+% for i = 1:nChannels
+% %    [name, ~] = textscan(char(msg(p:end)), '%s'); %% p is the end of the last scanned character
+%    % textscan reads past the null char separating the channel names, so do not uses numCharRead
+%    % 2018-06-06: textscan was returning a cell name: 1×1 cell array
+%    %	 {'inv_ta inv_gastroc uninv_ta uninv_gastroc '}
+%    % I don't know if this was always incorrect or that the behaviour of
+%    % textscan changed.
+%    chanInfo.names(i) = name{:};
+%    p = p+length(chanInfo.names{i})+1;	%% move past the null byte to the beginning next string
+%    % check that we haven't gone too far
+%    if p > length(msg), return; end
+%    
+% end
+tmp = textscan(char(msg(p:end)), '%s',4, 'Delimiter', sprintf('\0'));  % a 1x1 cell containing a 4x1 cell with the names
+chanInfo.names = tmp{1};
 return
 
 % ===============================================================================

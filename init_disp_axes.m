@@ -1,8 +1,9 @@
 function init_disp_axes(app)
 
-app.h_disp_emg_axes = axes;
-ylabel('EMG (ÂµV)')
+app.h_disp_emg_axes = axes('FontSize', 16);
+ylabel('EMG (µV)')
 xlabel('Time (msec)')
+
 
 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 seg_num_points = round(app.params.sampFreq*seg_time);
@@ -30,3 +31,6 @@ app.mep_value_text = uicontrol(app.emg_data_fig, 'Style', 'text', ...
 			'Units', 'normalized', ...
 			'Position', [0.8008 0.8226 0.2005 0.1835], ...
 			'Fontsize', 50, 'ForegroundColor', 'b');
+
+% set a close function to uncheck the display MEP checkbox
+app.emg_data_fig.CloseRequestFcn = {@close_mep_fig, app};

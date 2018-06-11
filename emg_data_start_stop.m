@@ -54,24 +54,25 @@ if app.StartButton.Value
    % memmap to share the emg data parameters
    
    % memmap - file to send emg data to emg display app
-	% emg data
-	filename = 'emg_data.data';
-% 	if ~exist(filename, 'file')
-		[f, msg] = fopen(filename, 'wb');
-		if f ~= -1
-			fwrite(f, zeros(1,2), 'uint8');
-			fwrite(f, zeros(1,length(app.emgTriggerDataVec)), 'double');
-			fclose(f);
-		else
-			error('MATLAB:demo:send:cannotOpenFile', ...
-				'Cannot open file "%s": %s.', filename, msg);
-		end
-% 	end
-	% Memory map the file.
-	app.emg_data_mmap = memmapfile(filename, 'Writable', true, ... 
-		'Format', ...
-		{'uint8', [1 1], 'new_data'; 'uint8', [1 1], 'magstim_val';
-		'double', [1 length(app.emgTriggerDataVec)], 'emg_data'});
+   setup_memmap(app, 'emg_data')
+% 	% emg data
+% 	filename = 'emg_data.data';
+% % 	if ~exist(filename, 'file')
+% 		[f, msg] = fopen(filename, 'wb');
+% 		if f ~= -1
+% 			fwrite(f, zeros(1,2), 'uint8');
+% 			fwrite(f, zeros(1,length(app.emgTriggerDataVec)), 'double');
+% 			fclose(f);
+% 		else
+% 			error('MATLAB:demo:send:cannotOpenFile', ...
+% 				'Cannot open file "%s": %s.', filename, msg);
+% 		end
+% % 	end
+% 	% Memory map the file.
+% 	app.emg_data_mmap = memmapfile(filename, 'Writable', true, ... 
+% 		'Format', ...
+% 		{'uint8', [1 1], 'new_data'; 'uint8', [1 1], 'magstim_val';
+% 		'double', [1 length(app.emgTriggerDataVec)], 'emg_data'});
 	
    % parameters to high pass filter at 10 Hz
    [app.hpFilt.b, app.hpFilt.a] = butter(4, 10/(app.params.sampFreq/2), 'high');
