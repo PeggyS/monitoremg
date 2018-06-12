@@ -16,6 +16,9 @@ switch param
 				'Fontsize', 20, ...
 				'Callback', {@load_stim_emg_data, app.rc_axes});
 		end
+		% clear any existing fit_info
+		app.rc_fit_info = [];
+		
 	case 'stop'
 		close(app.rc_fig)
 end 
