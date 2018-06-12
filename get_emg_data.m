@@ -1,4 +1,6 @@
 function get_emg_data(app)
+warning('off', 'MATLAB:table:RowsAddedExistingVars');
+
 while app.CheckBoxDisplayMEP.Value
 	if ~isempty(app.emg_data_mmap)
 		% if the emg monitor app is sending new data
@@ -57,9 +59,17 @@ while app.CheckBoxDisplayMEP.Value
 			% if the rc figure window exists, plot the point
 			rc_fig = findobj(0,'Name', 'Recruitment Curve');
 			if ~isempty(rc_fig)
-
+				% add title 
+				if isempty(app.rc_axes.Title.String)
+					app.rc_axes.Title.String = muscle;
+				end
+				
 				% add the data to the axes userdata
 				epoch = height(app.rc_axes.UserData) + 1;
+				% next line generates warning:
+					% Warning: The assignment added rows to the table, but did not assign values to all of the
+					% table's existing variables. Those variables have been extended with rows containing default
+					% values.
 				app.rc_axes.UserData.Epoch(epoch) = epoch;
 				app.rc_axes.UserData.Use(epoch) = 1;
 				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
@@ -72,3 +82,5 @@ while app.CheckBoxDisplayMEP.Value
 	end
 	pause(0.5)
 end % while true
+
+warning('on', 'MATLAB:table:RowsAddedExistingVars');

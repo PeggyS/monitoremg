@@ -5,6 +5,11 @@ h_line = line(h_ax, magstim_val, mep_val, ...
 h_line.UserData.table_row_num = table_row_num;
 
 drawnow
+
+% make sure recruit curve window is in front, so context menu gets
+% created in the correct figure
+figure(h_ax.Parent.Number)
+
 % context menu to disable/enable points
 cmenu = uicontextmenu;
 h_line.UIContextMenu = cmenu;
