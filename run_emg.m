@@ -54,6 +54,7 @@ while app.StartButton.Value
 	         if triggerPos == triggerInd
 				 % data to emg display app
 				 app.emg_data_mmap.Data(1).emg_data = app.emgTriggerDataVec;
+             app.emg_data_mmap.Data(1).new_data = uint8(1);
 	         	% the data to save & find MEP
 	         	% fprintf(fid, '%d,', magstim_val);
 	         	% fprintf(fid, '%f,', app.emgTriggerDataVec);
@@ -87,7 +88,7 @@ while app.StartButton.Value
 					% put magstim value in emg data memmap
 					app.emg_data_mmap.Data(1).magstim_val = magstim_val;
 					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 20));
-					app.emg_data_mmap.Data(1).new_data = uint8(1);
+					
 				end
 			end
          
