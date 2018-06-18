@@ -47,14 +47,15 @@ while app.StartButton.Value
 	         
 	         % shift the data
 	         app.emgTriggerDataVec = circshift(app.emgTriggerDataVec, -double(shift_val));
-	         app.emgTriggerDataVec(end-shift_val+1:end) = newHpFiltData(1:shift_val);
+	         %app.emgTriggerDataVec(end-shift_val+1:end) = newHpFiltData(1:shift_val);
+			 app.emgTriggerDataVec(end-shift_val+1:end) = newData(1:shift_val);
 	         triggerPos = triggerPos - shift_val;
 % 			 disp(['triggerPos = ' num2str(triggerPos)])
 			 
 	         if triggerPos == triggerInd
 				 % data to emg display app
-				 app.emg_data_mmap.Data(1).emg_data = app.emgTriggerDataVec;
-             app.emg_data_mmap.Data(1).new_data = uint8(1);
+				 app.emg_data_mmap.Data(1).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataVec);
+				app.emg_data_mmap.Data(1).new_data = uint8(1);
 	         	% the data to save & find MEP
 	         	% fprintf(fid, '%d,', magstim_val);
 	         	% fprintf(fid, '%f,', app.emgTriggerDataVec);
@@ -66,7 +67,8 @@ while app.StartButton.Value
          	% sprintf('triggerPos = %d, numPoints = %d',  triggerPos, numPoints)
          else % don't have a triggerPos, shift & save new data
          	app.emgTriggerDataVec = circshift(app.emgTriggerDataVec, -double(numPoints));
-	         app.emgTriggerDataVec(end-numPoints+1:end) = newHpFiltData;
+	         % app.emgTriggerDataVec(end-numPoints+1:end) = newHpFiltData;
+			 app.emgTriggerDataVec(end-numPoints+1:end) = newData;
          end
          % detect if a trigger message was sent - examine markers
 			if ~isempty(markInfo)
