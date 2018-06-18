@@ -48,7 +48,7 @@ while app.CheckBoxDisplayMEP.Value
 	% 		app.rc_data_mmap.Data(1).magstim_val = uint8(magstim_val);
 	% 		app.rc_data_mmap.Data(1).mep_val = mep_val;
 
-			set(app.mep_value_text, 'String', num2str(mep_val))
+			set(app.mep_value_text, 'String', num2str(round(mep_val)))
 			if mep_val >= 200
 				set(app.mep_value_text, 'ForegroundColor', 'r')
 			else
