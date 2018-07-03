@@ -1,10 +1,15 @@
 function rc_boltzman_fit(source,event, app)
+
+% norm factor
+norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
+
 % the data
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
-y_data = app.rc_axes.UserData.MEPAmpl_uVPp(logical(app.rc_axes.UserData.Use));
+y_data = (app.rc_axes.UserData.MEPAmpl_uVPp(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
 % the sigmoid function with 3 parameters to fit
-func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
+% func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
+func = @(p,x) p(3)./(1+exp(p(1)*(p(2)-x)));
 
 % p = parameter vector: [slope m, S50, MEP-max]
 

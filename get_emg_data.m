@@ -74,9 +74,10 @@ while app.CheckBoxDisplayMEP.Value
 				app.rc_axes.UserData.Use(epoch) = 1;
 				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
-
+				% norm factor
+				norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
-				add_point2rc(app.rc_axes, epoch, magstim_val, mep_val)
+				add_point2rc(app.rc_axes, epoch, magstim_val, mep_val/norm_factor)
 			end
 		end
 	end

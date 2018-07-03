@@ -1,20 +1,28 @@
-function load_stim_emg_data(source,event, h_ax)
+function load_stim_emg_data(source,event, app)
 
-[filename, pathname] = uigetfile('*.txt', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
+[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
 if isequal(filename,0) || isequal(pathname,0)
    disp('User pressed cancel')
 else
    fname = fullfile(pathname, filename);
 end
-		
-data = readtable(fname, 'delimiter', '\t');
+
+switch filename(end-2:end)
+	case 'txt'
+		data = readtable(fname, 'delimiter', '\t');
+	case 'csv'
+		data = readtable(fname);
+end
+
+% norm factor
+norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
 for cnt = 1:height(data)
 	if data.Use(cnt)
-		add_point2rc(h_ax, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt))
+		add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
 	end
 end
 % data table is saved in axes userdata
-h_ax.UserData = data;
+app.rc_axes.UserData = data;
 
 return
