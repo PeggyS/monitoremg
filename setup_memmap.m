@@ -13,7 +13,7 @@ if ~exist(filename, 'file')
 	if f ~= -1
 		switch which_map
 			case 'emg_data'
-				fwrite(f, zeros(1,22), 'uint8');
+				fwrite(f, zeros(1,32), 'uint8');
 				fwrite(f, zeros(1,seg_num_points), 'double');
 			otherwise
 				% body
@@ -31,7 +31,7 @@ switch which_map
 		app.emg_data_mmap = memmapfile(filename, 'Writable', true, ...
    			'Format', {'uint8', [1 1], 'new_data'; 
    			'uint8', [1 1], 'magstim_val';
-   			'uint8', [1 20], 'muscle_name';
+   			'uint8', [1 30], 'muscle_name';
     		'double', [1 seg_num_points], 'emg_data'});
 	% case 'rc_data'
 	% 	if ~exist(filename, 'file')
