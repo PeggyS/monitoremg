@@ -89,9 +89,7 @@ while app.StartButton.Value
 					magstim_val = app.magstim_mmap.Data(1);
 					% put magstim value in emg data memmap
 					app.emg_data_mmap.Data(1).magstim_val = magstim_val;
-					muscle_name = app.chanInfo.names{dispChan};
-					if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
-					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 30));
+					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 20));
 					
 				end
 			end
