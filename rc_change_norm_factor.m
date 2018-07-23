@@ -3,9 +3,14 @@ function rc_change_norm_factor(source,event, app)
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
-
 h_ax = app.rc_axes;
 cla(h_ax)
+
+if norm_factor == 1
+	h_ax.YLabel.String = 'MEP Vp-p (µV)';
+else
+	h_ax.YLabel.String = 'Normalized MEP';
+end
 
 data = app.rc_axes.UserData;
 

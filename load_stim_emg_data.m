@@ -14,6 +14,9 @@ switch filename(end-2:end)
 		data = readtable(fname);
 end
 
+% clear any existing points
+cla(app.rc_axes)
+
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 

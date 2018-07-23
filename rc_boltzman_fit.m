@@ -34,8 +34,8 @@ axes(app.rc_axes)
 hErr = findobj(app.rc_axes, 'Tag', 'errLine');
 if ~isempty(hErr), delete(hErr); end
 hold on
-hErr = errorbar(x,func(p,x),ci,ci,'m-');
-set(hErr, 'Tag', 'errLine');
+hErr = errorbar(x,func(p,x),ci,ci);
+set(hErr, 'Tag', 'errLine', 'LineWidth', 3, 'Color', [0.8 0 0]);
 
 % parameter confidence intervals
 pci = nlparci(p, r, 'jacobian', j);
@@ -53,8 +53,26 @@ app.rc_fit_ui.edSlope.String = num2str(round(p(1), 2));
 app.rc_fit_ui.txtSlopeCI.String = ['[' num2str(round(pci(1,1), 2)) ', ' num2str(round(pci(1,2),2)) ']' ] ;
 app.rc_fit_ui.edS50.String = num2str(round(p(2)));
 app.rc_fit_ui.txtS50CI.String = ['[' num2str(round(pci(2,1))) ', ' num2str(round(pci(2,2))) ']' ] ;
-app.rc_fit_ui.edMEPmax.String = num2str(round(p(3)));
-app.rc_fit_ui.txtMEPmaxCI.String = ['[' num2str(round(pci(3,1))) ', ' num2str(round(pci(3,2))) ']' ] ;
+app.rc_fit_ui.edMEPmax.String = num2str(round(p(3), 2));
+app.rc_fit_ui.txtMEPmaxCI.String = ['[' num2str(round(pci(3,1), 2)) ', ' num2str(round(pci(3,2), 2)) ']' ] ;
+
+% display S50 & m-max confidence intervals on the figure
+h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
+if ~isempty(h_ci_lines), delete(h_ci_lines); end
+if pci(3,1) > app.rc_axes.YLim(1) && pci(3,1) < app.rc_axes.YLim(2)
+	h_ci_lines(1) = line([app.rc_axes.XLim(2)-diff(app.rc_axes.XLim)/5, app.rc_axes.XLim(2)], [pci(3,1), pci(3,1)]);
+else
+	h_ci_lines(1) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
+if pci(3,2) > app.rc_axes.YLim(1) && pci(3,2) < app.rc_axes.YLim(2)
+	h_ci_lines(2) = line([app.rc_axes.XLim(2)-diff(app.rc_axes.XLim)/5, app.rc_axes.XLim(2)], [pci(3,2), pci(3,2)]);
+else
+	h_ci_lines(2) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
+h_ci_lines(3) = line([pci(2,1), pci(2,1)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+h_ci_lines(4) = line([pci(2,2), pci(2,2)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+
+set(h_ci_lines, 'Tag', 'ci_line', 'Color', [0.6 0.5 0.2])
 
 % calc R-squared (used method from the polyfit example in matlab)
 SSresid = sum(r.^2);			%% residual sum of squares
@@ -77,11 +95,11 @@ end
 hMean = findobj(app.rc_axes, 'Tag', 'meanLine');
 if ~isempty(hMean), delete(hMean); end
 
-hMean = line(stimLevels, meanY, 'Color', 'g', 'Tag', 'meanLine');
+hMean = line(stimLevels, meanY, 'Color', [0 0.7 0], 'Tag', 'meanLine');
 % area under the curve
 auc = polyarea([stimLevels(1); stimLevels; stimLevels(end)], ...
 				[0; meanY; 0]);
-app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc))];
+app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc, 2))];
 
 % info saved in app struct for easy saving
 app.rc_fit_info.mepMethod = 'p2p';
