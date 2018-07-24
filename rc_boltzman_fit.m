@@ -69,9 +69,17 @@ if pci(3,2) > app.rc_axes.YLim(1) && pci(3,2) < app.rc_axes.YLim(2)
 else
 	h_ci_lines(2) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
 end
-h_ci_lines(3) = line([pci(2,1), pci(2,1)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
-h_ci_lines(4) = line([pci(2,2), pci(2,2)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
 
+if pci(2,1) > app.rc_axes.XLim(1) && pci(2,1) < app.rc_axes.XLim(2)
+	h_ci_lines(3) = line([pci(2,1), pci(2,1)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+else
+	h_ci_lines(3) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
+if pci(2,2) > app.rc_axes.XLim(1) && pci(2,2) < app.rc_axes.XLim(2)
+	h_ci_lines(4) = line([pci(2,2), pci(2,2)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+else
+	h_ci_lines(4) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
 set(h_ci_lines, 'Tag', 'ci_line', 'Color', [0.6 0.5 0.2])
 
 % calc R-squared (used method from the polyfit example in matlab)
