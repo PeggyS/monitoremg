@@ -54,6 +54,14 @@ while app.CheckBoxDisplayMEP.Value
 			else
 				set(app.mep_value_text, 'ForegroundColor', 'b')
 			end
+
+			% compute the pre-stim emg
+			pre_stim_data = app.h_emg_line.YData(app.h_emg_line.XData>=-51 ...
+				& app.h_emg_line.XData<-1); % 50 ms prior to stim (+ 1 ms to allow for stim artifact)
+			pre_stim_val = mean(abs(pre_stim_data) - mean(pre_stim_data));
+			set(app.pre_emg_text, 'String', num2str(round(pre_stim_val)))
+			% change the color depending on the proximity to the goal
+
 			drawnow
 
 			% if the rc figure window exists, plot the point
