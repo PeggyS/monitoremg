@@ -119,5 +119,6 @@ app.rc_fit_info.s50Ci = pci(2,1:2);
 app.rc_fit_info.mepMaxCi = pci(3,1:2);
 app.rc_fit_info.Rsq = Rsq;
 app.rc_fit_info.auc = auc;
-
+app.rc_fit_info.aucMeanVals = meanY;
+app.rc_fit_info.stimLevels = stimLevels;
 return
