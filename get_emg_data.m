@@ -19,7 +19,8 @@ while app.CheckBoxDisplayMEP.Value
 			muscle = strip(char(app.emg_data_mmap.Data(1).muscle_name));
 			% save the data 
 			if app.CheckBoxSavedata.Value 
-				filename = [app.SaveLocationEditField.Value '/' app.EditFieldFilenameprefix.Value muscle ...
+				filename = [app.SaveLocationEditField.Value '/' ...
+					app.EditFieldFilenameprefix.Value muscle ...
 					'_emg_data.txt'];
 				fid = fopen(filename, 'a');
 				if ftell(fid) > 0 % already data in the file
