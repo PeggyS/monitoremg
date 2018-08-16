@@ -26,8 +26,10 @@ while app.StartButton.Value
 		 try
 			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
 		 catch
+         beep
 			 warning('Problem reading in data. Try to run again.')
 			 app.StartButton.Value = 0;
+          return
 		 end
          newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData);
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
