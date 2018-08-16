@@ -13,6 +13,12 @@ func = @(p,x) p(3)./(1+exp(p(1)*(p(2)-x)));
 
 % p = parameter vector: [slope m, S50, MEP-max]
 
+% change initial parameter for MEPmax depending on the axis limits
+if isempty(app.rc_fit_ui.edMEPmax.String)
+	ax_ymax = max(app.rc_axes.YLim);
+	app.rc_fit_ui.edMEPmax.String = num2str(0.75*ax_ymax);
+end
+
 % initial parameter guess
 p0 = [str2double(app.rc_fit_ui.edSlope.String), ...
 	str2double(app.rc_fit_ui.edS50.String), ...

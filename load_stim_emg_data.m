@@ -17,15 +17,18 @@ end
 % clear any existing points
 cla(app.rc_axes)
 
+% data table is saved in axes userdata
+app.rc_axes.UserData = data;
+
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
 for cnt = 1:height(data)
-	if data.Use(cnt)
+% 	if data.Use(cnt)
 		add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
-	end
+% 	end
 end
-% data table is saved in axes userdata
-app.rc_axes.UserData = data;
+
+title(strrep(filename, '_', ' '))
 
 return
