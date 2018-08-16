@@ -37,16 +37,13 @@ while app.CheckBoxDisplayMEP.Value
 			app.emg_data_mmap.Data(1).new_data = uint8(0);
 
 
-			% get mep value & put it in the recruit curve memmapfile
+			% get mep value 
 			t_emg = app.h_emg_line.XData;
 			t_mep_min = app.h_t_min_line.XData(1);
 			t_mep_max = app.h_t_max_line.XData(1);
 			mep_seg = emg_data(t_emg>t_mep_min & t_emg<t_mep_max);
 
 			mep_val = max(mep_seg) - min(mep_seg);
-	% 		app.rc_data_mmap.Data(1).new_data = uint8(1);
-	% 		app.rc_data_mmap.Data(1).magstim_val = uint8(magstim_val);
-	% 		app.rc_data_mmap.Data(1).mep_val = mep_val;
 
 			set(app.mep_value_text, 'String', num2str(round(mep_val)))
 			if mep_val >= 200
@@ -61,7 +58,16 @@ while app.CheckBoxDisplayMEP.Value
 			pre_stim_val = mean(abs(pre_stim_data) - mean(pre_stim_data));
 			set(app.pre_emg_text, 'String', num2str(round(pre_stim_val)))
 			% change the color depending on the proximity to the goal
-
+			in_goal_range = 0;
+			if pre_stim_val >= app.emg_data_mmap.Data(1).goal_min && ...
+					pre_stim_val <= app.emg_data_mmap.Data(1).goal_max  % in the green
+				set(app.pre_emg_text, 'ForegroundColor', [40 224 47]/255)
+				in_goal_range = 1;
+			elseif pre_stim_val < app.emg_data_mmap.Data(1).goal_min % below
+				set(app.pre_emg_text, 'ForegroundColor', [255 153 0]/255)
+			else % above
+				set(app.pre_emg_text, 'ForegroundColor', [209 36 36]/255)
+			end
 			drawnow
 
 			% if the rc figure window exists, plot the point
@@ -79,9 +85,13 @@ while app.CheckBoxDisplayMEP.Value
 					% table's existing variables. Those variables have been extended with rows containing default
 					% values.
 				app.rc_axes.UserData.Epoch(epoch) = epoch;
-				app.rc_axes.UserData.Use(epoch) = 1;
+				app.rc_axes.UserData.Use(epoch) = in_goal_range;
 				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
+				app.rc_axes.UserData.PreStimEmg(epoch) = pre_stim_val;
+				app.rc_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
+				app.rc_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
+				app.rc_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
 				% norm factor
 				norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
