@@ -25,7 +25,7 @@ function updateDisplay(app, dataVec, markInfo)
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).desc, val, magstim_val);
         else
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).label, val, magstim_val);
-            msg = sprintf('y = %3.1f, ms = %d', val, magstim_val);
+            msg = sprintf('emg = %4.0f, magstim = %d', val, magstim_val);
             drawnow
         end
 		app.msgText.Text = msg;
@@ -59,16 +59,15 @@ function updateDisplay(app, dataVec, markInfo)
 	end
 	
 	if app.monitorFlg
-		if val >= (app.params.goalPct*app.peakVal - 0.05*app.peakVal) && ...
-			val <= (app.params.goalPct*app.peakVal + 0.05*app.peakVal)		%% in the green
+		if val >= app.goalMin && val <= app.goalMax		%% in the green
 			set(app.hLine, 'Color', [40 224 47]/255);
-		elseif val > (app.params.goalPct*app.peakVal + 0.05*app.peakVal) && ...
-				val <= (app.params.goalPct*app.peakVal + 0.1*app.peakVal)		%% slightly above (purple)
+		elseif val > app.goalMax && ...
+				val <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
 			set(app.hLine, 'Color', [170 100 245]/255);
-		elseif val > (app.params.goalPct*app.peakVal + 0.1*app.peakVal)		%% far above goal (red)
+		elseif val > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
 			set(app.hLine, 'Color', [209 36 36]/255);
-		elseif val > (app.params.goalPct*app.peakVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
-			val <= (app.params.goalPct*app.peakVal - 0.05*app.peakVal)
+		elseif val > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
+			val <= (app.goalVal - 0.05*app.peakVal)
 			set(app.hLine, 'Color', [255 193 59]/255)
 		else
 			set(app.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)

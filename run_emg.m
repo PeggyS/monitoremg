@@ -26,8 +26,10 @@ while app.StartButton.Value
 		 try
 			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
 		 catch
+         beep
 			 warning('Problem reading in data. Try to run again.')
 			 app.StartButton.Value = 0;
+          return
 		 end
          newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData);
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
@@ -92,6 +94,11 @@ while app.StartButton.Value
 					muscle_name = app.chanInfo.names{dispChan};
 					if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
 					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 30));
+					if ~isempty(app.goalVal)
+					   app.emg_data_mmap.Data(1).goal_val = uint8(round(app.goalVal));
+                  app.emg_data_mmap.Data(1).goal_min = uint8(round(app.goalMin));
+                  app.emg_data_mmap.Data(1).goal_max = uint8(round(app.goalMax));
+					end
 					
 				end
 			end

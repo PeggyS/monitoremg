@@ -15,5 +15,10 @@ cmenu = uicontextmenu;
 h_line.UIContextMenu = cmenu;
 
 % menu items
-uimenu(cmenu, 'Label', 'Disable', 'Callback', {@data_point_enable_disable, h_line, h_ax})
+hm = uimenu(cmenu, 'Label', 'Disable', 'Callback', {@data_point_enable_disable, h_line, h_ax});
 uimenu(cmenu, 'Label', 'Disable All', 'Callback', {@data_point_enable_disable, h_line, h_ax})
+
+% if the datapoint is disabled
+if ~h_ax.UserData.Use(table_row_num)
+	data_point_enable_disable(hm, [], h_line, h_ax)
+end
