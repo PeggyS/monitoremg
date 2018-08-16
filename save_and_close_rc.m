@@ -9,7 +9,7 @@ filename = [app.SaveLocationEditField.Value '/' app.EditFieldFilenameprefix.Valu
 				strrep(app.rc_axes.Title.String, ' ', '_') ...
 					'_rc_datapoints.csv'];
 if exist(filename, 'file')
-	filename = strrep(filename, '.csv', [datestr(now, '_yyyymmdd_HH:MM:SS') '.csv']);
+	filename = strrep(filename, '.csv', [datestr(now, '_yyyymmdd_HHMMSS') '.csv']);
 end
 save_rc_table(app.rc_axes.UserData, filename)
 % and rc_fit_info
@@ -18,7 +18,7 @@ if isfield(app.rc_fit_info, 'mepMethod')
 				strrep(app.rc_axes.Title.String, ' ', '_') ...
 				'_fit_info.txt'];
 	if exist(filename, 'file')
-		filename = strrep(filename, '.txt', [datestr(now, '_yyyymmdd_HH:MM:SS') '.txt']);
+		filename = strrep(filename, '.txt', [datestr(now, '_yyyymmdd_HHMMSS') '.txt']);
 	end
 	write_fit_info(fileName, app.rc_fit_info)
 end
