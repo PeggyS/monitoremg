@@ -13,10 +13,11 @@ if ~exist(filename, 'file')
 	if f ~= -1
 		switch which_map
 			case 'emg_data'
-				fwrite(f, zeros(1,35), 'uint8'); 
+				fwrite(f, zeros(1,36), 'uint8'); 
 				% 1 for new data indicator flag, 
 				% 1 for magstim val
 				% 3 for goal val, min & max
+				% 1 for pre-stim emg
 				% 30 for muscle nam
 
 				fwrite(f, zeros(1,seg_num_points), 'double'); % emg data
@@ -39,6 +40,7 @@ switch which_map
    			'uint8', [1 1], 'goal_val';
    			'uint8', [1 1], 'goal_min';
    			'uint8', [1 1], 'goal_max';
+			'uint8', [1 1], 'monitor_emg_val';
    			'uint8', [1 30], 'muscle_name';
     		'double', [1 seg_num_points], 'emg_data'});
 	% case 'rc_data'

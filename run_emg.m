@@ -96,9 +96,10 @@ while app.StartButton.Value
 					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 30));
 					if ~isempty(app.goalVal)
 					   app.emg_data_mmap.Data(1).goal_val = uint8(round(app.goalVal));
-                  app.emg_data_mmap.Data(1).goal_min = uint8(round(app.goalMin));
-                  app.emg_data_mmap.Data(1).goal_max = uint8(round(app.goalMax));
+						app.emg_data_mmap.Data(1).goal_min = uint8(round(app.goalMin));
+						app.emg_data_mmap.Data(1).goal_max = uint8(round(app.goalMax));
 					end
+					app.emg_data_mmap.Data(1).monitor_emg_val = app.monitorEMGval;
 					
 				end
 			end

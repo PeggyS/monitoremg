@@ -12,10 +12,10 @@ function updateDisplay(app, dataVec, markInfo)
 	% data is a vector of all the data in the block just received for the channel being displayed
 	% markInfo - vector of structs (field label has the comment text)
 	%handles = guidata(hFig);
-	val = mean(abs(dataVec - mean(dataVec)));
+	app.monitorEMGval = mean(abs(dataVec - mean(dataVec)));
 %     disp(val)
 
-	set(app.hLine, 'YData', [0 val]);
+	set(app.hLine, 'YData', [0 app.monitorEMGval]);
 	if ~isempty(markInfo)
 		% fid = fopen('magstim_val.txt', 'r');
 		% magstim_val = fscanf(fid, '%d');
@@ -25,19 +25,19 @@ function updateDisplay(app, dataVec, markInfo)
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).desc, val, magstim_val);
         else
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).label, val, magstim_val);
-            msg = sprintf('emg = %4.0f, magstim = %d', val, magstim_val);
+            msg = sprintf('emg = %4.0f, magstim = %d', app.monitorEMGval, magstim_val);
             drawnow
         end
 		app.msgText.Text = msg;
 
-		app.hStarMark.Position = [0.3, val];
+		app.hStarMark.Position = [0.3, app.monitorEMGval];
 	end
 
 	if app.peakTracker
         % save val for sizeof(peakValVec) blocks of data
         
         app.peakValVec = circshift(app.peakValVec, [2 1]); % move all elements down
-        app.peakValVec(1) = val;                        % put new val at beginning
+        app.peakValVec(1) = app.monitorEMGval;                        % put new val at beginning
         app.peakVal = mean(app.peakValVec);
 
         if app.peakVal > app.UIAxes.YLim(2)
@@ -53,21 +53,21 @@ function updateDisplay(app, dataVec, markInfo)
         else 
             set(app.hPeakLine, 'Color', 'r');
         end
-        set(app.hPeakLine, 'YData', [val val])
-        set(app.MVCEditField, 'Value', round(val));
+        set(app.hPeakLine, 'YData', [app.monitorEMGval app.monitorEMGval])
+        set(app.MVCEditField, 'Value', round(app.monitorEMGval));
 
 	end
 	
 	if app.monitorFlg
-		if val >= app.goalMin && val <= app.goalMax		%% in the green
+		if app.monitorEMGval >= app.goalMin && app.monitorEMGval <= app.goalMax		%% in the green
 			set(app.hLine, 'Color', [40 224 47]/255);
-		elseif val > app.goalMax && ...
-				val <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
+		elseif app.monitorEMGval > app.goalMax && ...
+				app.monitorEMGval <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
 			set(app.hLine, 'Color', [170 100 245]/255);
-		elseif val > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
+		elseif app.monitorEMGval > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
 			set(app.hLine, 'Color', [209 36 36]/255);
-		elseif val > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
-			val <= (app.goalVal - 0.05*app.peakVal)
+		elseif app.monitorEMGval > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
+			app.monitorEMGval <= (app.goalVal - 0.05*app.peakVal)
 			set(app.hLine, 'Color', [255 193 59]/255)
 		else
 			set(app.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)

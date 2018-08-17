@@ -58,18 +58,21 @@ while app.CheckBoxDisplayMEP.Value
 				set(app.mep_value_text, 'ForegroundColor', 'b')
 			end
 
+			% monitor emg's value
+			monitor_emg_val = app.emg_data_mmap.Data(1).goal_min.monitor_emg_val;
+			
 			% compute the pre-stim emg
-			pre_stim_data = app.h_emg_line.YData(app.h_emg_line.XData>=-51 ...
-				& app.h_emg_line.XData<-1); % 50 ms prior to stim (+ 1 ms to allow for stim artifact)
-			pre_stim_val = mean(abs(pre_stim_data) - mean(pre_stim_data));
-			set(app.pre_emg_text, 'String', num2str(round(pre_stim_val)))
+			pre_stim_data = app.h_emg_line.YData(app.h_emg_line.XData>=-101 ...
+				& app.h_emg_line.XData<-1); % 100 ms prior to stim (+ 1 ms to allow for stim artifact)
+			pre_stim_val_100ms = mean(abs(pre_stim_data) - mean(pre_stim_data));
+			set(app.pre_emg_text, 'String', [num2str(monitor_emg_val) ' (' num2str(round(pre_stim_val_100ms)) ')'])
 			% change the color depending on the proximity to the goal
 			in_goal_range = 0;
-			if pre_stim_val >= app.emg_data_mmap.Data(1).goal_min && ...
-					pre_stim_val <= app.emg_data_mmap.Data(1).goal_max  % in the green
+			if monitor_emg_val >= app.emg_data_mmap.Data(1).goal_min && ...
+					monitor_emg_val <= app.emg_data_mmap.Data(1).goal_max  % in the green
 				set(app.pre_emg_text, 'ForegroundColor', [40 224 47]/255)
 				in_goal_range = 1;
-			elseif pre_stim_val < app.emg_data_mmap.Data(1).goal_min % below
+			elseif monitor_emg_val < app.emg_data_mmap.Data(1).goal_min % below
 				set(app.pre_emg_text, 'ForegroundColor', [255 153 0]/255)
 			else % above
 				set(app.pre_emg_text, 'ForegroundColor', [209 36 36]/255)
@@ -91,10 +94,11 @@ while app.CheckBoxDisplayMEP.Value
 					% table's existing variables. Those variables have been extended with rows containing default
 					% values.
 				app.rc_axes.UserData.Epoch(epoch) = epoch;
-				app.rc_axes.UserData.Use(epoch) = in_goal_range;
+				app.rc_axes.UserData.Use(epoch) = 1; % in_goal_range
 				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
-				app.rc_axes.UserData.PreStimEmg(epoch) = pre_stim_val;
+				app.rc_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val_100ms;
+				app.rc_axes.UserData.MonitorEMGval = monitor_emg_val;
 				app.rc_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
 				app.rc_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
 				app.rc_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
