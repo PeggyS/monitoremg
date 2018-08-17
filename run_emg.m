@@ -99,7 +99,7 @@ while app.StartButton.Value
 						app.emg_data_mmap.Data(1).goal_min = uint8(round(app.goalMin));
 						app.emg_data_mmap.Data(1).goal_max = uint8(round(app.goalMax));
 					end
-					app.emg_data_mmap.Data(1).monitor_emg_val = app.monitorEMGval;
+					app.emg_data_mmap.Data(1).monitor_emg_val = uint8(round(app.monitorEMGval));
 					
 				end
 			end

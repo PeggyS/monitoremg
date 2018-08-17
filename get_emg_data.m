@@ -59,7 +59,7 @@ while app.CheckBoxDisplayMEP.Value
 			end
 
 			% monitor emg's value
-			monitor_emg_val = app.emg_data_mmap.Data(1).goal_min.monitor_emg_val;
+			monitor_emg_val = app.emg_data_mmap.Data(1).monitor_emg_val;
 			
 			% compute the pre-stim emg
 			pre_stim_data = app.h_emg_line.YData(app.h_emg_line.XData>=-101 ...
@@ -70,7 +70,7 @@ while app.CheckBoxDisplayMEP.Value
 			in_goal_range = 0;
 			if monitor_emg_val >= app.emg_data_mmap.Data(1).goal_min && ...
 					monitor_emg_val <= app.emg_data_mmap.Data(1).goal_max  % in the green
-				set(app.pre_emg_text, 'ForegroundColor', [40 224 47]/255)
+				set(app.pre_emg_text, 'ForegroundColor', [20 224 20]/255)
 				in_goal_range = 1;
 			elseif monitor_emg_val < app.emg_data_mmap.Data(1).goal_min % below
 				set(app.pre_emg_text, 'ForegroundColor', [255 153 0]/255)
@@ -98,7 +98,7 @@ while app.CheckBoxDisplayMEP.Value
 				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.rc_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val_100ms;
-				app.rc_axes.UserData.MonitorEMGval = monitor_emg_val;
+				app.rc_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
 				app.rc_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
 				app.rc_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
 				app.rc_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
