@@ -31,23 +31,32 @@ if exist(datapoint_fname, 'file')
 	switch ans_button
 		case 'Yes'
 			datapoint_fname = strrep(datapoint_fname, '.csv', [suffix_str '.csv']);
-			fitinfo_fname = strrep(fitinfo_fname, '.txt', [suffix_str '.txt']);
+% 			fitinfo_fname = strrep(fitinfo_fname, '.txt', [suffix_str '.txt']);
 		case 'No'
 			confirm_saving = false;
 		case 'Cancel'
 			return
 	end
-	
-end
+end	
 
 if confirm_saving
 	% save the data
 	save_rc_table(app.rc_axes.UserData, datapoint_fname)
-	% and rc_fit_info
-	if isfield(app.rc_fit_info, 'mepMethod')
-		write_fit_info(fitinfo_fname, app.rc_fit_info)
-	end
 end % confirmed saving
+
+if isfield(app.rc_fit_info, 'mepMethod')
+	if exist(fitinfo_fname, 'file')
+		[filename, pathname] = uiputfile('*.txt', 'Save fit info as');
+		if isequal(filename,0) || isequal(pathname,0)
+		   disp('User pressed cancel')
+		else
+			fitinfo_fname = fullfile(pathname, filename);
+		   disp(['User selected ', fitinfo_fname])
+		end
+	end
+	write_fit_info(fitinfo_fname, app.rc_fit_info)
+end	
+
 
 if strcmp(source.Tag, 'pushbutton')  % don't delete if the save pushbutton called this function
 	return
