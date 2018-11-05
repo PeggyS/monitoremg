@@ -117,6 +117,7 @@ app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc, 2))];
 
 % info saved in app struct for easy saving
 app.rc_fit_info.mepMethod = 'p2p';
+app.rc_fit_info.norm_factor = norm_factor;
 app.rc_fit_info.slope = p(1);
 app.rc_fit_info.s50 = p(2);
 app.rc_fit_info.mepMax = p(3);
