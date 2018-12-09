@@ -1,28 +1,39 @@
 function init_review_figs(app)
 
-app.emg_data_fig = figure;
-app.h_disp_emg_axes = axes('FontSize', 16);
-ylabel('EMG (µV)')
-xlabel('Time (msec)')
+if isempty(app.emg_data_fig)
+	app.emg_data_fig = figure('Position', [970 200  1070  1000]);
+	app.h_disp_emg_axes = axes('Position', [0.6, 0.08,0.37,0.37], 'FontSize', 16);
+	ylabel('EMG (µV)')
+	xlabel('Time (msec)')
 
-% get parameters from text file
-parameter_file = 'parameters.txt';
-if ~exist(parameter_file, 'file')
-  [filename, pathname] = uigetfile( ...
-	 {'*.txt';'*.*'}, ...
-	 'Choose Parameter File');
-  parameter_file = fullfile(pathname, filename);
+	app.h_disp_rc_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
+	ylabel('MEP P-P')
+	xlabel('MagStim')
+	
+	app.h_uitable = uitable('Position', [31 66 548 837], 'RowName', []);
+	
+	% get parameters from text file
+	parameter_file = 'parameters.txt';
+	if ~exist(parameter_file, 'file')
+	  [filename, pathname] = uigetfile( ...
+		 {'*.txt';'*.*'}, ...
+		 'Choose Parameter File');
+	  parameter_file = fullfile(pathname, filename);
+	end
+	if ~exist(parameter_file, 'file')
+	  error( 'error finding parameter file, %s', parameter_file)
+	end
+	% read in the parameter file
+	keywords = { 'freq'  'pre' 'post'};
+	defaults = { 1000, 50, 100};
+	paramscell = readparamfile(parameter_file, keywords, defaults);
+	app.params.sampFreq  = paramscell{1};
+	app.params.preTriggerTime  = paramscell{2};
+	app.params.postTriggerTime = paramscell{3};
+else
+% 	app.h_disp_emg_axes
+
 end
-if ~exist(parameter_file, 'file')
-  error( 'error finding parameter file, %s', parameter_file)
-end
-% read in the parameter file
-keywords = { 'freq'  'pre' 'post'};
-defaults = { 1000, 50, 100};
-paramscell = readparamfile(parameter_file, keywords, defaults);
-app.params.sampFreq  = paramscell{1};
-app.params.preTriggerTime  = paramscell{2};
-app.params.postTriggerTime = paramscell{3};
    
    
 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
