@@ -46,11 +46,11 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 
 	% min & max vertical lines - draggable
 	app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
-	  'LineWidth', 2, 'Color', [0 0.9 0]);
-	draggable(app.h_t_min_line, 'h', [0 200])
+	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_min_line');
+	draggable(app.h_t_min_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
 	app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
-	  'LineWidth', 2, 'Color', [0 0.9 0]);
-	draggable(app.h_t_max_line, 'h', [0 200])
+	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_max_line');
+	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
 else
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
