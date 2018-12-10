@@ -1,7 +1,8 @@
 function add_point2rc(h_ax, table_row_num, magstim_val, mep_val)
+persistent h_prev_line
 
 h_line = line(h_ax, magstim_val, mep_val, ...
-	'Marker', '.', 'MarkerSize', 40);
+	'Marker', '.', 'MarkerSize', 50);
 h_line.UserData.table_row_num = table_row_num;
 
 drawnow
@@ -17,6 +18,25 @@ h_line.UIContextMenu = cmenu;
 % menu items
 hm = uimenu(cmenu, 'Label', 'Disable', 'Callback', {@data_point_enable_disable, h_line, h_ax});
 uimenu(cmenu, 'Label', 'Disable All', 'Callback', {@data_point_enable_disable, h_line, h_ax})
+
+
+% change size/color for the most recent data point added
+
+if h_ax.UserData.MonitorEMGval(table_row_num) > h_ax.UserData.GoalEMGmax(table_row_num)
+	h_line.Color = [170 100 245]/255;
+elseif h_ax.UserData.MonitorEMGval(table_row_num) < h_ax.UserData.GoalEMGmin(table_row_num)
+	h_line.Color = [255 193 59]/255;
+else
+	h_line.Color = [0 0.8 0];
+end
+
+% set prev_line to default values
+if ~isempty(h_prev_line)
+	h_prev_line.Color = [0    0.4470    0.7410];
+	h_prev_line.MarkerSize = 40;
+end
+
+h_prev_line = h_line; 
 
 % if the datapoint is disabled
 if ~h_ax.UserData.Use(table_row_num)

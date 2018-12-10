@@ -27,16 +27,24 @@ app.row_displayed = new_row;
 % highlight data point in rc_fig
 h_line = find_rc_datapoint(app.rc_axes, new_row);
 if ~isempty(h_line)
-	h_line.Color = [0 0.8 0];
+	clr = [0 0.8 0];
+	if h_tbl.Data{new_row, 6} > h_tbl.Data{new_row, 9}
+		clr = [170 100 245]/255;
+	elseif h_tbl.Data{new_row, 6} < h_tbl.Data{new_row, 7}
+		clr = [255 193 59]/255;
+	end
+	h_line.Color = clr;
 	h_line.MarkerSize = 50;
 end
 if ~isempty(app.rc_highlight_line)
-	% unhighlight prev
-	app.rc_highlight_line.Color = [0    0.4470    0.7410];
-	if app.rc_highlight_line.Marker == 'x'
-		app.rc_highlight_line.MarkerSize = 20;
-	else
-		app.rc_highlight_line.MarkerSize = 40;
+	if isgraphics(app.rc_highlight_line)
+		% unhighlight prev
+		app.rc_highlight_line.Color = [0    0.4470    0.7410];
+		if app.rc_highlight_line.Marker == 'x'
+			app.rc_highlight_line.MarkerSize = 20;
+		else
+			app.rc_highlight_line.MarkerSize = 40;
+		end
 	end
 end
 % save highlighted line handle
