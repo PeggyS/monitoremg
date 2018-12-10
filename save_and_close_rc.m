@@ -1,7 +1,14 @@
 function save_and_close_rc(source, event, app)
 
-if isempty(app.SaveLocationEditField.Value)
-	app.SaveLocationEditField.Value = pwd;
+if ~isfield(app, 'SaveLocationEditField') 
+	save_loc = pwd;
+	fname_prefix = '';
+else
+	if isempty(app.SaveLocationEditField.Value)
+		app.SaveLocationEditField.Value = pwd;
+		save_loc = pwd;
+		fname_prefix = app.EditFieldFilenameprefix.Value;
+	end
 end
 
 % determine base filename for saving datapoints.csv & fitinfo.txt
@@ -10,10 +17,8 @@ if contains(title_str, '.csv') % it's a file read in, no need to add prefix
 	datapoint_fname = title_str;
 	fitinfo_fname = strrep(title_str, 'rc_datapoints.csv', 'fit_info.txt');
 else
-	datapoint_fname = [app.SaveLocationEditField.Value '/' ...
-		app.EditFieldFilenameprefix.Value title_str '_rc_datapoints.csv'];
-	fitinfo_fname = [app.SaveLocationEditField.Value '/' ...
-		app.EditFieldFilenameprefix.Value title_str '_fit_info.txt'];
+	datapoint_fname = [save_loc '/' fname_prefix title_str '_rc_datapoints.csv'];
+	fitinfo_fname = [save_loc '/' fname_prefix title_str '_fit_info.txt'];
 end
 
 confirm_saving = true;
@@ -66,6 +71,8 @@ end
 delete(source)
 
 % change checkbox
-app.CheckBoxRecruitCurve.Value = 0;
+if isfield(app, 'CheckBoxRecruitCurve')
+	app.CheckBoxRecruitCurve.Value = 0;
+end
 
 return

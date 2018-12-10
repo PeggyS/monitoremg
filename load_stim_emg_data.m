@@ -1,18 +1,26 @@
 function load_stim_emg_data(source,event, app)
 
-[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
-if isequal(filename,0) || isequal(pathname,0)
-   disp('User pressed cancel')
-else
-   fname = fullfile(pathname, filename);
+if ~isfield(app, 'h_uitable') % when used in review_emg_rc.app, data is already in this field
+	% but re-read it in from the file as a table
+	filename = app.MuscleEditField.Value;
+	data = readtable(app.RCDatapointsCSVEditField.Value);
+	
+else % request the file name	
+	[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
+	if isequal(filename,0) || isequal(pathname,0)
+	   disp('User pressed cancel')
+	else
+	   fname = fullfile(pathname, filename);
+	end
+
+	switch filename(end-2:end)
+		case 'txt'
+			data = readtable(fname, 'delimiter', '\t');
+		case 'csv'
+			data = readtable(fname);
+	end
 end
 
-switch filename(end-2:end)
-	case 'txt'
-		data = readtable(fname, 'delimiter', '\t');
-	case 'csv'
-		data = readtable(fname);
-end
 
 % clear any existing points
 cla(app.rc_axes)

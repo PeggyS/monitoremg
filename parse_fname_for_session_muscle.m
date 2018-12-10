@@ -18,9 +18,9 @@ if ~isempty(tmp)
 end
 
 musc = '';
-tmp = regexpi(fname, '(ta)|(gastroc)|(flexors)|(extensors)', 'match');
+tmp = regexpi(fname, '(_ta)|(_gastroc)|(_flexors)|(_extensors)', 'match');
 if ~isempty(tmp)
-	musc = tmp{1};
+	musc = strrep(tmp{1}, '_', '');
 end
 
 if ~isempty(side) && ~isempty(musc)

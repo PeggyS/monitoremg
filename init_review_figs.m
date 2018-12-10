@@ -1,14 +1,14 @@
 function init_review_figs(app)
 
-if isempty(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [970 200  1070  1000]);
-	app.h_disp_emg_axes = axes('Position', [0.6, 0.08,0.37,0.37], 'FontSize', 16);
+if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
+	app.emg_data_fig = figure('Position', [466 86  1070  1000]);
+	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
 	ylabel('EMG (µV)')
 	xlabel('Time (msec)')
 
-	app.h_disp_rc_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
-	ylabel('MEP P-P')
-	xlabel('MagStim')
+% 	app.h_disp_rc_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
+% 	ylabel('MEP P-P')
+% 	xlabel('MagStim')
 	
 	app.h_uitable = uitable('Position', [31 66 548 837], 'RowName', []);
 	
@@ -30,31 +30,38 @@ if isempty(app.emg_data_fig)
 	app.params.sampFreq  = paramscell{1};
 	app.params.preTriggerTime  = paramscell{2};
 	app.params.postTriggerTime = paramscell{3};
+   
+   
+	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+	seg_num_points = round(app.params.sampFreq*seg_time);
+	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
+
+	% data line
+	app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), ...
+	  'LineWidth', 3) ;
+
+	% lines at x,y = 0,0
+	line(app.h_disp_emg_axes, app.h_disp_emg_axes.XLim, [0 0]);
+	line(app.h_disp_emg_axes, [0 0], [-1e6 1e6]);
+
+	% min & max vertical lines - draggable
+	app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
+	  'LineWidth', 2, 'Color', [0 0.9 0]);
+	draggable(app.h_t_min_line, 'h', [0 200])
+	app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
+	  'LineWidth', 2, 'Color', [0 0.9 0]);
+	draggable(app.h_t_max_line, 'h', [0 200])
 else
-% 	app.h_disp_emg_axes
-
+	% reset the data line
+	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+	seg_num_points = round(app.params.sampFreq*seg_time);
+	app.h_emg_line.YData = zeros(1, seg_num_points);
 end
-   
-   
-seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
-seg_num_points = round(app.params.sampFreq*seg_time);
-t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
 
-% data line
-app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), ...
-  'LineWidth', 3) ;
+title(strrep(app.MuscleEditField.Value, '_', ' '))
 
-% lines at x,y = 0,0
-line(app.h_disp_emg_axes, app.h_disp_emg_axes.XLim, [0 0]);
-line(app.h_disp_emg_axes, [0 0], [-1e6 1e6]);
-
-% min & max vertical lines - draggable
-app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
-  'LineWidth', 2, 'Color', [0 0.9 0]);
-draggable(app.h_t_min_line, 'h', [0 200])
-app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
-  'LineWidth', 2, 'Color', [0 0.9 0]);
-draggable(app.h_t_max_line, 'h', [0 200])
+% ======= rc fig ===========
+init_rc_fig(app)
 
 % % text display of MEP amplitude
 % app.mep_value_text = uicontrol(app.emg_data_fig, 'Style', 'text', ...
