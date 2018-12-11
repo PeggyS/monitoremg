@@ -1,7 +1,8 @@
 function init_review_figs(app)
 
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [466 86  1070  1000]);
+	app.emg_data_fig = figure('Position', [466 86  1070  1000], 'Name', 'EMG Data', ...
+		'NumberTitle', 'off');
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
 	ylabel('EMG (µV)')
 	xlabel('Time (msec)')
@@ -48,7 +49,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_min_line');
 	draggable(app.h_t_min_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
-	app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
+	app.h_t_max_line = line(app.h_disp_emg_axes, [110 110], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_max_line');
 	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
 else
@@ -56,9 +57,13 @@ else
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
 	app.h_emg_line.YData = zeros(1, seg_num_points);
+
+	% reset the mep min max lines
+	app.h_t_min_line.XData = [15 15];
+	app.h_t_max_line.XData = [110 110];
 end
 
-title(strrep(app.MuscleEditField.Value, '_', ' '))
+title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
 
 % ======= rc fig ===========
 init_rc_fig(app)

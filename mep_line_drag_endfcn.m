@@ -28,6 +28,6 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		% update the table 
 		app.h_uitable.Data{row_cnt, 4} = mep_val;
 		% update info in rc_fig
-		update_rc_datapoint(app.rc_axes, row_cnt, mep_val);
+		update_rc_datapoint(app, row_cnt, mep_val);
 	end
 end

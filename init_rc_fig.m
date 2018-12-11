@@ -6,6 +6,18 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 	
 	% clear any existing fit_info
 	app.rc_fit_info = [];
+	% reset ui
+	ylabel('MEP Vp-p (µV)')
+	app.rc_fit_ui.edNormFactor.String = '1';
+	app.rc_fit_ui.edSlope.String = '0.1';
+	app.rc_fit_ui.edS50.String = '50';
+	app.rc_fit_ui.edMEPmax.String = '';
+	app.rc_fit_ui.txtSlopeCI.String = '[x, x]';
+	app.rc_fit_ui.txtS50CI.String = '[x, x]';
+	app.rc_fit_ui.txtMEPmaxCI.String = '[x, x]';
+	app.rc_fit_ui.txtRsq.String = 'Rsq = 0.0';
+	app.rc_fit_ui.txtAUC.String = 'AUC = 0.0';
+	
 else
 
 	app.rc_fig = figure('Position', [1544 542 506 505], ...
@@ -39,6 +51,15 @@ else
 				'Tag', 'pushbutton', ...
 				'Callback', {@save_and_close_rc, app});
 
+	% button to print as png
+	h_print = uicontrol(app.rc_fig, 'Style', 'pushbutton', ...
+				'String', 'P', ...
+				'Units', 'normalized', ...
+				'Position', [0.95 0.03 0.04 0.04], ...
+				'Fontsize', 8, ...
+				'Callback', {@print_rc, app});
+	
+	
 	% set a close function to save the data
 	app.rc_fig.CloseRequestFcn = {@save_and_close_rc, app};
 	% 
