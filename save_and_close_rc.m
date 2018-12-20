@@ -1,31 +1,27 @@
 function save_and_close_rc(source, event, app)
 
-if ~isfield(app, 'SaveLocationEditField') % field only present in run_emg.mlapp (online app)
-	% this section runs for review_emg_rc.mlapp
+if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
 	save_loc = pwd;
 	fname_prefix = '';
 else
 	if isempty(app.SaveLocationEditField.Value)
 		app.SaveLocationEditField.Value = pwd;
 		save_loc = pwd;
-		fname_prefix = app.EditFieldFilenameprefix.Value;
+	else
+		save_loc = app.SaveLocationEditField.Value;
 	end
+	fname_prefix = app.EditFieldFilenameprefix.Value;
 end
 
 % determine base filename for saving datapoints.csv & fitinfo.txt
 title_str = strrep(app.rc_axes.Title.String, ' ', '_');
 if contains(title_str, '.csv') % it's a file read in, no need to add prefix
 	datapoint_fname = title_str;
-	fitinfo_fname = strrep(title_str, 'rc_datapoints.csv', 'fit_info_not_norm.txt');
+	fitinfo_fname = strrep(title_str, 'rc_datapoints.csv', 'fit_info.txt');
 else
 	datapoint_fname = [save_loc '/' fname_prefix title_str '_rc_datapoints.csv'];
-	fitinfo_fname = [save_loc '/' fname_prefix title_str '_fit_info_not_norm.txt'];
+	fitinfo_fname = [save_loc '/' fname_prefix title_str '_fit_info.txt'];
 end
-% if norm value > 1, change not_norm to norm in fitinfo_fname
-if str2double(app.rc_fit_ui.edNormFactor.String) > 1
-	fitinfo_fname = strrep(fitinfo_fname, '_not_norm', '_norm');
-end
-
 
 confirm_saving = true;
 

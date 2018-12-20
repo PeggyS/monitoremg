@@ -36,7 +36,7 @@ if isgraphics(h_mainwin)	% only do this if running in real time
 	h_line.MarkerSize = 50;
 	
 	% set prev_line to default values
-	if ~isempty(h_prev_line)
+	if ~isempty(h_prev_line) && isgraphics(h_prev_line)
 		h_prev_line.Color = [0    0.4470    0.7410];
 		if h_prev_line.Marker == '.'
 			h_prev_line.MarkerSize = 40;
