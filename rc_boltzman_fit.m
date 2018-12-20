@@ -40,7 +40,8 @@ axes(app.rc_axes)
 hErr = findobj(app.rc_axes, 'Tag', 'errLine');
 if ~isempty(hErr), delete(hErr); end
 hold on
-hErr = errorbar(x,func(p,x),ci,ci);
+y = func(p,x);
+hErr = errorbar(x,y,ci,ci);
 set(hErr, 'Tag', 'errLine', 'LineWidth', 3, 'Color', [0.8 0 0]);
 
 % parameter confidence intervals
@@ -61,6 +62,7 @@ app.rc_fit_ui.edS50.String = num2str(round(p(2)));
 app.rc_fit_ui.txtS50CI.String = ['[' num2str(round(pci(2,1))) ', ' num2str(round(pci(2,2))) ']' ] ;
 app.rc_fit_ui.edMEPmax.String = num2str(round(p(3), 2));
 app.rc_fit_ui.txtMEPmaxCI.String = ['[' num2str(round(pci(3,1), 2)) ', ' num2str(round(pci(3,2), 2)) ']' ] ;
+app.rc_fit_ui.edMEPmin.String = num2str(round(y(1), 2));
 
 % display S50 & m-max confidence intervals on the figure
 h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
