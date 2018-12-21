@@ -56,6 +56,7 @@ pci = nlparci(p, r, 'jacobian', j);
 % app.rc_fit_ui.txtMEPmax.String = num2str(p(3));
 % app.rc_fit_ui.txtMEPmaxCI1.String = ['[' num2str(pci(3,1))  ] ;
 % app.rc_fit_ui.txtMEPmaxCI2.String = [ num2str(pci(3,2)) ']' ] ;
+app.rc_fit_ui.eqn_params = p;
 app.rc_fit_ui.edSlope.String = num2str(round(p(1), 2));
 app.rc_fit_ui.txtSlopeCI.String = ['[' num2str(round(pci(1,1), 2)) ', ' num2str(round(pci(1,2),2)) ']' ] ;
 app.rc_fit_ui.edS50.String = num2str(round(p(2)));
