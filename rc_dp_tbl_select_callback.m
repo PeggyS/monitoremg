@@ -30,7 +30,7 @@ if ~isempty(h_line)
 	clr = [0 0.8 0];
 	if h_tbl.Data{new_row, 6} > h_tbl.Data{new_row, 9}
 		clr = [170 100 245]/255;
-	elseif h_tbl.Data{new_row, 6} < h_tbl.Data{new_row, 7}
+	elseif h_tbl.Data{new_row, 6} < h_tbl.Data{new_row, 8}
 		clr = [255 193 59]/255;
 	end
 	h_line.Color = clr;
