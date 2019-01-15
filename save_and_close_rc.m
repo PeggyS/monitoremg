@@ -23,6 +23,13 @@ else
 	fitinfo_fname = [save_loc '/' fname_prefix title_str '_fit_info.txt'];
 end
 
+% add norm or not norm to fit_info.txt
+if str2double(app.rc_fit_ui.edNormFactor.String) > 1
+	fitinfo_fname = strrep(fitinfo_fname, 'info.txt', 'info_norm.txt');
+else
+	fitinfo_fname = strrep(fitinfo_fname, 'info.txt', 'info_not_norm.txt');
+end
+
 confirm_saving = true;
 
 if exist(datapoint_fname, 'file')
