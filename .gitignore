@@ -1,3 +1,5 @@
 
 .DS_Store
 *.m~
+emg_data.data
+magstim_val.data
