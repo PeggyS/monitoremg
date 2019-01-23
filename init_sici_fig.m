@@ -9,14 +9,16 @@ if ~isempty(findobj('Name', 'SICI & ICF'))
 	% reset ui
 	ylabel('MEP Vp-p (µV)')
 	app.sici_info.edNormFactor.String = '1';
-	app.sici_info.edSlope.String = '0.1';
-	app.sici_info.edS50.String = '50';
-	app.sici_info.edMEPmax.String = '';
-	app.sici_info.txtSlopeCI.String = '[x, x]';
-	app.sici_info.txtS50CI.String = '[x, x]';
-	app.sici_info.txtMEPmaxCI.String = '[x, x]';
-	app.sici_info.txtRsq.String = 'Rsq = 0.0';
-	app.sici_info.txtAUC.String = 'AUC = 0.0';
+	app.sici_info.mean_ts.String = '0';
+	app.sici_info.sd_ts.String = '0';
+	app.sici_info.n_ts.String = '0';
+	app.sici_info.mean_sici.String = '0';
+	app.sici_info.sd_sici.String = '0';
+	app.sici_info.n_sici.String = '0';
+	app.sici_info.mean_icf.String = '';
+	app.sici_info.sd_icf.String = '';
+	app.sici_info.n_icf.String = '0';
+
 	
 else
 
@@ -26,9 +28,10 @@ else
 
 
 	app.sici_axes = axes('Position', [0.16 0.3 0.775 0.6], ...
-		'Fontsize', 20);
+		'Fontsize', 20, 'xlim', [0.5 3.5], 'xtick', 1:3, 'xticklabel', {'TS', 'SICI', 'ICF'});
 	ylabel('MEP Vp-p (µV)')
-	xlabel('Sample Number')
+	xlabel('Stim Type')
+
 
 	% userdata is a table with the data
 	app.sici_axes.UserData = cell2table(cell(0,4), ...

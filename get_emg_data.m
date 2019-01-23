@@ -123,7 +123,7 @@ while app.CheckBoxDisplayMEP.Value
 				app.sici_axes.UserData.Epoch(epoch) = epoch;
 				app.sici_axes.UserData.Use(epoch) = 1; % in_goal_range
 				app.sici_axes.UserData.MagStim_Setting(epoch) = magstim_val;
-				app.sici_axes.UserData.Sici_or_icf_or_ts(epoch) = '';
+				app.sici_axes.UserData.Sici_or_icf_or_ts(epoch) = {'?'};
 				app.sici_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.sici_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val_100ms;
 				app.sici_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
@@ -133,7 +133,7 @@ while app.CheckBoxDisplayMEP.Value
 				% norm factor
 				norm_factor = 1;  %str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
-				add_point2sici(app.sici_axes, epoch, magstim_val, mep_val/norm_factor)	
+				add_point2sici(app, epoch, magstim_val, mep_val/norm_factor)	
 			end
 		end
 	end
