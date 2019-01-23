@@ -107,6 +107,34 @@ while app.CheckBoxDisplayMEP.Value
 				% add point to axes
 				add_point2rc(app.rc_axes, epoch, magstim_val, mep_val/norm_factor)
 			end
+
+			% if sici figure exists, plot the point
+			sici_fig = findobj(0, 'Name', 'SICI & ICF');
+			if ~isempty(sici_fig)
+				if isempty(app.sici_axes.Title.String)
+					app.sici_axes.Title.String = muscle;
+				end
+				% add the data to the axes userdata
+				epoch = height(app.sici_axes.UserData) + 1;
+				% next line generates warning:
+					% Warning: The assignment added rows to the table, but did not assign values to all of the
+					% table's existing variables. Those variables have been extended with rows containing default
+					% values.
+				app.sici_axes.UserData.Epoch(epoch) = epoch;
+				app.sici_axes.UserData.Use(epoch) = 1; % in_goal_range
+				app.sici_axes.UserData.MagStim_Setting(epoch) = magstim_val;
+				app.sici_axes.UserData.Sici_or_icf_or_ts(epoch) = '';
+				app.sici_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
+				app.sici_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val_100ms;
+				app.sici_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
+				app.sici_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
+				app.sici_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
+				app.sici_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
+				% norm factor
+				norm_factor = 1;  %str2double(app.rc_fit_ui.edNormFactor.String);
+				% add point to axes
+				add_point2sici(app.sici_axes, epoch, magstim_val, mep_val/norm_factor)	
+			end
 		end
 	end
 	pause(0.5)
