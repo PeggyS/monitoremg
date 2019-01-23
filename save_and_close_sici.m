@@ -1,5 +1,6 @@
-function save_and_close_rc(source, event, app)
+function save_and_close_sici(source, event, app)
 
+%{
 if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
 	save_loc = pwd;
 	fname_prefix = '';
@@ -75,13 +76,14 @@ end
 if strcmp(source.Tag, 'pushbutton')  % don't delete if the save pushbutton called this function
 	return
 end
-
+%}
 % delete the figure
 delete(source)
 
 % change checkbox
-if any(strcmp(properties(app), 'CheckBoxRecruitCurve'))
-	app.CheckBoxRecruitCurve.Value = 0;
+if any(strcmp(properties(app), 'CheckBoxSici'))
+	app.CheckBoxSici.Value = 0;
 end
+
 
 return
