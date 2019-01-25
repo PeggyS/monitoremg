@@ -82,12 +82,12 @@ end
 % once there are 5 points, draw the mean & std dev of the data points
 tbl_stim_type = h_ax.UserData(strcmp(h_ax.UserData.Sici_or_icf_or_ts, stim_type), :);
 tbl_use = tbl_stim_type(tbl_stim_type.Use,:);
+n_var = [info_var '_n'];
+app.sici_info.(n_var).String = num2str(height(tbl_use));
 if height(tbl_use) > 5
-	mean_var = ['mean_' info_var];
-	sd_var = ['sd_' info_var];
-	n_var = ['n_' info_var];
-	app.sici_info.(mean_var).String = num2str(mean(tbl_use.MEPAmpl_uVPp))
-	app.sici_info.(sd_var).String = num2str(std(tbl_use.MEPAmpl_uVPp))
-	app.sici_info.(n_var).String = num2str(height(tbl_use))
+	mean_var = [info_var '_mean' ];
+	sd_var = [info_var '_sd'];	
+	app.sici_info.(mean_var).String = num2str(mean(tbl_use.MEPAmpl_uVPp));
+	app.sici_info.(sd_var).String = num2str(std(tbl_use.MEPAmpl_uVPp));
 end
 
