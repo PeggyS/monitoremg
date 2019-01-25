@@ -4,20 +4,20 @@ function init_sici_fig(app)
 if ~isempty(findobj('Name', 'SICI & ICF'))
 	app.sici_axes;
 	
-	% clear any existing fit_info
-	app.sici_info = [];
-	% reset ui
-	ylabel('MEP Vp-p (µV)')
-	app.sici_info.edNormFactor.String = '1';
-	app.sici_info.mean_ts.String = '0';
-	app.sici_info.sd_ts.String = '0';
-	app.sici_info.n_ts.String = '0';
-	app.sici_info.mean_sici.String = '0';
-	app.sici_info.sd_sici.String = '0';
-	app.sici_info.n_sici.String = '0';
-	app.sici_info.mean_icf.String = '';
-	app.sici_info.sd_icf.String = '';
-	app.sici_info.n_icf.String = '0';
+% 	% clear any existing fit_info
+% 	app.sici_info = [];
+% 	% reset ui
+% 	ylabel('MEP Vp-p (µV)')
+% 	app.sici_info.edNormFactor.String = '1';
+% 	app.sici_info.mean_ts.String = '0';
+% 	app.sici_info.sd_ts.String = '0';
+% 	app.sici_info.n_ts.String = '0';
+% 	app.sici_info.mean_sici.String = '0';
+% 	app.sici_info.sd_sici.String = '0';
+% 	app.sici_info.n_sici.String = '0';
+% 	app.sici_info.mean_icf.String = '';
+% 	app.sici_info.sd_icf.String = '';
+% 	app.sici_info.n_icf.String = '0';
 
 	
 else

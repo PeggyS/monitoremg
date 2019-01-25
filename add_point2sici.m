@@ -84,18 +84,23 @@ tbl_stim_type = h_ax.UserData(strcmp(h_ax.UserData.Sici_or_icf_or_ts, stim_type)
 tbl_use = tbl_stim_type(tbl_stim_type.Use==1,:);
 n_var = [info_var '_n'];
 app.sici_ui.(n_var).String = num2str(height(tbl_use));
+app.sici_info.(n_var) = num2str(height(tbl_use));
 if height(tbl_use) >= 3
 	mean_var = [info_var '_mean' ];	
 	mean_val = mean(tbl_use.MEPAmpl_uVPp);
-	app.sici_ui.(mean_var).String = num2str(round(mean_val),2);
+	app.sici_ui.(mean_var).String = num2str(mean_val,'%6.2f');
 	sd_var = [info_var '_sd'];
 	sd_val = std(tbl_use.MEPAmpl_uVPp);
-	app.sici_ui.(sd_var).String = num2str(round(sd_val),2);
+	app.sici_ui.(sd_var).String = num2str(sd_val,'%6.2f');
 	m_line_var = [info_var '_mline'];
 	app.sici_ui.(m_line_var).YData = [mean_val mean_val];
 	up_line_var = [info_var '_sdupline'];
 	app.sici_ui.(up_line_var).YData = [mean_val+sd_val mean_val+sd_val];
 	dwn_line_var = [info_var '_sddownline'];
 	app.sici_ui.(dwn_line_var).YData = [mean_val-sd_val mean_val-sd_val];
+
+	app.sici_info.(mean_var) = mean_val;
+	app.sici_info.(sd_var) = sd_val;
+
 end
 
