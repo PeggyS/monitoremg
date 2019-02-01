@@ -1,8 +1,12 @@
 function add_point2sici(app, table_row_num, magstim_val, mep_val)
 
 h_ax = app.sici_axes;
-stim_type = app.sici_popmenu.String{app.sici_popmenu.Value};
-h_ax.UserData.Sici_or_icf_or_ts(table_row_num) = {stim_type};
+if isempty(h_ax.UserData.Sici_or_icf_or_ts(table_row_num)) 
+	stim_type = app.sici_popmenu.String{app.sici_popmenu.Value};
+	h_ax.UserData.Sici_or_icf_or_ts(table_row_num) = {stim_type};
+else
+	stim_type = h_ax.UserData.Sici_or_icf_or_ts{table_row_num};
+end
 
 
 switch stim_type
@@ -72,6 +76,12 @@ if isgraphics(h_mainwin)	% only do this if running in real time
 	end
 
 	h_prev_line = h_line; 
+end
+
+if isfield(app.sici_ui, 'data_lines')
+	app.sici_ui.data_lines = [app.sici_ui.data_lines h_line];
+else
+	app.sici_ui.data_lines = h_line;
 end
 
 % if the datapoint is disabled

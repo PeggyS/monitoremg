@@ -1,10 +1,11 @@
 function load_stim_emg_data(source,event, app)
 
-if ~isfield(app, 'h_uitable') % when used in review_emg_rc.app, data is already in this field
+if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, data is already in this field
 	% but re-read it in from the file as a table
-	if isfield(app, 'MuscleEditField')
+	if any(strcmp(properties(app), 'MuscleEditField')) 
 		filename = app.MuscleEditField.Value;
 		data = readtable(app.RCDatapointsCSVEditField.Value);
+	else
 	end
 else % request the file name	
 	[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
@@ -24,18 +25,34 @@ end
 
 
 % clear any existing points
-cla(app.rc_axes)
+if isgraphics(app.rc_axes)
+	cla(app.rc_axes)
+	which_axes = 'rc_axes';
+elseif isgraphics(app.sici_axes)
+	if isfield(app.sici_ui, 'data_lines')
+		delete(app.sici_ui.data_lines)
+		app.sici_ui.data_lines = {};
+	end
+	which_axes = 'sici_axes';
+end
 
 % data table is saved in axes userdata
-app.rc_axes.UserData = data;
+app.(which_axes).UserData = data;
 
 % norm factor
-norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
+if isfield(app.rc_fit_ui, 'edNormFactor')
+	norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
+else
+	norm_factor = 1;
+end
 
 for cnt = 1:height(data)
-% 	if data.Use(cnt)
-		add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
-% 	end
+	switch which_axes
+		case 'rc_axes'
+			add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
+		case 'sici_axes'
+			add_point2sici(app, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
+ 	end
 end
 
 title(strrep(filename, '_', ' '))
