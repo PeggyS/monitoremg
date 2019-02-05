@@ -4,7 +4,7 @@ if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, d
 	% but re-read it in from the file as a table
 	if any(strcmp(properties(app), 'MuscleEditField')) 
 		filename = app.MuscleEditField.Value;
-		data = readtable(app.RCDatapointsCSVEditField.Value);
+		data = readtable(app.DatapointsCSVEditField.Value);
 	else
 	end
 else % request the file name	

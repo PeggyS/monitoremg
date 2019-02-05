@@ -1,7 +1,7 @@
 function init_review_figs(app)
 
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [466 86  1070  1000], 'Name', 'EMG Data', ...
+	app.emg_data_fig = figure('Position', [466 86  1100  1000], 'Name', 'EMG Data', ...
 		'NumberTitle', 'off');
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
 	ylabel('EMG (µV)')
@@ -11,7 +11,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 % 	ylabel('MEP P-P')
 % 	xlabel('MagStim')
 	
-	app.h_uitable = uitable('Position', [31 66 548 837], 'RowName', []);
+	app.h_uitable = uitable('Position', [31 66 580 837], 'RowName', []);
 	
 	% get parameters from text file
 	parameter_file = 'parameters.txt';
@@ -65,8 +65,12 @@ end
 
 title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
 
-% ======= rc fig ===========
-init_rc_fig(app)
+% ======= rc or sici fig ===========
+if app.ButtonRc.Value == 1
+	init_rc_fig(app)
+else
+	init_sici_fig(app)
+end
 
 % % text display of MEP amplitude
 % app.mep_value_text = uicontrol(app.emg_data_fig, 'Style', 'text', ...
