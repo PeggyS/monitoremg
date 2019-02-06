@@ -28,7 +28,7 @@ while app.CheckBoxDisplayMEP.Value
 				if app.CheckBoxRecruitCurve.Value
 					rc_or_sici = '_rc';
 				elseif app.CheckBoxSici.Value
-					rc_or_sici = '_sici'
+					rc_or_sici = '_sici';
 				end
 
 				filename = [app.SaveLocationEditField.Value '/' ...
