@@ -64,7 +64,7 @@ else
 	
 	
 	% set a close function to save the data
-% 	app.sici_fig.CloseRequestFcn = {@save_and_close_sici, app};
+ 	app.sici_fig.CloseRequestFcn = {@save_and_close_sici, app};
 
 	if any(strcmp(properties(app), 'sici_popmenu')) 
 		app.sici_popmenu = uicontrol(app.sici_fig, 'style','popup', ...
