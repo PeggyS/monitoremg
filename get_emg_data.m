@@ -23,9 +23,17 @@ while app.CheckBoxDisplayMEP.Value
 					app.SaveLocationEditField.Value = pwd;
 				end
 
+				% add rc or sici if their figure is being displayed
+				rc_or_sici = '';
+				if app.CheckBoxRecruitCurve.Value
+					rc_or_sici = '_rc';
+				elseif app.CheckBoxSici.Value
+					rc_or_sici = '_sici'
+				end
+
 				filename = [app.SaveLocationEditField.Value '/' ...
 					app.EditFieldFilenameprefix.Value muscle ...
-					'_emg_data.txt'];
+					rc_or_sici '_emg_data.txt'];
 
 				fid = fopen(filename, 'a');
 				if ftell(fid) > 0 % already data in the file

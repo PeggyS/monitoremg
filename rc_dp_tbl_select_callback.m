@@ -24,17 +24,26 @@ app.h_emg_line.YData = app.emg_data(new_row, 2:end);
 app.h_disp_emg_axes.YLim = [min(app.emg_data(new_row, 2:end)) max(app.emg_data(new_row, 2:end))];
 app.row_displayed = new_row;
 
-% highlight data point in rc_fig
-h_line = find_rc_datapoint(app.rc_axes, new_row);
+% highlight data point in rc_fig or sici_fig
+if isgraphics(app.rc_axes)
+	h_ax = app.rc_axes;
+elseif isgraphics(app.sici_axes)
+	h_ax = app.sici_axes;
+end
+h_line = find_rc_datapoint(h_ax, new_row);
 if ~isempty(h_line)
 	clr = [0 0.8 0];
-	if h_tbl.Data{new_row, 6} > h_tbl.Data{new_row, 9}
+	emg_ind = find_uitable_column(h_tbl, 'MonitorEMG');
+	emg_min_ind = find_uitable_column(h_tbl, 'Goal<br />Min');
+	emg_max_ind = find_uitable_column(h_tbl, 'Goal<br />Max');
+	if h_tbl.Data{new_row, emg_ind} > h_tbl.Data{new_row, emg_max_ind}
 		clr = [170 100 245]/255;
-	elseif h_tbl.Data{new_row, 6} < h_tbl.Data{new_row, 8}
+	elseif h_tbl.Data{new_row, emg_ind} < h_tbl.Data{new_row, emg_min_ind}
 		clr = [255 193 59]/255;
 	end
 	h_line.Color = clr;
 	h_line.MarkerSize = 50;
+	uistack(h_line,'top')
 end
 if ~isempty(app.rc_highlight_line)
 	if isgraphics(app.rc_highlight_line)

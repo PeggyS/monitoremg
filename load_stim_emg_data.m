@@ -30,8 +30,10 @@ if isgraphics(app.rc_axes)
 	which_axes = 'rc_axes';
 elseif isgraphics(app.sici_axes)
 	if isfield(app.sici_ui, 'data_lines')
-		delete(app.sici_ui.data_lines)
-		app.sici_ui.data_lines = {};
+		if ~isempty(app.sici_ui.data_lines)
+			delete(app.sici_ui.data_lines)
+			app.sici_ui.data_lines = {};
+		end
 	end
 	which_axes = 'sici_axes';
 end
@@ -40,7 +42,7 @@ end
 app.(which_axes).UserData = data;
 
 % norm factor
-if isfield(app.rc_fit_ui, 'edNormFactor')
+if isfield(app.rc_fit_ui, 'edNormFactor') && isgraphics(app.rc_fit_ui.edNormFactor)
 	norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 else
 	norm_factor = 1;

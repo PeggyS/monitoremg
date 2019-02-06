@@ -68,8 +68,14 @@ title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
 % ======= rc or sici fig ===========
 if app.ButtonRc.Value == 1
 	init_rc_fig(app)
+	if isgraphics(app.sici_fig)
+		delete(app.sici_fig)
+	end
 else
 	init_sici_fig(app)
+	if isgraphics(app.rc_fig)
+		delete(app.rc_fig)
+	end
 end
 
 % % text display of MEP amplitude
