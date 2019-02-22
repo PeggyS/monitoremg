@@ -9,8 +9,17 @@ function rc_dp_tbl_select_callback(h_tbl, cell_edit_data, app)
 % Source 
 % EventName = 'CellEdit'
 
+
 if cell_edit_data.Indices(2) == 2 % col2 'Use' edited
-	h_line = find_rc_datapoint(app.rc_axes, cell_edit_data.Indices(1));
+	if isgraphics(app.rc_axes)
+		h_ax = app.rc_axes;
+	elseif isgraphics(app.sici_axes)
+		h_ax = app.sici_axes;
+	else
+		return
+	end
+	h_line = find_rc_datapoint(h_ax, cell_edit_data.Indices(1));
+	
 	% get uimenu
 	if cell_edit_data.EditData
 		enable_disable_str = 'Enable';
@@ -23,5 +32,5 @@ if cell_edit_data.Indices(2) == 2 % col2 'Use' edited
 		end
 	end
 	
-	data_point_enable_disable(h_menu, [], h_line, app.rc_axes)
+	data_point_enable_disable(h_menu, [], h_line, h_ax)
 end
