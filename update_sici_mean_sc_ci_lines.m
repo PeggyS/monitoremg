@@ -11,11 +11,11 @@ app.sici_info.(n_var) = num2str(height(tbl_use));
 if height(tbl_use) >= 3
 	mean_var = [info_var '_mean' ];	
 	mean_val = mean(tbl_use.MEPAmpl_uVPp);
-	app.sici_ui.(mean_var).String = num2str(mean_val,'%6.2f');
+	app.sici_ui.(mean_var).String = num2str(mean_val,'%4.0f');
 	ci_var = [info_var '_ci'];
 	sd_val = std(tbl_use.MEPAmpl_uVPp);
 	ci_val = confidence_intervals(tbl_use.MEPAmpl_uVPp, 98);
-	ci_str = sprintf('[%6.2f, %6.2f]', mean_val+ci_val(1), mean_val+ci_val(2));
+	ci_str = sprintf('[%4.0f, %4.0f]', mean_val+ci_val(1), mean_val+ci_val(2));
 	app.sici_ui.(ci_var).String = ci_str;
 	m_line_var = [info_var '_mline'];
 	
@@ -30,8 +30,8 @@ if height(tbl_use) >= 3
 	dwn_line_var = [info_var '_cidownline'];
 	app.sici_ui.(dwn_line_var).YData = [mean_val+ci_val(1) mean_val+ci_val(1)];
 
-	app.sici_info.(info_var).(mean_var) = mean_val;
-	app.sici_info.(info_var).(ci_var) = ci_val;
+	app.sici_info.(mean_var) = mean_val;
+	app.sici_info.(ci_var) = mean_val + ci_val;
 
 end
 

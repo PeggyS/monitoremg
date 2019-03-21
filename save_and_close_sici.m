@@ -18,10 +18,10 @@ end
 title_str = strrep(app.sici_axes.Title.String, ' ', '_');
 if contains(title_str, '.csv') % it's a file read in, no need to add prefix
 	datapoint_fname = title_str;
-	fitinfo_fname = strrep(title_str, 'sici_datapoints.csv', 'sici_info.txt');
+	sici_info_fname = strrep(title_str, 'sici_datapoints.csv', 'sici_info.txt');
 else
 	datapoint_fname = [save_loc '/' fname_prefix title_str '_sici_datapoints.csv'];
-	fitinfo_fname = [save_loc '/' fname_prefix title_str '_sici_info.txt'];
+	sici_info_fname = [save_loc '/' fname_prefix title_str '_sici_info.txt'];
 end
 
 % % add norm or not norm to fit_info.txt
@@ -58,7 +58,7 @@ if confirm_saving
 	save_rc_table(app.sici_axes.UserData, datapoint_fname)
 end % confirmed saving
 
-if isfield(app.sici_info, 'muscle')
+if isfield(app.sici_info, 'ts_n')
 	if exist(sici_info_fname, 'file')
 		[filename, pathname] = uiputfile('*.txt', 'Save fit info as');
 		if isequal(filename,0) || isequal(pathname,0)
@@ -68,6 +68,9 @@ if isfield(app.sici_info, 'muscle')
 		   disp(['User selected ', sici_info_fname])
 		end
 	end
+	% get the TS & CS values
+	app.sici_info.ts_value = str2double(app.sici_ui.ts.String);
+	app.sici_info.cs_value = str2double(app.sici_ui.cs.String);
 	write_fit_info(sici_info_fname, app.sici_info)
 end	
 
