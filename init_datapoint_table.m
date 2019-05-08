@@ -1,4 +1,9 @@
 function init_datapoint_table(app, tbl)
+% fill in the datapoint table with info in tbl (the rc data points)
+% tbl cols: Epoch,Use,MagStim_Setting,MEPAmpl_uVPp,PreStimEmg_100ms,MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
+
+% if the tbl is empty, then no recruit curve data table
+% create the table - FIXME
 
 % col 2 = Use = logical
 tbl.Use = logical(tbl.Use);

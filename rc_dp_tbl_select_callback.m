@@ -21,7 +21,14 @@ end
 
 % display emg data
 app.h_emg_line.YData = app.emg_data(new_row, 2:end);
-app.h_disp_emg_axes.YLim = [min(app.emg_data(new_row, 2:end)) max(app.emg_data(new_row, 2:end))];
+% if y limits are the same, make them wider
+ymin = min(app.emg_data(new_row, 2:end));
+ymax = max(app.emg_data(new_row, 2:end));
+if ymax - ymin < eps
+	ymax = ymax + 1;
+	ymin = ymin - 1;
+end
+app.h_disp_emg_axes.YLim = [ymin ymax];
 app.row_displayed = new_row;
 
 % highlight data point in rc_fig or sici_fig
