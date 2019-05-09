@@ -6,7 +6,7 @@ switch param
 		if isempty(emg_fig)
 			app.emg_data_fig = figure('Position', [1546 77 502 440], ...
 				'NumberTitle', 'off', 'Name', 'EMG Data', ...
-				'MenuBar', 'none', 'ToolBar', 'none');
+				'MenuBar', 'none'); %, 'ToolBar', 'none');
 
 			init_disp_axes(app)
 		end
