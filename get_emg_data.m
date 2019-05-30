@@ -31,17 +31,27 @@ while app.CheckBoxDisplayMEP.Value
 					rc_or_sici = '_sici';
 				end
 
-				filename = [app.SaveLocationEditField.Value '/' ...
-					app.EditFieldFilenameprefix.Value muscle ...
-					rc_or_sici '_emg_data.txt'];
+				shortfilename = [app.EditFieldFilenameprefix.Value muscle ...
+					rc_or_sici '_emg_data'];
+				fullfilename = [app.SaveLocationEditField.Value '/' ...
+					shortfilename];
 
-				fid = fopen(filename, 'a');
+				% number the samples saved in the file
+				if ~isfield(app.fname_sample_struct, shortfilename)
+					app.fname_sample_struct.(shortfilename) = 0;
+				end
+				fid = fopen([fullfilename '.txt'], 'a');
 				if ftell(fid) > 0 % already data in the file
 					fprintf(fid, '\n'); % start a new line of data
 				end
 				fprintf(fid, '%d', magstim_val);
 	         	fprintf(fid, ',%f', emg_data);
 	         	fclose(fid);
+				app.SaveFileName.Text = [shortfilename '.txt'];
+	         	app.fname_sample_struct.(shortfilename) = app.fname_sample_struct.(shortfilename) + 1;
+	         	app.sample_num_text.String = num2str(app.fname_sample_struct.(shortfilename));
+			else
+				app.SaveFileName.Text = 'no file';
 			end
 			
 			% title = channel/muscle
