@@ -1,4 +1,4 @@
-function print_sici(source, event, app)
+function print_avg_emg(source, event, app)
 
 if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
 	save_loc = pwd;
@@ -18,7 +18,11 @@ set(app.sici_fig,'PaperOrientation', orient, ...
 	'PaperPosition', [0 0 7 8]);
 
 % 	'PaperSize', [6 7], ..
-fname = [save_loc '/' fname_prefix strrep(app.sici_axes.Title.String, ' ', '_') '_sici.png'];
 
 
-print(app.sici_fig, '-dpng', fname);
+if ~isempty(app.fullfilename)
+	fname = strrep(app.fullfilename, '.txt', '.png')
+else
+	fname = [save_loc '/' fname_prefix '_avg.png'];
+end
+print(app.avg_emg_fig, '-dpng', fname);

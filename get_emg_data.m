@@ -176,7 +176,7 @@ while app.CheckBoxDisplayMEP.Value
 				add_point2sici(app, epoch, magstim_val, mep_val/norm_factor)	
 			end
 			% if the average figure exists, update it
-			avg_fig = findobj(0, 'Name', 'Average EMG')
+			avg_fig = findobj(0, 'Name', 'Average EMG');
 			if ~isempty(avg_fig)
 				update_avg_emg([], [], app)
 			end
