@@ -21,3 +21,9 @@ fseek(fid, f_loc, 'bof');
 % write over that value with the new 
 fprintf(fid, '%d', source.Value);
 fclose(fid);
+
+% if the average figure exists, update it
+avg_fig = findobj(0, 'Name', 'Average EMG')
+if ~isempty(avg_fig)
+	update_avg_emg([], [], app)
+end

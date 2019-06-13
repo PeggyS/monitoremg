@@ -44,6 +44,12 @@ while app.CheckBoxDisplayMEP.Value
 				fid = fopen(app.fullfilename, 'a');
 				if ftell(fid) > 0 % already data in the file
 					fprintf(fid, '\n'); % start a new line of data
+					if app.fname_sample_struct.(shortfilename) == 0
+						% data being appended to an existing file, but the app is 
+						% counting samples from 0 - warn the user
+						beep
+						warning('Data being appended to %s', app.fullfilename)
+					end
 				end
 				fprintf(fid, '%d', app.active_sample_checkbox.Value);
 				fprintf(fid, ',%d', magstim_val);
@@ -168,6 +174,11 @@ while app.CheckBoxDisplayMEP.Value
 				norm_factor = 1;  %str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
 				add_point2sici(app, epoch, magstim_val, mep_val/norm_factor)	
+			end
+			% if the average figure exists, update it
+			avg_fig = findobj(0, 'Name', 'Average EMG')
+			if ~isempty(avg_fig)
+				update_avg_emg([], [], app)
 			end
 		end
 	end
