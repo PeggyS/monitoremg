@@ -20,10 +20,10 @@ if new_row == app.row_displayed
 end
 
 % display emg data
-app.h_emg_line.YData = app.emg_data(new_row, 2:end);
+app.h_emg_line.YData = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
 % if y limits are the same, make them wider
-ymin = min(app.emg_data(new_row, 2:end));
-ymax = max(app.emg_data(new_row, 2:end));
+ymin = min(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
+ymax = max(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
 if ymax - ymin < eps
 	ymax = ymax + 1;
 	ymin = ymin - 1;
