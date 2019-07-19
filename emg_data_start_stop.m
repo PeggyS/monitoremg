@@ -1,7 +1,7 @@
 function emg_data_start_stop(app)
 
 if app.StartButton.Value 
-   parameter_file = 'parameters.txt';
+   parameter_file = app.param_fname;
    if ~exist(parameter_file, 'file')
       [filename, pathname] = uigetfile( ...
          {'*.txt';'*.*'}, ...
