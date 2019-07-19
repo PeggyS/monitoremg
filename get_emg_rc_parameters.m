@@ -1,7 +1,7 @@
-function get_emg_rc_parameters(app)
+function get_emg_rc_parameters(app, param_fname)
 
 % read in parameters   
-parameter_file = 'parameters.txt';
+parameter_file = param_fname;
 if ~exist(parameter_file, 'file')
   [filename, pathname] = uigetfile( ...
      {'*.txt';'*.*'}, ...
