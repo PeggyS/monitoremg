@@ -8,7 +8,8 @@ triggerInd = app.params.preTriggerTime / 1000 * app.params.sampFreq;
 while app.StartButton.Value
    % get message from server
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
-   dispChan = str2double(app.EMGChannelDropDown.Value);
+   dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
+%    dispChan = str2double(app.EMGDropDown.Value);
    
    % 	set(app.hLine, 'YData', [0 10]);
    switch msgType
@@ -17,6 +18,14 @@ while app.StartButton.Value
       case 1		%% Start Message
          disp('Detected BrainVision. Start Monitoring')
          app.chanInfo = doStartMsg(msgBlock);
+		 % verify correct sampling freq
+		 assert(app.params.sampFreq == app.chanInfo.samp_freq, ...
+			 'Samp freq mismatch: parameter file %s = %g; streaming data = %g', ...
+			 app.param_fname, app.params.sampFreq, app.chanInfo.samp_freq)
+		 % rename the emg channels from number to the muscle name
+		 for ch_cnt = 1:length(app.chanInfo.names)
+			app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_cnt};
+		 end
          
       case 2		%% Data Message
          %fprintf('\n');
@@ -159,6 +168,7 @@ function chanInfo = doStartMsg(msg)
 
 nChannels = typecast(msg(1:4), 'uint32');		%% 4 bytes
 sampInterval = typecast(msg(5:12), 'double');	%% double = 8 bytes
+chanInfo.samp_freq = 1/(sampInterval*1e-6);
 len = nChannels * 8;							%% 8 bytes per channel
 chanInfo.resolution = typecast(msg(13:13+len-1), 'double');		%% resolution for each channel
 
