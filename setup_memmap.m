@@ -24,6 +24,8 @@ if ~exist(filename, 'file')
 				fwrite(f, zeros(1,seg_num_points*8), 'double'); % emg data
 			case 'data_channels'
 				fwrite(f, zeros(1,1*8), 'uint8'); % number of data channels being sent from brainVision
+				% flag for if this is the channel in the activity monitor figure
+				fwrite(f, zeros(1,1*8), 'uint8');
 				% make space for up to 8 channel names - 30 char each
 				fwrite(f, zeros(1,8*30), 'uint8'); % 
 				% space to store for each channel to save or not
@@ -54,6 +56,7 @@ switch which_map
 	case 'data_channels'
 		app.data_channels_mmap = memmapfile(filename, 'Writable', true, ...
 			'Format', {'uint8', [1 1], 'num_channels';
+				'uint8', [1 1], 'live_display';
 				'uint8', [1 1], 'save';
 				'uint8', [1 30], 'muscle_name'}, ...
 			'Repeat', 8);

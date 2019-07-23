@@ -9,8 +9,7 @@ while app.StartButton.Value
    % get message from server
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
-%    dispChan = str2double(app.EMGDropDown.Value);
-
+		
 	% get other channels of data to save to file -- FIXME
    
    % 	set(app.hLine, 'YData', [0 10]);
@@ -27,15 +26,18 @@ while app.StartButton.Value
 		 
 		 num_channels = length(app.chanInfo.names);
 		 % save number of muscle names in data_channels_mmap
-		 app.data_channels_mmap.Data(1) = num_channels;
+		 app.data_channels_mmap.Data(1).num_channels = uint8(num_channels);
 		 for ch_cnt = 1:num_channels
 			 % rename the emg channels from number to the muscle name
 			 app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_cnt};
 			 % save muscle names in data_channels_mmap
-			 app.data_channels_mmap.Data(ch_cnt).num_channels = num_channels;
-			 app.data_channels_mmap.Data(ch_cnt).muscle_name = pad(app.chanInfo.names{ch_cnt}, 30);
+			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels);
+			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_cnt}, 30));
+			 app.data_channels_mmap.Data(ch_cnt).live_display = uint8(0);
 		 end
-		 
+		 % set dispChan in data_channels mmap
+		 app.data_channels_mmap.Data(dispChan).live_display = uint8(1);
+	
 		 
       case 2		%% Data Message
          %fprintf('\n');
@@ -54,7 +56,7 @@ while app.StartButton.Value
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
          app.emgBarDataVec(1:numPoints) = newHpFiltData;
          
-         
+         % update the activity bar
          updateDisplay(app, app.emgBarDataVec, markInfo);
 
          % filling in the trigger data vector
@@ -108,18 +110,22 @@ while app.StartButton.Value
 % 					fclose(msfid);
 					% magstim value from magspy
 					magstim_val = app.magstim_mmap.Data(1);
-					% put magstim value in emg data memmap
-					app.emg_data_mmap.Data(1).magstim_val = magstim_val;
-					muscle_name = app.chanInfo.names{dispChan};
-					if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
-					app.emg_data_mmap.Data(1).muscle_name = uint8(pad(app.chanInfo.names{dispChan}, 30));
-					if ~isempty(app.goalVal)
-					   app.emg_data_mmap.Data(1).goal_val = uint8(round(app.goalVal));
-						app.emg_data_mmap.Data(1).goal_min = uint8(round(app.goalMin));
-						app.emg_data_mmap.Data(1).goal_max = uint8(round(app.goalMax));
+					% for the live_display channel and all save channels,
+					% put info in the emg_data_memmap
+					for c_cnt = 1:app.data_channels_mmap.Data(1).num_channels
+						if app.data_channels_mmap.Data(c_cnt).live_display
+							app.emg_data_mmap.Data(c_cnt).magstim_val = magstim_val;
+% 							muscle_name = app.chanInfo.names{dispChan};
+% 							if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
+							app.emg_data_mmap.Data(c_cnt).muscle_name = uint8(pad(app.chanInfo.names{c_cnt}, 30));
+							if ~isempty(app.goalVal)
+							   app.emg_data_mmap.Data(c_cnt).goal_val = uint8(round(app.goalVal));
+								app.emg_data_mmap.Data(c_cnt).goal_min = uint8(round(app.goalMin));
+								app.emg_data_mmap.Data(c_cnt).goal_max = uint8(round(app.goalMax));
+							end
+							app.emg_data_mmap.Data(c_cnt).monitor_emg_val = uint8(round(app.monitorEMGval));
+						end
 					end
-					app.emg_data_mmap.Data(1).monitor_emg_val = uint8(round(app.monitorEMGval));
-					
 				end
 			end
          

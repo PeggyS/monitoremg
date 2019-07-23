@@ -3,14 +3,18 @@ function display_mep(app, param)
 switch param
 	case 'start'
 		% get the muscle channels & update the app figure
-		num_channels = app.data_channels_mmap.Data(1);
-		if num_channels > 0
-			for ch_cnt = 1:num_channels
-				% get muscle names in data_channels_mmap
-				app_chan = ['CheckBox_channel' num2str(ch_cnt)];
-				app.(app_chan).Text = app.data_channels_mmap.Data(ch_cnt).muscle_name;
-				app.(app_chan).Visible = 'on';
-			end
+		num_channels = app.data_channels_mmap.Data(1).num_channels;
+		if num_channels < 1
+			beep
+			disp('**** Start emg_activity_mvc_goal.m and start monitoring in BrainVision ****')
+			app.CheckBoxDisplayMEP.Value = 0;
+			return
+		end
+		for ch_cnt = 1:num_channels
+			% get muscle names in data_channels_mmap
+			app_chan = ['CheckBox_channel' num2str(ch_cnt)];
+			app.(app_chan).Text = strip(char(app.data_channels_mmap.Data(ch_cnt).muscle_name));
+			app.(app_chan).Visible = 'on';
 		end
 		for ch_cnt = num_channels+1:4
 			app_chan = ['CheckBox_channel' num2str(ch_cnt)];

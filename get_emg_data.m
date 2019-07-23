@@ -3,6 +3,27 @@ warning('off', 'MATLAB:table:RowsAddedExistingVars');
 
 while app.CheckBoxDisplayMEP.Value
 	if ~isempty(app.emg_data_mmap)
+		save_chan_list = [];
+		% if saving data
+		if app.CheckBoxSavedata.Value
+			% find the live_display channel
+			% if the live_display channel has changed, update the default
+			% channel save checkboxes
+			ch_struc = app.data_channels_mmap.Data;
+			for c_cnt = 1:ch_struc(1).num_channels
+				chkbox_var = ['CheckBox_channel' num2str(c_cnt)];
+				if ch_struc(c_cnt).live_display 
+					app.(chkbox_var).Value = 1;
+					live_chan_num = c_cnt;
+				else
+					app.(chkbox_var).Value = 0;
+				end
+				if ch_struc(c_cnt).save
+					save_chan_list = [save_chan_list, c_cnt]; %#ok<AGROW>
+				end
+			end
+		end
+		
 		% if the emg monitor app is sending new data
 		new_data = app.emg_data_mmap.Data(1).new_data;
 		if new_data

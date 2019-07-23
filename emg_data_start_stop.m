@@ -1,28 +1,28 @@
 function emg_data_start_stop(app)
 
 if app.StartButton.Value 
-   parameter_file = app.param_fname;
-   if ~exist(parameter_file, 'file')
-      [filename, pathname] = uigetfile( ...
-         {'*.txt';'*.*'}, ...
-         'Choose Parameter File');
-      parameter_file = fullfile(pathname, filename);
-   end
-   if ~exist(parameter_file, 'file')
-      error( 'error finding parameter file, %s', parameter_file)
-   end
-   % read in the parameter file
-   keywords = {'addr' 'freq' 'period' 'chan' 'goal' 'pre' 'post'};
-   defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100};
-   paramscell = readparamfile(parameter_file, keywords, defaults);
-   app.params.ipAddr    = paramscell{1};
-   app.params.sampFreq  = paramscell{2};
-   app.params.avgPeriod = paramscell{3};
-   app.params.dispChan  = paramscell{4};
-   app.params.goalPct   = paramscell{5};
-   app.params.preTriggerTime  = paramscell{6};
-   app.params.postTriggerTime = paramscell{7};
-   
+%    parameter_file = app.param_fname;
+%    if ~exist(parameter_file, 'file')
+%       [filename, pathname] = uigetfile( ...
+%          {'*.txt';'*.*'}, ...
+%          'Choose Parameter File');
+%       parameter_file = fullfile(pathname, filename);
+%    end
+%    if ~exist(parameter_file, 'file')
+%       error( 'error finding parameter file, %s', parameter_file)
+%    end
+%    % read in the parameter file
+%    keywords = {'addr' 'freq' 'period' 'chan' 'goal' 'pre' 'post'};
+%    defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100};
+%    paramscell = readparamfile(parameter_file, keywords, defaults);
+%    app.params.ipAddr    = paramscell{1};
+%    app.params.sampFreq  = paramscell{2};
+%    app.params.avgPeriod = paramscell{3};
+%    app.params.dispChan  = paramscell{4};
+%    app.params.goalPct   = paramscell{5};
+%    app.params.preTriggerTime  = paramscell{6};
+%    app.params.postTriggerTime = paramscell{7};
+%    
    % create tcpip object
    app.tcp_port = tcpip(app.params.ipAddr, 51234);	%% local machine & 16-bit port (32-bit port: 51244)
    
@@ -51,13 +51,7 @@ if app.StartButton.Value
    seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
    app.emgTriggerDataVec = zeros(round(app.params.sampFreq*seg_time),1);
 
-   % memmap to share the emg data parameters
    
-   % memmap - file to send emg data to emg display app
-   setup_memmap(app, 'emg_data')
-   
-   % memmap to send all the muscle channels to emg_rc
-   setup_memmap(app, 'data_channels');
    
 % 	% emg data
 % 	filename = 'emg_data.data';
