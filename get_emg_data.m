@@ -10,11 +10,6 @@ while app.CheckBoxDisplayMEP.Value
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
 			emg_data = app.emg_data_mmap.Data(1).emg_data;
 
-% 			% display the data
-% 			app.h_emg_line.YData = emg_data;
-% 
-% 			% adjust y limits
-% 			app.h_disp_emg_axes.YLim = [min(emg_data) max(emg_data)];
 
 			muscle = strip(char(app.emg_data_mmap.Data(1).muscle_name));
 			% save the data 
@@ -29,6 +24,8 @@ while app.CheckBoxDisplayMEP.Value
 					rc_or_sici = '_rc';
 				elseif app.CheckBoxSici.Value
 					rc_or_sici = '_sici';
+				elseif app.CheckBoxAverageEmg.Value
+					rc_or_sici = '_avg';
 				end
 
 				shortfilename = [app.EditFieldFilenameprefix.Value muscle ...
@@ -71,6 +68,7 @@ while app.CheckBoxDisplayMEP.Value
 			% monitor emg's value
 			monitor_emg_val = app.emg_data_mmap.Data(1).monitor_emg_val;
 
+% 			% display the data
 			[mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, ...
 				app.emg_data_mmap.Data(1).goal_min, app.emg_data_mmap.Data(1).goal_max);
 			

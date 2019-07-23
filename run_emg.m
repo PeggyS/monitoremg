@@ -10,6 +10,8 @@ while app.StartButton.Value
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
 %    dispChan = str2double(app.EMGDropDown.Value);
+
+	% get other channels of data to save to file -- FIXME
    
    % 	set(app.hLine, 'YData', [0 10]);
    switch msgType
@@ -22,11 +24,19 @@ while app.StartButton.Value
 		 assert(app.params.sampFreq == app.chanInfo.samp_freq, ...
 			 'Samp freq mismatch: parameter file %s = %g; streaming data = %g', ...
 			 app.param_fname, app.params.sampFreq, app.chanInfo.samp_freq)
-		 % rename the emg channels from number to the muscle name
-		 for ch_cnt = 1:length(app.chanInfo.names)
-			app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_cnt};
+		 
+		 num_channels = length(app.chanInfo.names);
+		 % save number of muscle names in data_channels_mmap
+		 app.data_channels_mmap.Data(1) = num_channels;
+		 for ch_cnt = 1:num_channels
+			 % rename the emg channels from number to the muscle name
+			 app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_cnt};
+			 % save muscle names in data_channels_mmap
+			 app.data_channels_mmap.Data(ch_cnt).num_channels = num_channels;
+			 app.data_channels_mmap.Data(ch_cnt).muscle_name = pad(app.chanInfo.names{ch_cnt}, 30);
 		 end
-         
+		 
+		 
       case 2		%% Data Message
          %fprintf('\n');
          %disp('Read a block of data')

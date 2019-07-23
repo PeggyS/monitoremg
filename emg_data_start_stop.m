@@ -55,6 +55,10 @@ if app.StartButton.Value
    
    % memmap - file to send emg data to emg display app
    setup_memmap(app, 'emg_data')
+   
+   % memmap to send all the muscle channels to emg_rc
+   setup_memmap(app, 'data_channels');
+   
 % 	% emg data
 % 	filename = 'emg_data.data';
 % % 	if ~exist(filename, 'file')
