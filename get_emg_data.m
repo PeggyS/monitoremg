@@ -3,18 +3,24 @@ warning('off', 'MATLAB:table:RowsAddedExistingVars');
 
 while app.CheckBoxDisplayMEP.Value
 	if ~isempty(app.emg_data_mmap)
+		ch_struc = app.data_channels_mmap.Data;
+		% find the live display channel
+		for c_cnt = 1:ch_struc(1).num_channels
+			if ch_struc(c_cnt).live_display 
+				live_chan_num = c_cnt;
+			end
+		end
 		save_chan_list = [];
 		% if saving data
 		if app.CheckBoxSavedata.Value
 			% find the live_display channel
 			% if the live_display channel has changed, update the default
 			% channel save checkboxes
-			ch_struc = app.data_channels_mmap.Data;
 			for c_cnt = 1:ch_struc(1).num_channels
 				chkbox_var = ['CheckBox_channel' num2str(c_cnt)];
 				if ch_struc(c_cnt).live_display 
 					app.(chkbox_var).Value = 1;
-					live_chan_num = c_cnt;
+% 					live_chan_num = c_cnt;
 				else
 					app.(chkbox_var).Value = 0;
 				end
@@ -27,12 +33,12 @@ while app.CheckBoxDisplayMEP.Value
 		% if the emg monitor app is sending new data
 		new_data = app.emg_data_mmap.Data(1).new_data;
 		if new_data
-			magstim_val = app.emg_data_mmap.Data(1).magstim_val;
+			magstim_val = app.emg_data_mmap.Data(live_chan_num).magstim_val;
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
-			emg_data = app.emg_data_mmap.Data(1).emg_data;
+			emg_data = app.emg_data_mmap.Data(live_chan_num).emg_data;
 
 
-			muscle = strip(char(app.emg_data_mmap.Data(1).muscle_name));
+			muscle = strip(char(app.emg_data_mmap.Data(live_chan_num).muscle_name));
 			% save the data 
 			if app.CheckBoxSavedata.Value 
 				if isempty(app.SaveLocationEditField.Value)
@@ -87,11 +93,11 @@ while app.CheckBoxDisplayMEP.Value
 			app.emg_data_mmap.Data(1).new_data = uint8(0);
 
 			% monitor emg's value
-			monitor_emg_val = app.emg_data_mmap.Data(1).monitor_emg_val;
+			monitor_emg_val = app.emg_data_mmap.Data(live_chan_num).monitor_emg_val;
 
 % 			% display the data
 			[mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, ...
-				app.emg_data_mmap.Data(1).goal_min, app.emg_data_mmap.Data(1).goal_max);
+				app.emg_data_mmap.Data(live_chan_num).goal_min, app.emg_data_mmap.Data(live_chan_num).goal_max);
 			
 % 			% compute the pre-stim emg
 % 			left_time = app.preEmgMinEditField.Value; % 100 ms prior to stim (+ 1 ms to allow for stim artifact)
@@ -158,9 +164,9 @@ while app.CheckBoxDisplayMEP.Value
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.rc_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;
 				app.rc_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
-				app.rc_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
-				app.rc_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
-				app.rc_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
+				app.rc_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_val;
+				app.rc_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_min;
+				app.rc_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_max;
 				% norm factor
 				norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
@@ -186,9 +192,9 @@ while app.CheckBoxDisplayMEP.Value
 				app.sici_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.sici_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;
 				app.sici_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
-				app.sici_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(1).goal_val;
-				app.sici_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(1).goal_min;
-				app.sici_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(1).goal_max;
+				app.sici_axes.UserData.GoalEMG(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_val;
+				app.sici_axes.UserData.GoalEMGmin(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_min;
+				app.sici_axes.UserData.GoalEMGmax(epoch) = app.emg_data_mmap.Data(live_chan_num).goal_max;
 				% norm factor
 				norm_factor = 1;  %str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes

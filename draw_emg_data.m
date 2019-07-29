@@ -4,7 +4,11 @@ function [mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val,
 app.h_emg_line.YData = emg_data;
 
 % adjust y limits
-app.h_disp_emg_axes.YLim = [min(emg_data) max(emg_data)];
+min_y = min(emg_data);
+max_y = max(emg_data);
+if max_y-min_y > eps
+	app.h_disp_emg_axes.YLim = [min_y max_y];
+end
 
 % compute the pre-stim emg
 left_time = app.preEmgMinEditField.Value; % 100 ms prior to stim (+ 1 ms to allow for stim artifact)
