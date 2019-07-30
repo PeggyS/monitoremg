@@ -10,8 +10,6 @@ while app.StartButton.Value
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
 		
-	% get other channels of data to save to file -- FIXME
-   
    % 	set(app.hLine, 'YData', [0 10]);
    switch msgType
       case 0		%% no socket open, not reading data
@@ -82,7 +80,9 @@ while app.StartButton.Value
 			 
 	         if triggerPos == triggerInd
 				 % data to emg display app
-				 app.emg_data_mmap.Data(dispChan).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataMat(dispChan,:));
+				 for c_cnt = 1:num_channels
+					app.emg_data_mmap.Data(c_cnt).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataMat(c_cnt,:));
+				 end
 				app.emg_data_mmap.Data(1).new_data = uint8(1);
 	         	% the data to save & find MEP
 	         	% fprintf(fid, '%d,', magstim_val);

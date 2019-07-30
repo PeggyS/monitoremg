@@ -1,16 +1,18 @@
 function get_emg_data(app)
 warning('off', 'MATLAB:table:RowsAddedExistingVars');
+prev_live_chan = -1;
 
 while app.CheckBoxDisplayMEP.Value
 	if ~isempty(app.emg_data_mmap)
+		
 		ch_struc = app.data_channels_mmap.Data;
-		% find the live display channel
+		% find the live display channel & if it has changed
 		for c_cnt = 1:ch_struc(1).num_channels
 			if ch_struc(c_cnt).live_display 
 				live_chan_num = c_cnt;
 			end
 		end
-		save_chan_list = [];
+
 		% if saving data
 		if app.CheckBoxSavedata.Value
 			% find the live_display channel
@@ -18,15 +20,17 @@ while app.CheckBoxDisplayMEP.Value
 			% channel save checkboxes
 			for c_cnt = 1:ch_struc(1).num_channels
 				chkbox_var = ['CheckBox_channel' num2str(c_cnt)];
-				if ch_struc(c_cnt).live_display 
+				if logical(ch_struc(c_cnt).live_display) && (c_cnt ~= prev_live_chan)
 					app.(chkbox_var).Value = 1;
 % 					live_chan_num = c_cnt;
-				else
-					app.(chkbox_var).Value = 0;
+					if prev_live_chan > 0
+						chkbox_var = ['CheckBox_channel' num2str(prev_live_chan)];
+						app.(chkbox_var).Value = 0;
+					end
+					prev_live_chan = live_chan_num;
 				end
-				if ch_struc(c_cnt).save
-					save_chan_list = [save_chan_list, c_cnt]; %#ok<AGROW>
-				end
+				app.data_channels_mmap.Data(c_cnt).save = uint8(app.(chkbox_var).Value);
+
 			end
 		end
 		
@@ -35,57 +39,63 @@ while app.CheckBoxDisplayMEP.Value
 		if new_data
 			magstim_val = app.emg_data_mmap.Data(live_chan_num).magstim_val;
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
-			emg_data = app.emg_data_mmap.Data(live_chan_num).emg_data;
-
-
-			muscle = strip(char(app.emg_data_mmap.Data(live_chan_num).muscle_name));
+			
 			% save the data 
 			if app.CheckBoxSavedata.Value 
 				if isempty(app.SaveLocationEditField.Value)
 					app.SaveLocationEditField.Value = pwd;
 				end
 
-				% add rc or sici if their figure is being displayed
-				rc_or_sici = '';
-				if app.CheckBoxRecruitCurve.Value
-					rc_or_sici = '_rc';
-				elseif app.CheckBoxSici.Value
-					rc_or_sici = '_sici';
-				elseif app.CheckBoxAverageEmg.Value
-					rc_or_sici = '_avg';
-				end
+				for c_cnt = 1:ch_struc(1).num_channels
+					if ch_struc(c_cnt).save
+						muscle = strip(char(ch_struc(c_cnt).muscle_name));
+						emg_data = app.emg_data_mmap.Data(c_cnt).emg_data;
+						% add rc or sici if their figure is being displayed
+						rc_or_sici = '';
+						if app.CheckBoxRecruitCurve.Value
+							rc_or_sici = '_rc';
+						elseif app.CheckBoxSici.Value
+							rc_or_sici = '_sici';
+						elseif app.CheckBoxAverageEmg.Value
+							rc_or_sici = '_avg';
+						end
 
-				shortfilename = [app.EditFieldFilenameprefix.Value muscle ...
-					rc_or_sici '_emg_data'];
-				pathfilename = [app.SaveLocationEditField.Value '/' ...
-					shortfilename];
-				app.fullfilename = [pathfilename '.txt'];
-				
-				% number the samples saved in the file
-				if ~isfield(app.fname_sample_struct, shortfilename)
-					app.fname_sample_struct.(shortfilename) = 0;
-				end
-				fid = fopen(app.fullfilename, 'a');
-				if ftell(fid) > 0 % already data in the file
-					fprintf(fid, '\n'); % start a new line of data
-					if app.fname_sample_struct.(shortfilename) == 0
-						% data being appended to an existing file, but the app is 
-						% counting samples from 0 - warn the user
-						beep
-						warning('Data being appended to %s', app.fullfilename)
+						shortfilename = [app.EditFieldFilenameprefix.Value muscle ...
+							rc_or_sici '_emg_data'];
+						pathfilename = [app.SaveLocationEditField.Value '/' ...
+							shortfilename];
+						app.fullfilename = [pathfilename '.txt'];
+
+						% number the samples saved in the file
+						if ~isfield(app.fname_sample_struct, shortfilename)
+							app.fname_sample_struct.(shortfilename) = 0;
+						end
+						fid = fopen(app.fullfilename, 'a');
+						if ftell(fid) > 0 % already data in the file
+							fprintf(fid, '\n'); % start a new line of data
+							if app.fname_sample_struct.(shortfilename) == 0
+								% data being appended to an existing file, but the app is 
+								% counting samples from 0 - warn the user
+								beep
+								warning('Data being appended to %s', app.fullfilename)
+							end
+						end
+						fprintf(fid, '%d', app.active_sample_checkbox.Value);
+						fprintf(fid, ',%d', magstim_val);
+						fprintf(fid, ',%f', emg_data);
+						fclose(fid);
+						app.SaveFileName.Text = [shortfilename '.txt'];
+						app.fname_sample_struct.(shortfilename) = app.fname_sample_struct.(shortfilename) + 1;
+						app.sample_num_text.String = num2str(app.fname_sample_struct.(shortfilename));
 					end
-				end
-				fprintf(fid, '%d', app.active_sample_checkbox.Value);
-				fprintf(fid, ',%d', magstim_val);
-	         	fprintf(fid, ',%f', emg_data);
-	         	fclose(fid);
-				app.SaveFileName.Text = [shortfilename '.txt'];
-	         	app.fname_sample_struct.(shortfilename) = app.fname_sample_struct.(shortfilename) + 1;
-	         	app.sample_num_text.String = num2str(app.fname_sample_struct.(shortfilename));
+				end % for loop thru each channel to see if saving it
 			else
 				app.SaveFileName.Text = 'no file';
 			end
 			
+			% data to display
+			emg_data = app.emg_data_mmap.Data(live_chan_num).emg_data;
+			muscle = strip(char(app.emg_data_mmap.Data(live_chan_num).muscle_name));
 			% title = channel/muscle
 			muscle = strrep(muscle, '_', ' ');
 			title(app.h_disp_emg_axes, muscle, 'FontSize', 20)
