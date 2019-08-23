@@ -9,9 +9,9 @@ y_data = (app.rc_axes.UserData.MEPAmpl_uVPp(logical(app.rc_axes.UserData.Use))) 
 
 % the sigmoid function with 3 parameters to fit
 % func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
-func = @(p,x) p(3)./(1+exp(p(1)*(p(2)-x)));
+func = @(p,x) p(4) + (p(3)-p(4))./(1+exp(p(1)*(p(2)-x)));
 
-% p = parameter vector: [slope m, S50, MEP-max]
+% p = parameter vector: [slope m, S50, MEP-max, MEP-min]
 
 % change initial parameter for MEPmax depending on the axis limits
 if isempty(app.rc_fit_ui.edMEPmax.String)
@@ -22,7 +22,8 @@ end
 % initial parameter guess
 p0 = [str2double(app.rc_fit_ui.edSlope.String), ...
 	str2double(app.rc_fit_ui.edS50.String), ...
-	str2double(app.rc_fit_ui.edMEPmax.String)];
+	str2double(app.rc_fit_ui.edMEPmax.String), ...
+	str2double(app.rc_fit_ui.edMEPmin.String)];
 
 options = statset('nlinfit');
 options = statset(options, 'MaxIter', 1e4);
@@ -63,7 +64,8 @@ app.rc_fit_ui.edS50.String = num2str(round(p(2)));
 app.rc_fit_ui.txtS50CI.String = ['[' num2str(round(pci(2,1))) ', ' num2str(round(pci(2,2))) ']' ] ;
 app.rc_fit_ui.edMEPmax.String = num2str(round(p(3), 2));
 app.rc_fit_ui.txtMEPmaxCI.String = ['[' num2str(round(pci(3,1), 2)) ', ' num2str(round(pci(3,2), 2)) ']' ] ;
-app.rc_fit_ui.edMEPmin.String = num2str(round(y(1), 2));
+app.rc_fit_ui.edMEPmin.String = num2str(round(p(4), 2));
+app.rc_fit_ui.txtMEPminCI.String = ['[' num2str(round(pci(4,1), 2)) ', ' num2str(round(pci(4,2), 2)) ']' ] ;
 
 % display S50 & m-max confidence intervals on the figure
 h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
@@ -79,17 +81,28 @@ else
 	h_ci_lines(2) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
 end
 
-if pci(2,1) > app.rc_axes.XLim(1) && pci(2,1) < app.rc_axes.XLim(2)
-	h_ci_lines(3) = line([pci(2,1), pci(2,1)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+if pci(4,1) > app.rc_axes.YLim(1) && pci(4,1) < app.rc_axes.YLim(2)
+	h_ci_lines(3) = line([app.rc_axes.XLim(1)+diff(app.rc_axes.XLim)/5, app.rc_axes.XLim(1)], [pci(4,1), pci(4,1)]);
 else
 	h_ci_lines(3) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
 end
-if pci(2,2) > app.rc_axes.XLim(1) && pci(2,2) < app.rc_axes.XLim(2)
-	h_ci_lines(4) = line([pci(2,2), pci(2,2)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+if pci(4,2) > app.rc_axes.YLim(1) && pci(4,2) < app.rc_axes.YLim(2)
+	h_ci_lines(4) = line([app.rc_axes.XLim(1)+diff(app.rc_axes.XLim)/5, app.rc_axes.XLim(1)], [pci(4,2), pci(4,2)]);
 else
 	h_ci_lines(4) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
 end
-set(h_ci_lines, 'Tag', 'ci_line', 'Color', [0.6 0.5 0.2])
+
+if pci(2,1) > app.rc_axes.XLim(1) && pci(2,1) < app.rc_axes.XLim(2)
+	h_ci_lines(5) = line([pci(2,1), pci(2,1)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+else
+	h_ci_lines(5) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
+if pci(2,2) > app.rc_axes.XLim(1) && pci(2,2) < app.rc_axes.XLim(2)
+	h_ci_lines(6) = line([pci(2,2), pci(2,2)], [app.rc_axes.YLim(1) diff(app.rc_axes.YLim)/5]);
+else
+	h_ci_lines(6) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
+end
+set(h_ci_lines, 'Tag', 'ci_line', 'Color', [0.7 0.5 0.2], 'LineWidth', 1.5)
 
 % calc R-squared (used method from the polyfit example in matlab)
 SSresid = sum(r.^2);			%% residual sum of squares
