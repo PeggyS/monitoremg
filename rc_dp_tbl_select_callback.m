@@ -31,6 +31,10 @@ end
 app.h_disp_emg_axes.YLim = [ymin ymax];
 app.row_displayed = new_row;
 
+% update pre-stim line
+pre_stim_col = find(contains(app.h_uitable.ColumnName, 'PreStim'));
+app.h_pre_stim_emg_line.YData = [app.h_uitable.Data{new_row,pre_stim_col} app.h_uitable.Data{new_row,pre_stim_col}];
+
 % highlight data point in rc_fig or sici_fig
 if isgraphics(app.rc_axes)
 	h_ax = app.rc_axes;

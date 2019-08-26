@@ -21,6 +21,10 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
                   'String','Area Under the Curve',...
                   'Position',[2 7 150 20],...
                   'HandleVisibility','off');
+% 	app.preEmgMinEditField = uicontrol('Position', [0.3 0.92 0.2 0.1], ...
+% 		'Style', 'edit', 'String', '-100');
+	
+	
 	
 	% get parameters from text file
 	parameter_file = 'parameters.txt';
@@ -58,9 +62,14 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_min_line');
 	draggable(app.h_t_min_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
-	app.h_t_max_line = line(app.h_disp_emg_axes, [110 110], [-1e6 1e6], ...
+	app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_max_line');
 	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
+	
+	% pre-stim emg line
+	app.h_pre_stim_emg_line = line(app.h_disp_emg_axes, ...
+		app.h_disp_emg_axes.XLim, [1000 1000], 'Color', [0 0 0]);
+	
 else
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
@@ -69,7 +78,10 @@ else
 
 	% reset the mep min max lines
 	app.h_t_min_line.XData = [15 15];
-	app.h_t_max_line.XData = [110 110];
+	app.h_t_max_line.XData = [90 90];
+	
+	% reset prestim line
+	app.h_pre_stim_emg_line.YData = [1000 1000];
 end
 
 title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
