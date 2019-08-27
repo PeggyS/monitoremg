@@ -32,8 +32,18 @@ app.h_disp_emg_axes.YLim = [ymin ymax];
 app.row_displayed = new_row;
 
 % update pre-stim line
-pre_stim_col = find(contains(app.h_uitable.ColumnName, 'PreStim'));
-app.h_pre_stim_emg_line.YData = [app.h_uitable.Data{new_row,pre_stim_col} app.h_uitable.Data{new_row,pre_stim_col}];
+pre_stim_col = find_uitable_column(h_tbl, 'PreStim');
+pre_stim_val = app.h_uitable.Data{new_row,pre_stim_col};
+app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
+
+% update emg auc patch
+mep_start_time = app.h_t_min_line.XData(1);
+mep_end_time = app.h_t_max_line.XData(1);
+[vertices, faces] = compute_patch(mep_start_time, mep_end_time, app.h_emg_line, pre_stim_val);
+
+app.h_emg_auc_patch.Vertices = vertices;
+app.h_emg_auc_patch.Faces = faces;
+auc = compute_auc(vertices)
 
 % highlight data point in rc_fig or sici_fig
 if isgraphics(app.rc_axes)

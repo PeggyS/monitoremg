@@ -12,7 +12,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	% radiobuttons to choose how to compute MEP 
 	app.h_radio_mep = uibuttongroup('Position', [0.1 0.92 0.125 0.065], ...
 		'Title', 'MEP Calculation', ...
-		'SelectionChangedFcn',@mep_button_selection);
+		'SelectionChangedFcn',{@mep_button_selection, app});
 	r1 = uicontrol(app.h_radio_mep,'Style', 'radiobutton',...
                   'String','Peak-to-Peak',...
                   'Position',[2 25 90 25],...
@@ -70,6 +70,11 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_pre_stim_emg_line = line(app.h_disp_emg_axes, ...
 		app.h_disp_emg_axes.XLim, [1000 1000], 'Color', [0 0 0]);
 	
+	% emg auc line
+	app.h_emg_auc_patch = patch(app.h_disp_emg_axes, ...
+		[10 10 90 90], [10 100 100 10], [0.4 0.4 0.4]);
+	app.h_emg_auc_patch.FaceAlpha = 0.5;
+	app.h_emg_auc_patch.Visible = 'off';
 else
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
@@ -80,8 +85,10 @@ else
 	app.h_t_min_line.XData = [15 15];
 	app.h_t_max_line.XData = [90 90];
 	
-	% reset prestim line
+	% reset prestim line & emg auc patch
 	app.h_pre_stim_emg_line.YData = [1000 1000];
+	app.h_emg_auc_patch.Vertices = [];
+	app.h_emg_auc_patch.Faces = [];
 end
 
 title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
