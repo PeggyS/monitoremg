@@ -52,6 +52,9 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_t_max_line = line(app.h_disp_emg_axes, [110 110], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_max_line');
 	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
+	
+	% radio buttons to switch between MEP-peak-to-peak & MEP-auc
+	
 else
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
