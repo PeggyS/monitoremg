@@ -48,8 +48,8 @@ if app.StartButton.Value
    app.emgBarDataVec = zeros(round(app.params.sampFreq*app.params.avgPeriod),1);
 
    % data vector for finding MEP peak-to-peak value relative to the trigger
-   seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
-   app.emgTriggerDataVec = zeros(round(app.params.sampFreq*seg_time),1);
+%    seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+%    app.emgTriggerDataMat = zeros(num_chans, round(app.params.sampFreq*seg_time));
 
    
    

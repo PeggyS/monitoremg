@@ -10,8 +10,6 @@ while app.StartButton.Value
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
 		
-	% get other channels of data to save to file -- FIXME
-   
    % 	set(app.hLine, 'YData', [0 10]);
    switch msgType
       case 0		%% no socket open, not reading data
@@ -37,6 +35,10 @@ while app.StartButton.Value
 		 end
 		 % set dispChan in data_channels mmap
 		 app.data_channels_mmap.Data(dispChan).live_display = uint8(1);
+		 % init matrix to store emg data relative to the trigger
+		 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+		 app.emgTriggerDataMat = zeros(num_channels, round(app.params.sampFreq*seg_time));
+
 	
 		 
       case 2		%% Data Message
@@ -45,14 +47,15 @@ while app.StartButton.Value
          [data, numPoints, markInfo] = doDataMsg(msgBlock, app.chanInfo);
          % put new data into the data vectors
 		 try
-			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
+% 			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
+			 newData = double(data).*app.chanInfo.resolution;
 		 catch
          beep
 			 warning('Problem reading in data. Try to run again.')
 			 app.StartButton.Value = 0;
           return
 		 end
-         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData);
+         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dispChan,:));
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
          app.emgBarDataVec(1:numPoints) = newHpFiltData;
          
@@ -69,15 +72,17 @@ while app.StartButton.Value
          	end
 	         
 	         % shift the data
-	         app.emgTriggerDataVec = circshift(app.emgTriggerDataVec, -double(shift_val));
+	         app.emgTriggerDataMat = circshift(app.emgTriggerDataMat, -double(shift_val), 2);
 	         %app.emgTriggerDataVec(end-shift_val+1:end) = newHpFiltData(1:shift_val);
-			 app.emgTriggerDataVec(end-shift_val+1:end) = newData(1:shift_val);
+			 app.emgTriggerDataMat(:,end-shift_val+1:end) = newData(:,1:shift_val);
 	         triggerPos = triggerPos - shift_val;
 % 			 disp(['triggerPos = ' num2str(triggerPos)])
 			 
 	         if triggerPos == triggerInd
 				 % data to emg display app
-				 app.emg_data_mmap.Data(1).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataVec);
+				 for c_cnt = 1:num_channels
+					app.emg_data_mmap.Data(c_cnt).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataMat(c_cnt,:));
+				 end
 				app.emg_data_mmap.Data(1).new_data = uint8(1);
 	         	% the data to save & find MEP
 	         	% fprintf(fid, '%d,', magstim_val);
@@ -89,9 +94,9 @@ while app.StartButton.Value
 
          	% sprintf('triggerPos = %d, numPoints = %d',  triggerPos, numPoints)
          else % don't have a triggerPos, shift & save new data
-         	app.emgTriggerDataVec = circshift(app.emgTriggerDataVec, -double(numPoints));
+         	app.emgTriggerDataMat = circshift(app.emgTriggerDataMat, -double(numPoints), 2);
 	         % app.emgTriggerDataVec(end-numPoints+1:end) = newHpFiltData;
-			 app.emgTriggerDataVec(end-numPoints+1:end) = newData;
+			 app.emgTriggerDataMat(:,end-numPoints+1:end) = newData;
          end
          % detect if a trigger message was sent - examine markers
 			if ~isempty(markInfo)
@@ -101,7 +106,7 @@ while app.StartButton.Value
 				if strncmp(markInfo(1).label', 'R128', 4)
 					% markInfo.pos is zero-based relative position in the block 
 					if isnan(triggerPos)
-						triggerPos = length(app.emgTriggerDataVec)-numPoints + markInfo.pos; 
+						triggerPos = size(app.emgTriggerDataMat,2)-numPoints + markInfo.pos; 
 					end
 					% fprintf('triggerPos = %d\n',  triggerPos);
 					% get magstim value now

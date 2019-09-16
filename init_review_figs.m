@@ -75,6 +75,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		[10 10 90 90], [10 100 100 10], [0.4 0.4 0.4]);
 	app.h_emg_auc_patch.FaceAlpha = 0.5;
 	app.h_emg_auc_patch.Visible = 'off';
+
 else
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
