@@ -43,7 +43,7 @@ mep_end_time = app.h_t_max_line.XData(1);
 
 app.h_emg_auc_patch.Vertices = vertices;
 app.h_emg_auc_patch.Faces = faces;
-auc = compute_auc(vertices)
+auc = compute_auc(vertices);
 
 % highlight data point in rc_fig or sici_fig
 if isgraphics(app.rc_axes)
