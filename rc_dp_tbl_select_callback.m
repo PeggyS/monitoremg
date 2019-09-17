@@ -9,7 +9,7 @@ if ~isempty(cell_select_data.Indices)
 	new_row = cell_select_data.Indices(1);
 else
 	new_row = [];
-	app.row_displayed = 0;
+	return
 end
 
 if isempty(new_row) 
@@ -44,6 +44,7 @@ mep_end_time = app.h_t_max_line.XData(1);
 app.h_emg_auc_patch.Vertices = vertices;
 app.h_emg_auc_patch.Faces = faces;
 auc = compute_auc(vertices);
+
 
 % highlight data point in rc_fig or sici_fig
 if isgraphics(app.rc_axes)

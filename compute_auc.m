@@ -3,6 +3,9 @@ function auc = compute_auc(vertices)
 % col 2 = y (min y = flat base of shapes under the curve)
 
 auc = 0;
+if isempty(vertices)
+	return
+end
 
 % the min y value vertex is the base of all the triangles, rectangles, etc
 y_min = min(vertices(:,2));

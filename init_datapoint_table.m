@@ -3,35 +3,62 @@ function init_datapoint_table(app, tbl)
 % tbl cols: Epoch,Use,MagStim_Setting,MEPAmpl_uVPp,PreStimEmg_100ms,MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
 
 % if the tbl is empty, then no recruit curve data table
-% create the table - FIXME
+if isempty(tbl)
+	keyboard
+	% create the table - FIXME
+end
 
 % col 2 = Use = logical
 tbl.Use = logical(tbl.Use);
+
+% if there is no MEPAUC col, add it
+if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
+	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:9)];
+	tbl.Properties.VariableNames{5} = 'MEPAUC';
+	
+	% compute all the MEPAUCs
+	emg.XData = app.h_emg_line.XData;
+	for row_cnt = 1:height(tbl)
+		pre_stim_val = tbl.PreStimEmg_100ms(row_cnt);
+		
+		% update emg auc patch
+		mep_start_time = app.h_t_min_line.XData(1);
+		mep_end_time = app.h_t_max_line.XData(1);
+		
+		emg.YData = app.emg_data(app.emg_data_num_vals_ignore:end);
+		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, pre_stim_val);
+		
+		auc = compute_auc(vertices);
+		tbl.MEPAUC(row_cnt) = auc;
+	end
+end
 
 % ======= rc or sici fig ===========
 if app.ButtonRc.Value == 1
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
+		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
            '<html><center>PreStimEmg<br />100ms</center></html>', ...
            '<html><center>MonitorEMG<br />val</center></html>', ...
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	  colwidths = {40, 30, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, false, false, false, false, false, false];
+	  colwidths = {40, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, false, false, false, false, false, false];
 else
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
+		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
 		   '<html><center>Stim<br />Type</center></html>', ...
            '<html><center>PreStimEmg<br />100ms</center></html>', ...
            '<html><center>MonitorEMG<br />val</center></html>', ...
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, false, false, false, false, false, false];
+	colwidths = {40, 30, 50, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, false, false, false, false, false, false];
 end
 
 

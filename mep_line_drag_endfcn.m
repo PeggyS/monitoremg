@@ -16,10 +16,11 @@ t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params
 ind_mep_min = find(t>=t_mep_min, 1);
 ind_mep_max = find(t<=t_mep_max, 1, 'last');
 	
-% recompute the MEP peak to peak value for all rows in the data point table
+% recompute the MEP peak to peak value and MEPAUC for all rows in the data point table
+emg.XData = app.h_emg_line.XData;
 for row_cnt = 1:length(app.h_uitable.Data)
 	
-	% get mep value 	
+	% get mep p-p  value 	
 	mep_seg = app.emg_data(row_cnt, ind_mep_min+1:ind_mep_max+1); % +1 because 1st value in emg_data is magstim value
 
 	mep_val = max(mep_seg) - min(mep_seg);
@@ -30,4 +31,29 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		% update info in rc_fig
 		update_rc_sici_datapoint(app, row_cnt, mep_val);
 	end
+	
+	% AUC
+	pre_stim_col = find_uitable_column(app.h_uitable, 'PreStim');
+	pre_stim_val = app.h_uitable.Data{row_cnt,pre_stim_col};
+% 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
+
+	% update emg auc patch
+	mep_start_time = app.h_t_min_line.XData(1);
+	mep_end_time = app.h_t_max_line.XData(1);
+	emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
+	[vertices, faces] = compute_patch(mep_start_time, mep_end_time, emg, pre_stim_val);
+	
+	% if this row is being shown, update the patch
+	if row_cnt == app.row_displayed
+		app.h_emg_auc_patch.Vertices = vertices;
+		app.h_emg_auc_patch.Faces = faces;
+	end
+	
+	auc = compute_auc(vertices);
+	if app.h_uitable.Data{row_cnt, 5} ~= auc
+		app.h_uitable.Data{row_cnt, 5} = auc;
+% 		update_rc_sici_datapoint(app, row_cnt, auc);
+	end
+
 end
+
