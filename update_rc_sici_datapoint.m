@@ -4,13 +4,13 @@ if isgraphics(app.rc_axes)
 	h_line = find_rc_datapoint(app.rc_axes, table_row_num);
 
 	h_line.YData = mep_val/str2double(app.rc_fit_ui.edNormFactor.String) ;
-
+	% make provision for MEPAUC - FIXME
 	app.rc_axes.UserData.MEPAmpl_uVPp(table_row_num) = mep_val;
 elseif isgraphics(app.sici_axes)
 	h_line = find_rc_datapoint(app.sici_axes, table_row_num);
 
 	h_line.YData = mep_val;
-	
+	% make provision for MEPAUC - FIXME
 	app.sici_axes.UserData.MEPAmpl_uVPp(table_row_num) = mep_val;
 	
 	% update mean sd & ci linesswitch stim_type

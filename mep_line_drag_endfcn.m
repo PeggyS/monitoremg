@@ -52,6 +52,7 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	auc = compute_auc(vertices);
 	if app.h_uitable.Data{row_cnt, 5} ~= auc
 		app.h_uitable.Data{row_cnt, 5} = auc;
+		% FIX ME
 % 		update_rc_sici_datapoint(app, row_cnt, auc);
 	end
 

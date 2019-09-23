@@ -5,6 +5,7 @@ norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
 % the data
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
+% make provision for MEPAUC - FIXME
 y_data = (app.rc_axes.UserData.MEPAmpl_uVPp(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
 % the sigmoid function with 3 parameters to fit
