@@ -7,9 +7,9 @@ h_ax = app.rc_axes;
 cla(h_ax)
 
 if norm_factor == 1
-	h_ax.YLabel.String = 'MEP Vp-p (µV)';
+	h_ax.YLabel.String = 'EMG (µV)';
 else
-	h_ax.YLabel.String = 'Normalized MEP';
+	h_ax.YLabel.String = 'Normalized EMG';
 end
 
 data = app.rc_axes.UserData;

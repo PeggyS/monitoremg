@@ -25,13 +25,6 @@ for row_cnt = 1:length(app.h_uitable.Data)
 
 	mep_val = max(mep_seg) - min(mep_seg);
 	
-	if app.h_uitable.Data{row_cnt, 4} ~= mep_val
-		% update the table 
-		app.h_uitable.Data{row_cnt, 4} = mep_val;
-		% update info in rc_fig
-		update_rc_sici_datapoint(app, row_cnt, mep_val);
-	end
-	
 	% AUC
 	pre_stim_col = find_uitable_column(app.h_uitable, 'PreStim');
 	pre_stim_val = app.h_uitable.Data{row_cnt,pre_stim_col};
@@ -50,10 +43,13 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	end
 	
 	auc = compute_auc(vertices);
-	if app.h_uitable.Data{row_cnt, 5} ~= auc
+	if app.h_uitable.Data{row_cnt, 4} ~= mep_val && app.h_uitable.Data{row_cnt, 5} ~= auc
+		% update the table 
+		app.h_uitable.Data{row_cnt, 4} = mep_val;
 		app.h_uitable.Data{row_cnt, 5} = auc;
-		% FIX ME
-% 		update_rc_sici_datapoint(app, row_cnt, auc);
+		
+		% update info in rc_fig
+		update_rc_sici_datapoint(app, row_cnt, mep_val, auc);
 	end
 
 end

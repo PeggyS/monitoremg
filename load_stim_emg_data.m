@@ -2,14 +2,20 @@ function load_stim_emg_data(source,event, app)
 
 if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, data is already in this field
 % 	% but re-read it in from the file as a table
-% 	if any(strcmp(properties(app), 'MuscleEditField')) 
-% 		filename = app.MuscleEditField.Value;
+ 	if any(strcmp(properties(app), 'MuscleEditField')) 
+ 		filename = app.MuscleEditField.Value;
 % 		data = readtable(app.DatapointsCSVEditField.Value);
 % 	else
-% 	end
+ 	end
 
 % why read in again, we already computed AUC and added it to h_uitable if needed  when
-% it was read in -- FIXME
+% it was read in
+	data = cell2table(app.h_uitable.Data);
+	colnames = strrep(app.h_uitable.ColumnName, '<html><center>', '');
+	colnames = strrep(colnames, '</center></html>', '');
+	colnames = strrep(colnames, '<br />', '_');
+	colnames = strrep(colnames, '*', '_');
+	data.Properties.VariableNames = colnames;
 else % request the file name	
 	[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
 	if isequal(filename,0) || isequal(pathname,0)
