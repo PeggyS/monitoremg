@@ -7,7 +7,6 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 	% clear any existing fit_info
 	app.rc_fit_info = [];
 	% reset ui
-	ylabel('MEP Vp-p (µV)')
 	app.rc_fit_ui.edNormFactor.String = '1';
 	app.rc_fit_ui.edSlope.String = '0.1';
 	app.rc_fit_ui.edS50.String = '50';
