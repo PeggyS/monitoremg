@@ -117,6 +117,11 @@ if pci(2,2) > app.rc_axes.XLim(1) && pci(2,2) < app.rc_axes.XLim(2)
 else
 	h_ci_lines(6) = line(mean(app.rc_axes.XLim), mean(app.rc_axes.YLim), 'Visible', 'off');
 end
+if p(2) > app.rc_axes.XLim(1) && p(2) < app.rc_axes.XLim(2) % symbol at s_50
+	h_ci_lines(7) = line(p(2), app.rc_axes.YLim(1), 'Marker', '*', 'Markersize', 15);
+else
+	h_ci_lines(7) = line(0,0, 'Visible', 'off');
+end
 set(h_ci_lines, 'Tag', 'ci_line', 'Color', [0.7 0.5 0.2], 'LineWidth', 1.5)
 
 % calc R-squared (used method from the polyfit example in matlab)
