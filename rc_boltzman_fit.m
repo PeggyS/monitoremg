@@ -5,8 +5,22 @@ norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
 % the data
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
-% make provision for MEPAUC - FIXME
-y_data = (app.rc_axes.UserData.MEPAmpl_uVPp(logical(app.rc_axes.UserData.Use))) / norm_factor;
+% make provision for MEPAUC:
+% find out if app is displaying MEP ampl or auc
+if isprop(app, 'h_radio_mep')
+	for kk = 1:length(app.h_radio_mep.Children)
+		if app.h_radio_mep.Children(kk).Value
+			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_pp, or rb_mep_auc)
+		end
+	end
+end
+switch tag
+	case 'rb_mep_pp'
+		data_var = 'MEPAmpl_uVPp';
+	case 'rb_mep_auc'
+		data_var = 'MEPAUC_uV_ms';
+end
+y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
 % the sigmoid function with 3 parameters to fit
 % func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
