@@ -3,6 +3,10 @@ function rc_boltzman_fit(source,event, app)
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 
+% mep begin & end lines
+mep_begin = app.h_t_min_line.XData(1);
+mep_end = app.h_t_max_line.XData(1);
+
 % the data
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
 % make provision for MEPAUC:
@@ -20,7 +24,7 @@ switch tag
 		mepMethod = 'p2p';
 	case 'rb_mep_auc'
 		data_var = 'MEPAUC_uV_ms';
-		mepMethod = 'auc'
+		mepMethod = 'auc';
 end
 y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
@@ -156,6 +160,8 @@ app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc, 2))];
 % info saved in app struct for easy saving
 app.rc_fit_info.mepMethod = mepMethod;
 app.rc_fit_info.norm_factor = norm_factor;
+app.rc_fit_info.mep_begin_t = mep_begin;
+app.rc_fit_info.mep_end_t = mep_end;
 app.rc_fit_info.slope = p(1);
 app.rc_fit_info.s50 = p(2);
 app.rc_fit_info.mepMin = p(4);

@@ -1,7 +1,7 @@
 function init_review_figs(app)
 
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [466 86  1100  1000], 'Name', 'EMG Data', ...
+	app.emg_data_fig = figure('Position', [466 86  1160  1000], 'Name', 'EMG Data', ...
 		'NumberTitle', 'off');
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
 	ylabel('EMG (µV)')
@@ -26,7 +26,11 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 % 	app.preEmgMinEditField = uicontrol('Position', [0.3 0.92 0.2 0.1], ...
 % 		'Style', 'edit', 'String', '-100');
 	
-	
+	% mep begin & end times
+	app.h_edit_mep_begin = uicontrol('Style', 'edit', ...
+		'Position', [0.7, 0.4, 0.2, 0.1]);
+	app.h_edit_mep_end = uicontrol('Style', 'edit', ...
+		'Position', [0.8, 0.4, 0.2, 0.1]);
 	
 	% get parameters from text file
 	parameter_file = 'parameters.txt';
