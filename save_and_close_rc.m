@@ -36,10 +36,18 @@ end
 title_str = strrep(app.rc_axes.Title.String, ' ', '_');
 if contains(title_str, '.csv') % it's a file read in, no need to add prefix
 	datapoint_fname = title_str;
-	fitinfo_fname = strrep(title_str, 'rc_datapoints.csv', [app.rc_fit_info.mepMethod 'fit_info.txt']);
+	if isfield(app.rc_fit_info, 'mepMethod')
+		fitinfo_fname = strrep(title_str, 'rc_datapoints.csv', [app.rc_fit_info.mepMethod 'fit_info.txt']);
+	else
+		fitinfo_fname = 'fit.txt';
+	end
 else
 	datapoint_fname = [save_loc '/' fname_prefix title_str '_rc_datapoints.csv'];
-	fitinfo_fname = [save_loc '/' fname_prefix title_str '_' app.rc_fit_info.mepMethod '_fit_info.txt'];
+	if isfield(app.rc_fit_info, 'mepMethod')
+		fitinfo_fname = [save_loc '/' fname_prefix title_str '_' app.rc_fit_info.mepMethod '_fit_info.txt'];
+	else
+		fitinfo_fname = 'fit.txt';
+	end
 end
 
 % add norm or not norm to fit_info.txt
