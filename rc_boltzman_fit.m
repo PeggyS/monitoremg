@@ -17,8 +17,10 @@ end
 switch tag
 	case 'rb_mep_pp'
 		data_var = 'MEPAmpl_uVPp';
+		mepMethod = 'p2p';
 	case 'rb_mep_auc'
 		data_var = 'MEPAUC_uV_ms';
+		mepMethod = 'auc'
 end
 y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
@@ -152,7 +154,7 @@ auc = polyarea([stimLevels(1); stimLevels; stimLevels(end)], ...
 app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc, 2))];
 
 % info saved in app struct for easy saving
-app.rc_fit_info.mepMethod = 'p2p';
+app.rc_fit_info.mepMethod = mepMethod;
 app.rc_fit_info.norm_factor = norm_factor;
 app.rc_fit_info.slope = p(1);
 app.rc_fit_info.s50 = p(2);
