@@ -5,9 +5,11 @@ app = h_line.UserData;
 % get min & max line x values
 h_min_line = findobj(h_line.Parent, 'Tag', 'mep_min_line');
 t_mep_min = h_min_line.XData(1);
+app.h_edit_mep_begin.String = num2str(t_mep_min, 3);
 
 h_max_line = findobj(h_line.Parent, 'Tag', 'mep_max_line');
 t_mep_max = h_max_line.XData(1);
+app.h_edit_mep_end.String = num2str(t_mep_max, 3);
 
 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 seg_num_points = round(app.params.sampFreq*seg_time);
