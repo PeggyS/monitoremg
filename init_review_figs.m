@@ -1,5 +1,9 @@
 function init_review_figs(app)
 
+% default mep begin & end times
+mep_beg_t = 15;
+mep_end_t = 90;
+	
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.emg_data_fig = figure('Position', [466 86  1160  1000], 'Name', 'EMG Data', ...
 		'NumberTitle', 'off');
@@ -26,9 +30,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 % 	app.preEmgMinEditField = uicontrol('Position', [0.3 0.92 0.2 0.1], ...
 % 		'Style', 'edit', 'String', '-100');
 	
-	% mep begin & end times
-	mep_beg_t = 15;
-	mep_end_t = 90;
+	
 	uicontrol('Style', 'text', 'Units', 'normalized', ...
 		'Position', [0.6 0.4 0.08 0.03], 'Fontsize', 16, ...
 		'String', 'MEP begin: ', ...
