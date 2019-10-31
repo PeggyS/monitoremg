@@ -7,7 +7,7 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	% if the current directory has '/data/' in it then change it
 	% '/analysis/' to save the output there
 	if contains(save_loc, '/data/', 'IgnoreCase', true)
-		save_loc = strrep(save_loc, '/data/', '/analysis/');
+		save_loc = strrep(lower(save_loc), '/data/', '/analysis/');
 		% ask to create the folder if it doesn't exist
 		if ~exist(save_loc, 'dir')
 			ButtonName = questdlg(['Create new directory: ' save_loc ' ?'], ...

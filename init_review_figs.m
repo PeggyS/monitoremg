@@ -110,6 +110,10 @@ else
 	app.h_t_min_line.XData = [mep_beg_t mep_beg_t];
 	app.h_t_max_line.XData = [mep_end_t mep_end_t];
 	
+	% reset mep beg & end edit fields
+	app.h_edit_mep_begin.String = num2str(mep_beg_t);
+	app.h_edit_mep_end.String = num2str(mep_end_t);
+	
 	% reset prestim line & emg auc patch
 	app.h_pre_stim_emg_line.YData = [1000 1000];
 	app.h_emg_auc_patch.Vertices = [];
