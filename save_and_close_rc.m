@@ -1,7 +1,26 @@
 function save_and_close_rc(source, event, app)
+cur_dir = pwd;
 
-if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
-	save_loc = pwd;
+if ~any(strcmp(properties(app), 'SaveLocationEditField'))
+	% review_emg_rc app has no property for save location
+	save_loc = cur_dir;
+	% if the current directory has '/data/' in it then change it
+	% '/analysis/' to save the output there
+	if contains(save_loc, '/data/', 'IgnoreCase', true)
+		save_loc = strrep(save_loc, '/data/', '/analysis/');
+		% ask to create the folder if it doesn't exist
+		if ~exist(save_loc, 'dir')
+			ButtonName = questdlg(['Create new directory: ' save_loc ' ?'], ...
+                         'Create new directory', ...
+                         'Yes', 'No', 'Yes');
+			if strcmp(ButtonName, 'Yes')
+				[success, msg, msg_id] = mkdir(save_loc);
+			else
+				disp('Choose where to save output')
+				save_loc = uigetdir();
+			end
+		end
+	end
 	fname_prefix = '';
 else
 	if isempty(app.SaveLocationEditField.Value)
@@ -60,6 +79,8 @@ end % confirmed saving
 
 if isfield(app.rc_fit_info, 'mepMethod')
 	if exist(fitinfo_fname, 'file')
+		disp('Save fit info as...')
+		cd(save_loc)
 		[filename, pathname] = uiputfile('*.txt', 'Save fit info as');
 		if isequal(filename,0) || isequal(pathname,0)
 		   disp('User pressed cancel')
@@ -67,6 +88,7 @@ if isfield(app.rc_fit_info, 'mepMethod')
 			fitinfo_fname = fullfile(pathname, filename);
 		   disp(['User selected ', fitinfo_fname])
 		end
+		cd(cur_dir)
 	end
 	write_fit_info(fitinfo_fname, app.rc_fit_info)
 end	
