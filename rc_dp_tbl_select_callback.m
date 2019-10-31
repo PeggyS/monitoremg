@@ -39,7 +39,7 @@ app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 % update emg auc patch
 mep_start_time = app.h_t_min_line.XData(1);
 mep_end_time = app.h_t_max_line.XData(1);
-[vertices, faces] = compute_patch(mep_start_time, mep_end_time, app.h_emg_line, pre_stim_val);
+[vertices, faces] = compute_patch(mep_start_time, mep_end_time, app.h_emg_line, 0);
 
 app.h_emg_auc_patch.Vertices = vertices;
 app.h_emg_auc_patch.Faces = faces;

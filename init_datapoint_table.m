@@ -19,14 +19,14 @@ if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	% compute all the MEPAUCs
 	emg.XData = app.h_emg_line.XData;
 	for row_cnt = 1:height(tbl)
-		pre_stim_val = tbl.PreStimEmg_100ms(row_cnt);
+		% pre_stim_val = tbl.PreStimEmg_100ms(row_cnt);
 		
 		% update emg auc patch
 		mep_start_time = app.h_t_min_line.XData(1);
 		mep_end_time = app.h_t_max_line.XData(1);
 		
 		emg.YData = app.emg_data(app.emg_data_num_vals_ignore:end);
-		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, pre_stim_val);
+		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 		
 		auc = compute_auc(vertices);
 		tbl.MEPAUC(row_cnt) = auc;

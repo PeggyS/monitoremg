@@ -29,14 +29,14 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	
 	% AUC
 	pre_stim_col = find_uitable_column(app.h_uitable, 'PreStim');
-	pre_stim_val = app.h_uitable.Data{row_cnt,pre_stim_col};
+	% pre_stim_val = app.h_uitable.Data{row_cnt,pre_stim_col};
 % 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
 	% update emg auc patch
 	mep_start_time = app.h_t_min_line.XData(1);
 	mep_end_time = app.h_t_max_line.XData(1);
 	emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
-	[vertices, faces] = compute_patch(mep_start_time, mep_end_time, emg, pre_stim_val);
+	[vertices, faces] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 	
 	% if this row is being shown, update the patch
 	if row_cnt == app.row_displayed

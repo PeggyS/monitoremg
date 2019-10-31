@@ -38,12 +38,16 @@ set(app.rc_fig,'PaperOrientation', orient, ...
 	'PaperPosition', [0 0 7 8]);
 
 % 	'PaperSize', [6 7], ..
-fname = [save_loc '/' fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_rc_not_norm.png'];
+% add mep method to fname
+if isfield(app.rc_fit_info, 'mepMethod')
+	fname = [save_loc '/' fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_' app.rc_fit_info.mepMethod '_rc_not_norm.png'];
+else
+	fname = [save_loc '/' fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_rc_not_norm.png'];
+end
 
 % if norm value > 1, change not_norm to norm in fitinfo_fname
 if str2double(app.rc_fit_ui.edNormFactor.String) > 1
 	fname = strrep(fname, '_not_norm', '_norm');
 end
-
 
 print(app.rc_fig, '-dpng', fname);
