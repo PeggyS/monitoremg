@@ -1,5 +1,5 @@
-ip address : 10.83.111.28
-sampling frequency (Hz) : 1000
+ip address : 10.83.111.17
+sampling frequency (Hz) : 5000
 average time period (sec) : 0.5
 emg channel : 1
 activation goal : 0.2
@@ -7,6 +7,6 @@ emg pre trigger time (msec) : 100
 emg post trigger time (msec) : 200
 baseline_emg_begin : -101
 baseline_emg_end : -1
-baseline_emg_method : mean_rect
-mep_p2p_method : abs
-mep_thresh : 200
+baseline_emg_method : max_p2p
+mep_p2p_method : sub_pre
+mep_thresh : 100

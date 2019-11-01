@@ -30,7 +30,7 @@ app.params.postTriggerTime = paramscell{7};
 app.PostTriggerLabel.Text = ['Post Trigger: ' num2str(app.params.postTriggerTime) ' ms'];
 app.preEmgMinEditField.Value = paramscell{8};
 app.preEmgMaxEditField.Value = paramscell{9};
-switch paramscell{10}
+switch paramscell{10} % baseline_emg_method
 	case 'mean_rect'
 		app.MeanRectifiedValueButton.Value = 1;
 	case 'max_p2p'
@@ -38,6 +38,15 @@ switch paramscell{10}
 	otherwise
 		disp(['unknown baseline_emg_method in ' parameter_file]);
 end
+switch paramscell{11} % mep_p2p_method
+	case 'abs'
+		app.UseMEPAbsoluteValueButton.Value = 1;
+	case 'sub_pre'
+		app.SubtractPreEMGppButton.Value = 1;
+	otherwise
+		disp(['unknown baseline_emg_method in ' parameter_file]);
+end
+app.MEPThresholdEditField.Value = paramscell{12};
 
 % 
 % seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
