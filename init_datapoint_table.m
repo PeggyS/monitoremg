@@ -13,6 +13,7 @@ tbl.Use = logical(tbl.Use);
 
 % if there is no MEPAUC col, add it
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
+	disp('Computing MEP AUC...')
 	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:9)];
 	tbl.Properties.VariableNames{5} = 'MEPAUC';
 	
@@ -25,11 +26,34 @@ if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 		mep_start_time = app.h_t_min_line.XData(1);
 		mep_end_time = app.h_t_max_line.XData(1);
 		
-		emg.YData = app.emg_data(app.emg_data_num_vals_ignore:end);
+		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
 		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 		
 		auc = compute_auc(vertices);
 		tbl.MEPAUC(row_cnt) = auc;
+	end
+end
+
+% if prestim emg is nan, compute it
+if any(isnan(tbl.PreStimEmg_100ms))
+	disp('Computing Pre Stim EMG...')
+	emg.XData = app.h_emg_line.XData;
+	for row_cnt  = 1:height(tbl)
+		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
+		tbl.PreStimEmg_100ms(row_cnt) = compute_pre_stim_emg_value(app, emg);
+	end
+end
+
+% if mep ampl is nan, compute it
+if any(isnan(tbl.MEPAmpl_uVPp))
+	disp('Computing MEP Ampl...')
+	emg.XData = app.h_emg_line.XData;
+	for row_cnt  = 1:height(tbl)
+		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
+		tbl.MEPAmpl_uVPp(row_cnt) = max(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+													emg.XData < str2double(app.h_edit_mep_end.String))) ...
+								- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+													emg.XData < str2double(app.h_edit_mep_end.String))) ;
 	end
 end
 
