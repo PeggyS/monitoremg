@@ -9,3 +9,4 @@ switch source.Tag
 end
 
 h_line.XData = [val val];
+mep_line_drag_endfcn(h_line)

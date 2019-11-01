@@ -49,26 +49,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		'Tag', 'edit_mep_end', ...
 		'String', num2str(mep_end_t), 'fontsize', 16, ...
 		'Callback', {@edit_mep_limits, app});
-	
-% 	% get parameters from text file
-% 	parameter_file = 'parameters.txt';
-% 	if ~exist(parameter_file, 'file')
-% 	  [filename, pathname] = uigetfile( ...
-% 		 {'*.txt';'*.*'}, ...
-% 		 'Choose Parameter File');
-% 	  parameter_file = fullfile(pathname, filename);
-% 	end
-% 	if ~exist(parameter_file, 'file')
-% 	  error( 'error finding parameter file, %s', parameter_file)
-% 	end
-% 	% read in the parameter file
-% 	keywords = { 'freq'  'pre' 'post'};
-% 	defaults = { 1000, 50, 100};
-% 	paramscell = readparamfile(parameter_file, keywords, defaults);
-% 	app.params.sampFreq  = paramscell{1};
-% 	app.params.preTriggerTime  = paramscell{2};
-% 	app.params.postTriggerTime = paramscell{3};
-%    
+	    
    
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
