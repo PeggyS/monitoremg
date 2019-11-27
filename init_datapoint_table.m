@@ -14,7 +14,8 @@ tbl.Use = logical(tbl.Use);
 % if there is no MEPAUC col, add it
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	disp('Computing MEP AUC...')
-	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:9)];
+	n_cols = width(tbl);
+	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:n_cols)];
 	tbl.Properties.VariableNames{5} = 'MEPAUC';
 	
 	% compute all the MEPAUCs
