@@ -2,8 +2,10 @@ function save_and_close_rc(source, event, app)
 cur_dir = pwd;
 
 if ~any(strcmp(properties(app), 'SaveLocationEditField'))
-	% review_emg_rc app has no property for save location
-	save_loc = cur_dir;
+	% review_emg_rc app has no property for save location, use file path
+	% location
+	[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
+	save_loc = pname;
 	% if the current directory has '/data/' in it then change it
 	% '/analysis/' to save the output there
 	if contains(save_loc, '/data/', 'IgnoreCase', true)

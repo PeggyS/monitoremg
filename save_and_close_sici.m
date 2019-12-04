@@ -2,7 +2,25 @@ function save_and_close_sici(source, event, app)
 
 
 if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
-	save_loc = pwd;
+	[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
+	save_loc = pname;
+	% if the current directory has '/data/' in it then change it
+	% '/analysis/' to save the output there
+	if contains(save_loc, '/data/', 'IgnoreCase', true)
+		save_loc = strrep(lower(save_loc), '/data/', '/analysis/');
+		% ask to create the folder if it doesn't exist
+		if ~exist(save_loc, 'dir')
+			ButtonName = questdlg(['Create new directory: ' save_loc ' ?'], ...
+                         'Create new directory', ...
+                         'Yes', 'No', 'Yes');
+			if strcmp(ButtonName, 'Yes')
+				[success, msg, msg_id] = mkdir(save_loc);
+			else
+				disp('Choose where to save output')
+				save_loc = uigetdir();
+			end
+		end
+	end
 	fname_prefix = '';
 else
 	if isempty(app.SaveLocationEditField.Value)
