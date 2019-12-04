@@ -3,7 +3,7 @@ function update_sici_mean_sc_ci_lines(app, stim_type, info_var)
 h_ax = app.sici_axes;
 
 % once there are 5 points, draw the mean & std dev of the data points
-tbl_stim_type = h_ax.UserData(strcmp(h_ax.UserData.Sici_or_icf_or_ts, stim_type), :);
+tbl_stim_type = h_ax.UserData(strcmp(h_ax.UserData.Stim_Type, stim_type), :);
 tbl_use = tbl_stim_type(tbl_stim_type.Use==1,:);
 n_var = [info_var '_n'];
 app.sici_ui.(n_var).String = num2str(height(tbl_use));

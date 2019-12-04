@@ -200,7 +200,7 @@ while app.CheckBoxDisplayMEP.Value
 				app.sici_axes.UserData.Epoch(epoch) = epoch;
 				app.sici_axes.UserData.Use(epoch) = 1; % in_goal_range
 				app.sici_axes.UserData.MagStim_Setting(epoch) = magstim_val;
-				app.sici_axes.UserData.Sici_or_icf_or_ts(epoch) = {'?'};
+				app.sici_axes.UserData.Stim_Type(epoch) = {'?'};
 				app.sici_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.sici_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;
 				app.sici_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;

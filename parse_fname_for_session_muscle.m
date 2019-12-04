@@ -12,7 +12,7 @@ if ~isempty(tmp)
 end
 
 side = '';
-tmp = regexpi(fname, '(inv)|(uninv)', 'match');
+tmp = regexpi(fname, '(inv)|(uninv)|(left)|(right)', 'match');
 if ~isempty(tmp)
 	side = tmp{1};
 end

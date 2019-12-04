@@ -1,11 +1,11 @@
 function add_point2sici(app, table_row_num, magstim_val, mep_val)
 
 h_ax = app.sici_axes;
-if strcmp(h_ax.UserData.Sici_or_icf_or_ts(table_row_num), '?') 
+if strcmp(h_ax.UserData.Stim_Type(table_row_num), '?') 
 	stim_type = app.sici_popmenu.String{app.sici_popmenu.Value};
-	h_ax.UserData.Sici_or_icf_or_ts(table_row_num) = {stim_type};
+	h_ax.UserData.Stim_Type(table_row_num) = {stim_type};
 else
-	stim_type = h_ax.UserData.Sici_or_icf_or_ts{table_row_num};
+	stim_type = h_ax.UserData.Stim_Type{table_row_num};
 end
 
 

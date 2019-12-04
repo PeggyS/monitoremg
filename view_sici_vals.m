@@ -2,20 +2,20 @@ function view_sici_vals(fname)
 
 % vals = load(fname);
 tbl = readtable(fname);
-tbl.Sici_or_icf_or_ts = nominal(tbl.Sici_or_icf_or_ts);
+tbl.Stim_Type = nominal(tbl.Stim_Type);
 
 % figure('Position', [1142         906         882         439])
 figure('Position', [904   722   771   534]);
 % h_ax = axes('FontSize', 14);
 % title(strrep(fname, '_', '\_'))
 
-stim_type_list = unique(tbl.Sici_or_icf_or_ts, 'stable');
+stim_type_list = unique(tbl.Stim_Type, 'stable');
 for s_cnt = 1:length(stim_type_list)
 	h_ax = subplot(length(stim_type_list), 1, s_cnt);
 	h_ax.FontSize = 14;
 	yyaxis(h_ax, 'left')
 	
-	vals = table2array(tbl(tbl.Sici_or_icf_or_ts == stim_type_list(s_cnt), {'MEPAmpl_uVPp'}));
+	vals = table2array(tbl(tbl.Stim_Type == stim_type_list(s_cnt), {'MEPAmpl_uVPp'}));
 
 	% the mep values
 	x = 1:length(vals);

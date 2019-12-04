@@ -32,7 +32,7 @@ h_line.YData = new_display_value;
 
 if isgraphics(app.sici_axes)
 	% update mean sd & ci lines
-	stim_type = app.sici_axes.UserData.Sici_or_icf_or_ts{table_row_num};
+	stim_type = app.sici_axes.UserData.Stim_Type{table_row_num};
 	switch stim_type
 		case 'Test Stim'
 			info_var = 'ts';
