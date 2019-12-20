@@ -7,7 +7,7 @@ if isempty(mmax_fname) || isempty(session) || isempty(muscle)
 	return
 end
 
-m_tbl = readtable(mmax_fname);
+m_tbl = readtable(mmax_fname, 'DateLocale', '%{MM/dd/uuuu}D');
 m_tbl.Properties.VariableNames = lower(m_tbl.Properties.VariableNames);
 
 m_tbl.session = nominal(m_tbl.session);

@@ -11,6 +11,9 @@ h_max_line = findobj(h_line.Parent, 'Tag', 'mep_max_line');
 t_mep_max = h_max_line.XData(1);
 app.h_edit_mep_end.String = num2str(t_mep_max, 3);
 
+t_dur = t_mep_max - t_mep_min;
+app.h_edit_mep_dur.String = num2str(t_dur, 3);
+
 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 seg_num_points = round(app.params.sampFreq*seg_time);
 t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
