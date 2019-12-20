@@ -16,10 +16,12 @@ switch event.NewValue.String
 		app.h_emg_auc_patch.Visible = 'on';
 		tbl_var_str = 'MEPAUC_uV_ms';
 		app.(axes_str).YLabel.String = 'MEP AUC (µV*ms)';
+		app.MmaxtoRCButton.Text = 'M AUC to RC';
 	case 'Peak-to-Peak'
 		app.h_emg_auc_patch.Visible = 'off';
 		tbl_var_str = 'MEPAmpl_uVPp';
 		app.(axes_str).YLabel.String = 'MEP Vp-p (µV)';
+		app.MmaxtoRCButton.Text = 'M-max to RC';
 end
 
 
