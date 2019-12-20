@@ -24,7 +24,10 @@ switch event.NewValue.String
 		app.MmaxtoRCButton.Text = 'M-max to RC';
 end
 
+% reset norm factor
+app.rc_fit_ui.edNormFactor.String = '1';
 
+% replot the data
 app.(axes_str).YLabel.String;
 for row_cnt = 1:height(app.(axes_str).UserData)
 	h_line = find_rc_datapoint(app.(axes_str), row_cnt);
