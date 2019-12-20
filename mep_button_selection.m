@@ -33,3 +33,17 @@ for row_cnt = 1:height(app.(axes_str).UserData)
 	h_line = find_rc_datapoint(app.(axes_str), row_cnt);
 	h_line.YData = app.(axes_str).UserData.(tbl_var_str)(row_cnt);
 end
+
+% remove curve fit lines
+h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
+if ~isempty(h_ci_lines)
+	delete(h_ci_lines)
+end
+h_err = findobj(app.rc_axes, 'Tag', 'errLine');
+if ~isempty(h_err)
+	delete(h_err)
+end
+h_ml = findobj(app.rc_axes, 'Tag', 'meanLine');
+if ~isempty(h_ml)
+	delete(h_ml)
+end

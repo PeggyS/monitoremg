@@ -47,8 +47,22 @@ data = app.rc_axes.UserData;
 % end
 
 
-
+% change the data points
 for row_cnt = 1:height(app.rc_axes.UserData)
 	h_line = find_rc_datapoint(app.rc_axes, row_cnt);
 	h_line.YData = app.rc_axes.UserData.(data_var)(row_cnt)/norm_factor;
+end
+
+% remove curve fit lines
+h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
+if ~isempty(h_ci_lines)
+	delete(h_ci_lines)
+end
+h_err = findobj(app.rc_axes, 'Tag', 'errLine');
+if ~isempty(h_err)
+	delete(h_err)
+end
+h_ml = findobj(app.rc_axes, 'Tag', 'meanLine');
+if ~isempty(h_ml)
+	delete(h_ml)
 end
