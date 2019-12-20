@@ -20,6 +20,10 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 			else
 				disp('Choose where to save output')
 				save_loc = uigetdir();
+% 				while save_loc==0
+% 					disp('Must choose a folder to save output.')
+% 					save_loc = uigetdir();
+% 				end
 			end
 		end
 	end
@@ -84,7 +88,12 @@ end
 
 if confirm_saving
 	% save the data
-	save_rc_table(app.rc_axes.UserData, datapoint_fname)
+	try
+		save_rc_table(app.rc_axes.UserData, datapoint_fname)
+	catch ME
+		disp('did not save rc_datapoints')
+		disp(ME)
+	end
 end % confirmed saving
 
 
