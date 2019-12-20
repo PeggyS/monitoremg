@@ -36,6 +36,7 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 			% make rb_mep_pp selected
 			app.h_radio_mep.Children(rb_ind).Value = 0;
 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
+			app.MmaxtoRCButton.Text = 'M-max to RC';
 	end
 	app.rc_axes.YLabel.String = 'MEP Vp-p (µV)';
 else

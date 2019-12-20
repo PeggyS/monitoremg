@@ -15,7 +15,7 @@ if exist(fname, 'file')
 	btn2 = 'Overwrite';
 	btn3 = 'Cancel';
 	opts.Interpreter = 'tex';
-	opts.Default = 'Yes';
+	opts.Default = btn1;
 	ans_button = questdlg(q_str, 'Save File', btn1, btn2, btn3, opts);
 	
 	switch ans_button
