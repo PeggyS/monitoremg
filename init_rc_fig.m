@@ -43,11 +43,12 @@ else
 
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'Recruitment Curve', ...
-		'ToolBar', 'none'); % 		'MenuBar', 'none'); %% , 
+		'ToolBar', 'none', 'MenuBar', 'none'); 
 
 
 	app.rc_axes = axes('Position', [0.16 0.3 0.775 0.6], ...
 		'Fontsize', 20);
+	app.rc_axes.Toolbar.Visible = 'on';
 	ylabel('MEP Vp-p (µV)')
 	xlabel('Magstim Power')
 
