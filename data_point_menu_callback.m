@@ -1,4 +1,4 @@
-function data_point_enable_disable(source, event, h_line, h_ax)
+function data_point_menu_callback(source, event, h_line, h_ax)
 switch source.Label
 	case 'Disable'
 		h_line.Marker = 'x';
@@ -17,7 +17,7 @@ switch source.Label
 			menu_list =  h_all_lines(l_cnt).UIContextMenu.Children;
 			for m_cnt = 1:length(menu_list)
 				if strcmp(menu_list(m_cnt).Text, 'Disable')
-					data_point_enable_disable(menu_list(m_cnt), [], h_all_lines(l_cnt), h_ax)
+					data_point_menu_callback(menu_list(m_cnt), [], h_all_lines(l_cnt), h_ax)
 				end
 			end
 		end
@@ -29,10 +29,12 @@ switch source.Label
 			menu_list =  h_all_lines(l_cnt).UIContextMenu.Children;
 			for m_cnt = 1:length(menu_list)
 				if strcmp(menu_list(m_cnt).Text, 'Enable')
-					data_point_enable_disable(menu_list(m_cnt), [], h_all_lines(l_cnt), h_ax)
+					data_point_menu_callback(menu_list(m_cnt), [], h_all_lines(l_cnt), h_ax)
 				end
 			end
 		end
 		source.Label = 'Disable All';
+	case 'Show in Table'
+		keyboard
 end
 return
