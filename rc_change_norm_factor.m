@@ -53,6 +53,10 @@ for row_cnt = 1:height(app.rc_axes.UserData)
 	h_line.YData = app.rc_axes.UserData.(data_var)(row_cnt)/norm_factor;
 end
 
+% scale m-min & m-max by the norm_factor
+app.rc_fit_ui.edMEPmax.String = num2str(str2double(app.rc_fit_ui.edMEPmax.String) / norm_factor);
+app.rc_fit_ui.edMEPmin.String = num2str(str2double(app.rc_fit_ui.edMEPmin.String) / norm_factor);
+
 % remove curve fit lines
 h_ci_lines = findobj(app.rc_axes, 'Tag', 'ci_line');
 if ~isempty(h_ci_lines)
