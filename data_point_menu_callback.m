@@ -35,6 +35,8 @@ switch source.Label
 		end
 		source.Label = 'Disable All';
 	case 'Show in Table'
-		keyboard
+		hf=h_ax.Parent;
+		hf.UserData.app.h_edit_epoch.String = num2str(h_line.UserData.table_row_num);
+		edit_epoch(hf.UserData.app.h_edit_epoch, [], hf.UserData.app)
 end
 return
