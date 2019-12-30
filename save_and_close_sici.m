@@ -49,47 +49,63 @@ end
 % 	fitinfo_fname = strrep(fitinfo_fname, 'info.txt', 'info_not_norm.txt');
 % end
 
-confirm_saving = true;
+[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
 
-if exist(datapoint_fname, 'file')
-	suffix_str = datestr(now, '_yyyymmdd_HHMMSS');
-	q_str = ['\fontsize{14} ' strrep(datapoint_fname, '_', '\_') ...
-		' already exists. Do you want to save a new version with the suffix ' ...
-		strrep(suffix_str, '_', '\_') '?' ];
+% confirm_saving = true;
 
-	opts.Interpreter = 'tex';
-	opts.Default = 'Yes';
-	ans_button = questdlg(q_str, 'Save File', opts);
+% if exist(datapoint_fname, 'file')
+% 	suffix_str = datestr(now, '_yyyymmdd_HHMMSS');
+% 	q_str = ['\fontsize{14} ' strrep(datapoint_fname, '_', '\_') ...
+% 		' already exists. Do you want to save a new version with the suffix ' ...
+% 		strrep(suffix_str, '_', '\_') '?' ];
+
+% 	opts.Interpreter = 'tex';
+% 	opts.Default = 'Yes';
+% 	ans_button = questdlg(q_str, 'Save File', opts);
 	
-	switch ans_button
-		case 'Yes'
-			datapoint_fname = strrep(datapoint_fname, '.csv', [suffix_str '.csv']);
-		case 'No'
-			confirm_saving = false;
-		case 'Cancel'
-			return
-	end
-end	
+% 	switch ans_button
+% 		case 'Yes'
+% 			datapoint_fname = strrep(datapoint_fname, '.csv', [suffix_str '.csv']);
+% 		case 'No'
+% 			confirm_saving = false;
+% 		case 'Cancel'
+% 			return
+% 	end
+% end	
 
 if confirm_saving
 	% save the data
-	save_rc_table(app.sici_axes.UserData, datapoint_fname)
+	try
+		save_rc_table(app.sici_axes.UserData, datapoint_fname)
+	catch ME
+		disp('did not save rc_datapoints')
+		disp(ME)
+	end
 end % confirmed saving
 
 if isfield(app.sici_info, 'ts_n')
-	if exist(sici_info_fname, 'file')
-		[filename, pathname] = uiputfile('*.txt', 'Save fit info as');
-		if isequal(filename,0) || isequal(pathname,0)
-		   disp('User pressed cancel')
-		else
-			sici_info_fname = fullfile(pathname, filename);
-		   disp(['User selected ', sici_info_fname])
-		end
-	end
+	% if exist(sici_info_fname, 'file')
+	% 	[filename, pathname] = uiputfile('*.txt', 'Save fit info as');
+	% 	if isequal(filename,0) || isequal(pathname,0)
+	% 	   disp('User pressed cancel')
+	% 	else
+	% 		sici_info_fname = fullfile(pathname, filename);
+	% 	   disp(['User selected ', sici_info_fname])
+	% 	end
+	% end
+	[confirm_saving, sici_info_fname] = confirm_savename(sici_info_fname);
+
 	% get the TS & CS values
 	app.sici_info.ts_value = str2double(app.sici_ui.ts.String);
 	app.sici_info.cs_value = str2double(app.sici_ui.cs.String);
-	write_fit_info(sici_info_fname, app.sici_info)
+	if confirm_saving
+		try
+			write_fit_info(sici_info_fname, app.sici_info)
+			catch ME
+			disp('did not save fit_info')
+			disp(ME)
+		end
+	end
 end	
 
 
