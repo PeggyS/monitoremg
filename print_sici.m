@@ -33,12 +33,23 @@ else
 	fname_prefix = app.EditFieldFilenameprefix.Value;
 end
 
+% determine mep method
+if isprop(app,'emg_data_fig')
+	rb_mep_ampl = findobj(app.emg_data_fig, 'Tag', 'rb_mep_ampl');
+	if rb_mep_ampl.Value
+		mep_method = 'p2p';
+	else
+		mep_method = 'auc';
+	end
+else
+	mep_method = 'p2p';
+end
 set(app.sici_fig,'PaperOrientation', orient, ...
 	'PaperUnits','inches', ...
 	'PaperPosition', [0 0 7 8]);
 
 % 	'PaperSize', [6 7], ..
-fname = [save_loc '/' fname_prefix strrep(app.sici_axes.Title.String, ' ', '_') '_sici.png'];
+fname = [save_loc '/' fname_prefix strrep(app.sici_axes.Title.String, ' ', '_') '_' mep_method '_sici.png'];
 
 
 print(app.sici_fig, '-dpng', fname);

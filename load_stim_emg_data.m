@@ -57,12 +57,19 @@ else
 	norm_factor = 1;
 end
 
+% get mep method
+rb_mep_ampl = findobj(app.emg_data_fig, 'Tag', 'rb_mep_ampl');
+if rb_mep_ampl.Value
+	data_var = 'MEPAmpl_uVPp';
+else
+	data_var = 'MEPAUC_uV_ms';
+end
 for cnt = 1:height(data)
 	switch which_axes
 		case 'rc_axes'
-			add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
+			add_point2rc(app.rc_axes, data.Epoch(cnt), data.MagStim_Setting(cnt), data.(data_var)(cnt)/norm_factor)
 		case 'sici_axes'
-			add_point2sici(app, data.Epoch(cnt), data.MagStim_Setting(cnt), data.MEPAmpl_uVPp(cnt)/norm_factor)
+			add_point2sici(app, data.Epoch(cnt), data.MagStim_Setting(cnt), data.(data_var)(cnt)/norm_factor)
  	end
 end
 

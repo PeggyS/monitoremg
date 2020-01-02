@@ -32,5 +32,5 @@ if cell_edit_data.Indices(2) == 2 % col2 'Use' edited
 		end
 	end
 	
-	data_point_enable_disable(h_menu, [], h_line, h_ax)
+	data_point_menu_callback(h_menu, [], h_line, h_ax)
 end

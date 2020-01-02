@@ -11,7 +11,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	ylabel('EMG (µV)')
 	xlabel('Time (msec)')
 	
-	app.h_uitable = uitable('Position', [31 66 580 837], 'RowName', []);
+	app.h_uitable = uitable('Position', [31 66 580 837], 'RowName', [], 'Tag', 'review_emg_uitable');
 	
 	% radiobuttons to choose how to compute MEP 
 	app.h_radio_mep = uibuttongroup('Position', [0.1 0.92 0.125 0.065], ...
