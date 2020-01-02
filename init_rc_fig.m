@@ -22,7 +22,7 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 	if isprop(app, 'h_radio_mep')
 		for kk = 1:length(app.h_radio_mep.Children)
 			if app.h_radio_mep.Children(kk).Value
-				tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_pp, or rb_mep_auc)
+				tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
 				rb_ind = kk;
 			else
 				rb_other_ind = kk;
@@ -30,10 +30,10 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 		end
 	end
 	switch tag
-		case 'rb_mep_pp'
+		case 'rb_mep_ampl'
 			% do nothing
 		case 'rb_mep_auc'
-			% make rb_mep_pp selected
+			% make rb_mep_ampl selected
 			app.h_radio_mep.Children(rb_ind).Value = 0;
 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
 			app.MmaxtoRCButton.Text = 'M-max to RC';

@@ -4,7 +4,7 @@ function [mep_beg_t, mep_end_t] = get_fit_info_mep_times(datapoint_csv_filename)
 
 % datapoint_csv_filename should be named <side>_<muscle>_rc_datapoints.csv, e.g. uninv_ta_rc_datapoints.csv
 [pname, fname, ext] = fileparts(datapoint_csv_filename);
-side_muscle = strrep(fname, '_rc_datapoints', '');
+side_muscle = regexprep(fname, '_((rc)|(sici))_datapoints', '');
 
 dir_struct = dir(pname); % all the files in the directory with the datapoint csv file
 dir_cell_list = arrayfun(@(x)(x.name), dir_struct, 'UniformOutput', false);
@@ -16,6 +16,11 @@ fit_info_pat = [side_muscle '_.*' '_fit_info_.*'];
 match_cell = cellfun(@(x)regexp(x, fit_info_pat, 'match'), dir_cell_list, 'UniformOutput', false);
 match_cell_array = match_cell(~cellfun(@isempty, match_cell));
 match_list = cellfun(@(x)(x{1}), match_cell_array, 'UniformOutput', false);
+if isempty(match_list)
+	mep_beg_t = 10;
+	mep_end_t = 100;
+	return
+end
 
 % read in each matching fit info file, parse for the mep_begin_t
 keywords = {'mep_begin_t' 'mep_end_t'};

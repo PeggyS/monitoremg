@@ -14,12 +14,12 @@ x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use))
 if isprop(app, 'h_radio_mep')
 	for kk = 1:length(app.h_radio_mep.Children)
 		if app.h_radio_mep.Children(kk).Value
-			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_pp, or rb_mep_auc)
+			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
 		end
 	end
 end
 switch tag
-	case 'rb_mep_pp'
+	case 'rb_mep_ampl'
 		data_var = 'MEPAmpl_uVPp';
 		mepMethod = 'p2p';
 	case 'rb_mep_auc'

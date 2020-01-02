@@ -15,12 +15,12 @@ app.(axes_str).UserData.MEPAUC_uV_ms(table_row_num) = auc;
 if isprop(app, 'h_radio_mep')
 	for kk = 1:length(app.h_radio_mep.Children)
 		if app.h_radio_mep.Children(kk).Value
-			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_pp, or rb_mep_auc)
+			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
 		end
 	end
 end
 switch tag
-	case 'rb_mep_pp'
+	case 'rb_mep_ampl'
 		new_display_value = mep_val;
 	case 'rb_mep_auc'
 		new_display_value = auc;

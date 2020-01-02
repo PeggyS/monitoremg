@@ -6,6 +6,8 @@ function mep_button_selection(source,event, app)
 % update display of rc or sici
 if isgraphics(app.rc_axes)
 	axes_str = 'rc_axes';
+	% reset norm factor
+	app.rc_fit_ui.edNormFactor.String = '1';
 elseif isgraphics(app.sici_axes)
 	axes_str = 'sici_axes';
 end
@@ -17,15 +19,13 @@ switch event.NewValue.String
 		tbl_var_str = 'MEPAUC_uV_ms';
 		app.(axes_str).YLabel.String = 'MEP AUC (µV*ms)';
 		app.MmaxtoRCButton.Text = 'M AUC to RC';
-	case 'Peak-to-Peak'
+	case 'Amplitude'
 		app.h_emg_auc_patch.Visible = 'off';
 		tbl_var_str = 'MEPAmpl_uVPp';
 		app.(axes_str).YLabel.String = 'MEP Vp-p (µV)';
 		app.MmaxtoRCButton.Text = 'M-max to RC';
 end
 
-% reset norm factor
-app.rc_fit_ui.edNormFactor.String = '1';
 
 % replot the data
 app.(axes_str).YLabel.String;
@@ -46,4 +46,9 @@ end
 h_ml = findobj(app.rc_axes, 'Tag', 'meanLine');
 if ~isempty(h_ml)
 	delete(h_ml)
+end
+
+% for sici fig, recalc the mean, ci lines, etc
+if strcmp(axes_str, 'sici_axes')
+	recalc_sici([], [], app)
 end

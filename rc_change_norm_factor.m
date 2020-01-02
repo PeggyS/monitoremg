@@ -7,16 +7,16 @@ h_ax = app.rc_axes;
 % cla(h_ax)
 
 % find out if app is displaying MEP ampl or auc
-tag = 'rb_mep_pp'; % default is p2p amplitude
+tag = 'rb_mep_ampl'; % default is p2p amplitude
 if isprop(app, 'h_radio_mep')
 	for kk = 1:length(app.h_radio_mep.Children)
 		if app.h_radio_mep.Children(kk).Value
-			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_pp, or rb_mep_auc)
+			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
 		end
 	end
 end
 switch tag
-	case 'rb_mep_pp'
+	case 'rb_mep_ampl'
 		if norm_factor == 1
 			h_ax.YLabel.String = 'MEP Vp-p (µV)';
 		else
