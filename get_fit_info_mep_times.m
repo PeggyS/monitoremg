@@ -14,7 +14,7 @@ dir_cell_list = arrayfun(@(x)(x.name), dir_struct, 'UniformOutput', false);
 
 % fit info files are named <side>_<muscle>_<mep type>_fit_info_<norm
 % type>.txt, e.g. uninv_ta_p2p_fit_info_norm.txt
-fit_info_pat = [side_muscle '_.*' '_fit_info_.*'];
+fit_info_pat = ['^' side_muscle '_.*' '_fit_info_.*'];
 
 match_cell = cellfun(@(x)regexp(x, fit_info_pat, 'match'), dir_cell_list, 'UniformOutput', false);
 match_cell_array = match_cell(~cellfun(@isempty, match_cell));
