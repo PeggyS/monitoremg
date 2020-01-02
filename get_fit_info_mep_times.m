@@ -6,6 +6,9 @@ function [mep_beg_t, mep_end_t] = get_fit_info_mep_times(datapoint_csv_filename)
 [pname, fname, ext] = fileparts(datapoint_csv_filename);
 side_muscle = regexprep(fname, '_((rc)|(sici))_datapoints', '');
 
+% always look in the analysis folder path
+pname = strrep(pname, '/data/', '/analysis/');
+
 dir_struct = dir(pname); % all the files in the directory with the datapoint csv file
 dir_cell_list = arrayfun(@(x)(x.name), dir_struct, 'UniformOutput', false);
 
