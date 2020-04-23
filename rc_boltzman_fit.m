@@ -28,7 +28,7 @@ switch tag
 end
 y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
-% the sigmoid function with 3 parameters to fit
+% the sigmoid function with 4 parameters to fit
 % func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
 func = @(p,x) p(4) + (p(3)-p(4))./(1+exp(p(1)*(p(2)-x)));
 

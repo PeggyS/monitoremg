@@ -16,8 +16,16 @@ if length(file_list) < 1
 	return;
 end
 
+if contains(lower(analysisDir), 'tdcs')
+	db_str = 'tdcs_vgait';
+elseif contains(lower(analysisDir), 'myomo')
+	db_str = 'myomo';
+else
+	error('do not know what database to use from this path: %s', analysisDir)
+end
+
 % open connection to database
-dbparams = get_db_login_params('tdcs_vgait');
+dbparams = get_db_login_params(db_str);
 
 try
 	conn = dbConnect(dbparams.dbname, dbparams.user, dbparams.password, dbparams.serveraddr);
@@ -44,10 +52,16 @@ for i = 1:count
 	subj_str = regexp(pathname, '([sc][\d]+\w+)', 'match');
 	subj_str = subj_str{1};
     
-	
-	% pre, mid, post or followup session
-	session_str = lower(regexp(pathname, '(pre|mid|post|followup)', 'match'));
-	if isempty(session_str)		% no pre mid post or fu in the path
+	switch db_str
+		case 'tdcs_vgait'
+		% pre, mid, post or followup session
+		session_str = lower(regexp(pathname, '(pre|mid|post|followup)', 'match'));
+		
+		case 'myomo'
+			% sessions named week#
+			session_str = lower(regexp(pathname, '(week\d+)', 'match'));
+	end
+	if isempty(session_str)		% no session found in the path
 		error('no session found in pathname %s', pathname)
 	end
 	session_str = session_str{1};
@@ -57,7 +71,7 @@ for i = 1:count
 	side = side{1};
 	
 	% muscle
-	muscle = lower(regexpi(filename, '_(gastroc|ta)_', 'match'));
+	muscle = lower(regexpi(filename, '_(gastroc|ta|flexors|extensors)_', 'match'));
 	muscle = muscle{1};
 	muscle = strrep(muscle, '_', '');
 	

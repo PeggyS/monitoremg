@@ -35,6 +35,10 @@ if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	end
 end
 
+% if column PreStimEmg_100ms is missing, create it
+if ~any(contains(tbl.Properties.VariableNames, 'PreStimEmg_100ms'))
+	tbl.PreStimEmg_100ms = nan(height(tbl), 1);
+end
 % if prestim emg is nan, compute it
 if any(isnan(tbl.PreStimEmg_100ms))
 	disp('Computing Pre Stim EMG...')
@@ -56,6 +60,20 @@ if any(isnan(tbl.MEPAmpl_uVPp))
 								- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
 													emg.XData < str2double(app.h_edit_mep_end.String))) ;
 	end
+end
+
+% if monitorEMG or goal cols are missing, add them MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
+if ~any(contains(tbl.Properties.VariableNames, 'MonitorEMGval'))
+	tbl.MonitorEMGval = nan(height(tbl), 1);
+end
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMG'))
+	tbl.GoalEMG = nan(height(tbl), 1);
+end
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmin'))
+	tbl.GoalEMGmin = nan(height(tbl), 1);
+end
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmax'))
+	tbl.GoalEMGmax = nan(height(tbl), 1);
 end
 
 % ======= rc or sici fig ===========
