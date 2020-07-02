@@ -38,7 +38,7 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
 			app.MmaxtoRCButton.Text = 'M-max to RC';
 	end
-	app.rc_axes.YLabel.String = 'MEP Vp-p (µV)';
+	app.rc_axes.YLabel.String = 'MEP Vp-p (\muV)';
 else
 
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
@@ -50,7 +50,7 @@ else
 	app.rc_axes = axes('Position', [0.16 0.3 0.775 0.6], ...
 		'Fontsize', 20);
 	app.rc_axes.Toolbar.Visible = 'on';
-	ylabel('MEP Vp-p (µV)')
+	ylabel('MEP Vp-p (\muV)')
 	xlabel('Magstim Power')
 
 	% userdata is a table with the data

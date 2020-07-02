@@ -1,8 +1,8 @@
-function rc_fitinfo_to_db(analysisDir)
-% send the data in the *fit_info*.txt files to the tdcs_vgait.tms_rc_measures table in the database
+function m_h_data_to_db(analysisDir)
+% send the data in the m_max_h_reflex.csv files to the myomo.m_max_h_reflex table in the database
 %
 % analysisDir is a string to the top level of the directory structure, e.g.
-% /Users/peggy/Documents/BrainLab/tDCS Gait/Analysis/ta_rc/s2718tdvg
+% /Users/peggy/Documents/BrainLab/myomo_tbi/data/H_Reflex_M_Max/
 %	Default analysisDir is the current directory.
 
 if nargin < 1
@@ -10,7 +10,7 @@ if nargin < 1
 end
 
 % find fit info files
-file_list = regexpdir(analysisDir,'(_fit_info_).+\.txt$');	% fixed for mac 2013a
+file_list = regexpdir(analysisDir,'(m_max_h_reflex.csv)$');	
 if length(file_list) < 1
 	disp('found no _fit_info_*.txt files.')
 	return;
@@ -34,7 +34,7 @@ catch
 	return
 end
 % since this takes a while, display a waitbar
-hwb = waitbar(0, 'Sending MEP Recruitment Curve Data to the Database');
+hwb = waitbar(0, 'Sending H-Reflex Data to the Database');
 
 count = length(file_list);
 for i = 1:count
@@ -61,6 +61,10 @@ for i = 1:count
 			% sessions named week#
 			session_str = lower(regexp(pathname, '(week\d+)', 'match'));
 	end
+	
+	% read in the subj's data
+	tbl = readtable();
+	
 	if isempty(session_str)		% no session found in the path
 		error('no session found in pathname %s', pathname)
 	end
@@ -75,8 +79,6 @@ for i = 1:count
 	muscle = muscle{1};
 	muscle = strrep(muscle, '_', '');
 	
-	% read in the data
-	ds = readRcInfo(file_list{i});
 
 	% check to see if this is already in the database
 	db_data = conn.dbSearch('tms_rc_measures', {'norm_factor','last_update', 'id'}, 'subject', subj_str, ...

@@ -15,7 +15,12 @@ if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, d
 	colnames = strrep(colnames, '</center></html>', '');
 	colnames = strrep(colnames, '<br />', '_');
 	colnames = strrep(colnames, '*', '_');
-	data.Properties.VariableNames = colnames;
+	% fix several column names:
+	colnames = strrep(colnames, 'MonitorEMG_val', 'MonitorEMGval');
+	colnames = strrep(colnames, 'Goal_EMG', 'GoalEMG');
+	colnames = strrep(colnames, 'Goal_Min', 'GoalEMGmin');
+	colnames = strrep(colnames, 'Goal_Max', 'GoalEMGmax');
+	data.Properties.VariableNames = colnames; 
 else % request the file name	
 	[filename, pathname] = uigetfile('*.txt; *.csv', 'Pick a text file with MagStim_Setting and MEPAmpl_uVPp');
 	if isequal(filename,0) || isequal(pathname,0)

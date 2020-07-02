@@ -8,7 +8,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.emg_data_fig = figure('Position', [466 86  1160  1000], 'Name', 'EMG Data', ...
 		'NumberTitle', 'off');
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
-	ylabel('EMG (µV)')
+	ylabel('EMG (\muV)')
 	xlabel('Time (msec)')
 	
 	app.h_uitable = uitable('Position', [31 66 580 837], 'RowName', [], 'Tag', 'review_emg_uitable');
