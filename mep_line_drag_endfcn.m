@@ -29,6 +29,12 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	mep_seg = app.emg_data(row_cnt, ind_mep_min+1:ind_mep_max+1); % +1 because 1st value in emg_data is magstim value
 
 	mep_val = max(mep_seg) - min(mep_seg);
+	if app.SubtractPreEMGppButton.Value % subtract the pre stim emg
+		% compute the pre-stim emg
+		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
+		pre_stim_val = compute_pre_stim_emg_value(app, emg);
+		mep_val = mep_val - pre_stim_val;
+	end
 	
 	% AUC
 	pre_stim_col = find_uitable_column(app.h_uitable, 'PreStim');
