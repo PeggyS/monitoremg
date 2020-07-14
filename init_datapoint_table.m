@@ -2,10 +2,15 @@ function init_datapoint_table(app, tbl)
 % fill in the datapoint table with info in tbl (the rc data points)
 % tbl cols: Epoch,Use,MagStim_Setting,MEPAmpl_uVPp,PreStimEmg_100ms,MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
 
-% if the tbl is empty, then no recruit curve data table
+% if the tbl is empty, then data table was missing from data & analysis folders
 if isempty(tbl)
-	keyboard
-	% create the table - FIXME
+	% create the table
+	tbl = table('Size', [size(app.emg_data,1), 10], ...
+		'VariableTypes', {'double', 'logical', 'double', 'double', 'double', ...
+							'double', 'double', 'double', 'double', 'double'}, ...
+		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
+							'PreStimEmg_100ms', 'MonitorEMGval', 'GoalEMG', 'GoalEMGmin', 'GoalEMGmax'});
+% 	tbl.Epoch = 
 end
 
 % col 2 = Use = logical
