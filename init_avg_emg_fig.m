@@ -1,13 +1,13 @@
 function init_avg_emg_fig(app)
 
-% if there is already a sici fig, clear old axes & fit info
+% if there is already a average fig, clear old axes
 if ~isempty(findobj('Name', 'Average EMG'))
 	app.avg_emg_axes;
 	
 else
 
 	app.avg_emg_fig = figure('Position', [1544 483 506 505], ...
-		'NumberTitle', 'off', 'Name', 'Average EMG') %%, ...
+		'NumberTitle', 'off', 'Name', 'Average EMG'); %%, ...
  		% 'MenuBar', 'none', 'ToolBar', 'none');
 
 

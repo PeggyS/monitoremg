@@ -50,6 +50,9 @@ elseif isgraphics(app.sici_axes)
 		end
 	end
 	which_axes = 'sici_axes';
+else
+	% neither rc or sici
+	return
 end
 
 % data table is saved in axes userdata

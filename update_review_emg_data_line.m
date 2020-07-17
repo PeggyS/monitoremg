@@ -34,6 +34,8 @@ if isgraphics(app.rc_axes)
 	h_ax = app.rc_axes;
 elseif isgraphics(app.sici_axes)
 	h_ax = app.sici_axes;
+else
+	return
 end
 h_line = find_rc_datapoint(h_ax, new_row);
 if ~isempty(h_line)

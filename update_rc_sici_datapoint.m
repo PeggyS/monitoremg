@@ -4,6 +4,8 @@ if isgraphics(app.rc_axes)
 	axes_str = 'rc_axes';
 elseif isgraphics(app.sici_axes)
 	axes_str = 'sici_axes';
+else
+	return
 end
 
 % update table with MEPAmpl & auc

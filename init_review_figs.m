@@ -133,6 +133,13 @@ elseif app.CheckBoxSici.Value == 1
 	if isgraphics(app.rc_fig)
 		delete(app.rc_fig)
 	end
+else
+	if isgraphics(app.sici_fig)
+		delete(app.sici_fig)
+	end
+	if isgraphics(app.rc_fig)
+		delete(app.rc_fig)
+	end
 end
 
 % % text display of MEP amplitude
