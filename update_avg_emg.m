@@ -1,14 +1,28 @@
 function update_avg_emg(source, event, app)
 
 % get emg data & display average
-if isempty(app.fullfilename)
+if isprop(app, 'fullfilename') %% emg_rc app is running
+	if isempty(app.fullfilename)
+		return
+	end
+	data = load(app.fullfilename);
+	% remove rows not being used (col = 0)
+	row_msk = data(:,1) > 0;
+	data = data(row_msk,:);
+
+elseif isprop(app, 'EMGDataTxtEditField') %% review_emg_rc is running
+	data = app.emg_data;
+	if app.emg_data_num_vals_ignore < 2 %% old data, need to add Use column
+		data = [zeros(size(data,1), 1) data];
+	end
+	% change 1st col of data (use value) to the checkboxes in the uitable
+	row_msk = [app.h_uitable.Data{:,2}]';
+	data(:,1) = row_msk;
+	data = data(row_msk,:);
+else
 	return
 end
 
-data = load(app.fullfilename);
-% remove rows not being used (col = 0)
-row_msk = data(:,1) > 0;
-data = data(row_msk,:);
 
 delete(app.avg_emg_axes.Children) %% remove existing lines
 
