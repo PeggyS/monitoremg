@@ -1,6 +1,6 @@
 function init_avg_emg_fig(app)
 
-% if there is already a average fig, clear old axes
+% if there is already a average fig, clear old data
 if ~isempty(findobj('Name', 'Average EMG'))
 	app.avg_emg_axes;
 	
@@ -13,7 +13,7 @@ else
 
 	app.avg_emg_axes = axes('Position', [0.16 0.3 0.775 0.6], ...
 		'Fontsize', 20);
-	ylabel('EMG (µV)')
+	ylabel('EMG (\muV)')
 	xlabel('Time (msec)')
 
 
