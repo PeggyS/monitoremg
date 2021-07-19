@@ -63,16 +63,20 @@ if any(isnan(tbl.MEPAmpl_uVPp))
 end
 
 % if monitorEMG or goal cols are missing, add them MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
-if ~any(contains(tbl.Properties.VariableNames, 'MonitorEMGval'))
+if ~any(contains(tbl.Properties.VariableNames, 'MonitorEMGval') | ...
+		contains(tbl.Properties.VariableNames, 'MonitorEMG_val'))
 	tbl.MonitorEMGval = nan(height(tbl), 1);
 end
-if ~any(contains(tbl.Properties.VariableNames, 'GoalEMG'))
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMG') | ...
+		contains(tbl.Properties.VariableNames, 'Goal_EMG'))
 	tbl.GoalEMG = nan(height(tbl), 1);
 end
-if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmin'))
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmin') | ...
+		contains(tbl.Properties.VariableNames, 'Goal_Min'))
 	tbl.GoalEMGmin = nan(height(tbl), 1);
 end
-if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmax'))
+if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmax') | ...
+		contains(tbl.Properties.VariableNames, 'Goal_Max'))
 	tbl.GoalEMGmax = nan(height(tbl), 1);
 end
 
