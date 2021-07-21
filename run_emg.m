@@ -106,7 +106,16 @@ while app.StartButton.Value
 				if strncmp(markInfo(1).label', 'R128', 4)
 					% markInfo.pos is zero-based relative position in the block 
 					if isnan(triggerPos)
-						triggerPos = size(app.emgTriggerDataMat,2)-numPoints + markInfo.pos; 
+% 						disp(size(app.emgTriggerDataMat,2))
+% 						disp(numPoints)
+% 						disp(markInfo.pos)
+						if length(markInfo) > 1
+							for m_cnt = 1:length(markInfo)
+								disp(['marker ' num2str(m_cnt)])
+								disp(markInfo(m_cnt))
+							end
+						end
+						triggerPos = size(app.emgTriggerDataMat,2)-numPoints + markInfo(1).pos; 
 					end
 					% fprintf('triggerPos = %d\n',  triggerPos);
 					% get magstim value now
