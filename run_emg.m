@@ -3,10 +3,12 @@ triggerPos = NaN; % position/index in the datavec when the trigger msg was rec'd
 % index when triggerPos is at correct position to record the proper pre & post amt of data
 triggerInd = app.params.preTriggerTime / 1000 * app.params.sampFreq;
 
+tic;
+num_loops = 0;
 % fid = fopen('emg_data.txt', 'w');
-
 while app.StartButton.Value
    % get message from server
+   t_start = tic;
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
 		
@@ -42,8 +44,9 @@ while app.StartButton.Value
 	
 		 
       case 2		%% Data Message
-         %fprintf('\n');
-         %disp('Read a block of data')
+%          fprintf('\n');
+% 		 t_block_read = toc(t_start);
+%          fprintf('Read in a block of data in %g sec\n', t_block_read)
          [data, numPoints, markInfo] = doDataMsg(msgBlock, app.chanInfo);
          % put new data into the data vectors
 		 try
@@ -148,10 +151,16 @@ while app.StartButton.Value
          disp('BrainVision: Stop Monitoring')
          
    end
-   drawnow;
+%    drawnow;
+	pause(0)
+   num_loops = num_loops + 1;
+%    t_while_loop = toc(t_start);
+%    fprintf('Completed a while loop in %g sec\n', t_while_loop)
 end
 % fclose(fid);
 set(app.hLine, 'YData', [0 1]);
+% fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)\
+fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
 return
 
 % ===============================================================================

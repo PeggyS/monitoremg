@@ -26,7 +26,7 @@ function updateDisplay(app, dataVec, markInfo)
         else
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).label, val, magstim_val);
             msg = sprintf('emg = %4.0f, magstim = %d', app.monitorEMGval, magstim_val);
-            drawnow
+%             drawnow
         end
 		app.msgText.Text = msg;
 
@@ -42,7 +42,7 @@ function updateDisplay(app, dataVec, markInfo)
 
         if app.peakVal > app.UIAxes.YLim(2)
         	set(app.UIAxes, 'YLim', [ 0, app.peakVal * 1.1]);
-        	drawnow
+%         	drawnow
         end
 
         set(app.hPeakLine, 'Visible', 'on')
