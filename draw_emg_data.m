@@ -11,7 +11,8 @@ if max_y-min_y > eps
 end
 
 % compute the pre-stim emg
-pre_stim_val = compute_pre_stim_emg_value(app, emg_data);
+% pre_stim_val = compute_pre_stim_emg_value(app, emg_data);
+pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
 
 set(app.pre_emg_text, 'String', [num2str(monitor_emg_val) ' (' num2str(round(pre_stim_val)) ')'])
 % change the color depending on the proximity to the goal
