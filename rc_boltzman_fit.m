@@ -10,21 +10,26 @@ mep_end = app.h_t_max_line.XData(1);
 % the data
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
 % make provision for MEPAUC:
-% find out if app is displaying MEP ampl or auc
+% find out if app is displaying MEP ampl or auc - currently only applies
+% when using the review_emg app
 if isprop(app, 'h_radio_mep')
 	for kk = 1:length(app.h_radio_mep.Children)
 		if app.h_radio_mep.Children(kk).Value
 			tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
 		end
 	end
-end
-switch tag
-	case 'rb_mep_ampl'
-		data_var = 'MEPAmpl_uVPp';
-		mepMethod = 'p2p';
-	case 'rb_mep_auc'
-		data_var = 'MEPAUC_uV_ms';
-		mepMethod = 'auc';
+
+	switch tag
+		case 'rb_mep_ampl'
+			data_var = 'MEPAmpl_uVPp';
+			mepMethod = 'p2p';
+		case 'rb_mep_auc'
+			data_var = 'MEPAUC_uV_ms';
+			mepMethod = 'auc';
+	end
+else
+	data_var = 'MEPAmpl_uVPp';
+	mepMethod = 'p2p';
 end
 y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
