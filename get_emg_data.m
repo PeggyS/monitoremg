@@ -107,8 +107,8 @@ while app.CheckBoxDisplayMEP.Value
 
 % 			% display the data
 			[mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, ...
-
-			app.emg_data_mmap.Data(live_chan_num).goal_min, app.emg_data_mmap.Data(live_chan_num).goal_max);
+				app.emg_data_mmap.Data(live_chan_num).goal_min, ...
+				app.emg_data_mmap.Data(live_chan_num).goal_max);
 			
 % 			% compute the pre-stim emg
 % 			left_time = app.preEmgMinEditField.Value; % 100 ms prior to stim (+ 1 ms to allow for stim artifact)
