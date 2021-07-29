@@ -77,7 +77,7 @@ while app.CheckBoxDisplayMEP.Value
 								% data being appended to an existing file, but the app is 
 								% counting samples from 0 - warn the user
 								beep
-								warning('Data being appended to %s', app.fullfilename)
+								warning('Data being appended to %s\nWindow numbers and file line numbers will not agree!', app.fullfilename)
 							end
 						end
 						fprintf(fid, '%d', app.active_sample_checkbox.Value);
