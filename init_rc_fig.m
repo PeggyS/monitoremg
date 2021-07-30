@@ -19,16 +19,7 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 	app.rc_fit_ui.txtRsq.String = 'Rsq = 0.0';
 	app.rc_fit_ui.txtAUC.String = 'AUC = 0.0';
 	% switch rb to default displaying MEP ampl 
-	if isprop(app, 'h_radio_mep')
-		for kk = 1:length(app.h_radio_mep.Children)
-			if app.h_radio_mep.Children(kk).Value
-				tag = app.h_radio_mep.Children(kk).Tag; % tag of selected radio button (either rb_mep_ampl, or rb_mep_auc)
-				rb_ind = kk;
-			else
-				rb_other_ind = kk;
-			end
-		end
-	end
+	tag = find_selected_radio_button(app.h_radio_mep);
 	switch tag
 		case 'rb_mep_ampl'
 			% do nothing
