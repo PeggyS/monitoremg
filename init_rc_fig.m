@@ -25,8 +25,15 @@ if ~isempty(findobj('Name', 'Recruitment Curve'))
 			% do nothing
 		case 'rb_mep_auc'
 			% make rb_mep_ampl selected
-			app.h_radio_mep.Children(rb_ind).Value = 0;
-			app.h_radio_mep.Children(rb_other_ind).Value = 1;
+			for c_cnt=1:length(app.h_radio_mep.Children)
+				if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
+					app.h_radio_mep.Children(c_cnt).Value = 1;
+				else
+					app.h_radio_mep.Children(c_cnt).Value = 0;
+				end
+			end
+% 			app.h_radio_mep.Children(rb_ind).Value = 0;
+% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
 			app.MmaxtoRCButton.Text = 'M-max to RC';
 	end
 	app.rc_axes.YLabel.String = 'MEP Vp-p (\muV)';
