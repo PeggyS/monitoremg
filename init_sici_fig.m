@@ -1,7 +1,7 @@
 function init_sici_fig(app)
 
 % if there is already a sici fig, clear old axes & fit info
-if ~isempty(findobj('Name', 'SICI & ICF'))
+if ~isempty(findobj('Tag', 'sici_icf_fig'))
 	app.sici_axes;
 	
 % 	% clear any existing fit_info
@@ -19,11 +19,31 @@ if ~isempty(findobj('Name', 'SICI & ICF'))
 % 	app.sici_info.sd_icf.String = '';
 % 	app.sici_info.n_icf.String = '0';
 
+% switch rb to default displaying MEP ampl 
+	tag = find_selected_radio_button(app.h_radio_mep);
+	switch tag
+		case 'rb_mep_ampl'
+			% do nothing
+		case 'rb_mep_auc'
+			% make rb_mep_ampl selected
+			for c_cnt=1:length(app.h_radio_mep.Children)
+				if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
+					app.h_radio_mep.Children(c_cnt).Value = 1;
+				else
+					app.h_radio_mep.Children(c_cnt).Value = 0;
+				end
+			end
+% 			app.h_radio_mep.Children(rb_ind).Value = 0;
+% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
+			app.MmaxtoRCButton.Text = 'M-max to RC';
+			app.rc_axes.YLabel.String = 'MEP Vp-p (\muV)';
+	end
 	
 else
 
 	app.sici_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'SICI & ICF', ...
+		'Tag', 'sici_icf_fig', ...
  		'MenuBar', 'none', 'ToolBar', 'none');
 
 
@@ -103,7 +123,21 @@ else
 			'Position', [0.63 0.019 0.15 0.06], ...
 			'FontSize', 16, ...
 			'Callback', {@recalc_sici, app});
-	
+		
+	% norm factor
+	uicontrol(app.sici_fig, ...
+		'Style', 'text', ...
+		'String', 'Norm Factor', ...
+		'Units', 'normalized', ...
+		'Position', [0.04 0.28 0.149 0.04], ...
+		'FontSize', 12);
+	app.rc_fit_ui.edNormFactor = uicontrol(app.sici_fig, ...
+		'Style', 'edit', ...
+		'String', '1.0', ...
+		'Units', 'normalized', ...
+		'Position', [0.05 0.24 0.122 0.032], ...
+		'FontSize', 12, ...
+		'Callback', {@rc_change_norm_factor, app});
 	% % mean
 	uicontrol(app.sici_fig, ...
 		'Style', 'text', ...

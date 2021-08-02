@@ -10,6 +10,7 @@ if isgraphics(app.rc_axes)
 	app.rc_fit_ui.edNormFactor.String = '1';
 elseif isgraphics(app.sici_axes)
 	axes_str = 'sici_axes';
+	app.rc_fit_ui.edNormFactor.String = '1';
 else
 	return
 end

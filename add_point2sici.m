@@ -32,7 +32,7 @@ end
 h_line = line(h_ax, x_value, mep_val, 'Marker', marker, 'MarkerSize', markersize);
 h_line.UserData.table_row_num = table_row_num;
 
-drawnow
+pause(0)
 
 % make sure sici window is in front, so context menu gets
 % created in the correct figure

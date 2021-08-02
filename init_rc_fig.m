@@ -1,7 +1,7 @@
 function init_rc_fig(app)
 
 % if there is already a rc fig, clear old axes & fit info
-if ~isempty(findobj('Name', 'Recruitment Curve'))
+if ~isempty(findobj('tag', 'rc_fig'))
 	app.rc_axes;
 	
 	% clear any existing fit_info
@@ -41,6 +41,7 @@ else
 
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'Recruitment Curve', ...
+		'Tag', 'rc_fig', ...
 		'ToolBar', 'none', 'MenuBar', 'none'); 
 
 	app.rc_fig.UserData.app = app;
