@@ -65,6 +65,9 @@ try
 		% get the TS & CS values
 		app.sici_info.ts_value = str2double(app.sici_ui.ts.String);
 		app.sici_info.cs_value = str2double(app.sici_ui.cs.String);
+		% default IPIs
+		app.sici_info.sici_ipi = 2;
+		app.sici_info.icf_ipi  = 10;
 		if confirm_saving
 			try
 				write_fit_info(sici_info_fname, app.sici_info)
