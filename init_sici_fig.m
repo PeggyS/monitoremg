@@ -43,12 +43,12 @@ else
 
 	app.sici_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'SICI & ICF', ...
-		'Tag', 'sici_icf_fig', ...
- 		'MenuBar', 'none', 'ToolBar', 'none');
+		'Tag', 'sici_icf_fig');  %, ...
+%  		'MenuBar', 'none');  %, 'ToolBar', 'none');
 
 
 	app.sici_axes = axes('Position', [0.16 0.3 0.775 0.6], ...
-		'Fontsize', 20, 'xlim', [0.5 3.5], 'xtick', 1:3, 'xticklabel', {'TS', 'SICI', 'ICF'});
+		'Fontsize', 20, 'xlim', [0.5 4.5], 'xtick', 1:4, 'xticklabel', {'TS', 'SICI', 'ICF', 'LICI'});
 	ylabel('MEP Vp-p (\muV)')
 	% xlabel('Stim Type')
 
@@ -236,6 +236,12 @@ else
 	app.sici_ui.icf_sddownline = line([2.7 3.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
 	app.sici_ui.icf_ciupline = line([2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 	app.sici_ui.icf_cidownline = line([2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+
+	app.sici_ui.lici_mline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
+	app.sici_ui.lici_sdupline = line([3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.lici_sddownline = line([3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.lici_ciupline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.lici_cidownline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 
 end
 

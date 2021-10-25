@@ -27,6 +27,11 @@ switch stim_type
 		markersize = 40;
 		x_value = 3;
 		info_var = 'icf';	
+	case 'LICI'
+		marker = '.';
+		markersize = 40;
+		x_value = 4;
+		info_var = 'lici';
 end
 
 h_line = line(h_ax, x_value, mep_val, 'Marker', marker, 'MarkerSize', markersize);
