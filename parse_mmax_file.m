@@ -10,7 +10,10 @@ if isempty(mmax_fname) || isempty(session) || isempty(muscle)
 	return
 end
 
-m_tbl = readtable(mmax_fname, 'datelocale', '%{MM/dd/uuuu}D');
+% m_tbl = readtable(mmax_fname, 'datelocale', '%{MM/dd/uuuu}D'); error:
+% datelocale is the wrong option to use. It's used for interpreting
+% non-English months & days fo the week
+m_tbl = readtable(mmax_fname);
 m_tbl.Properties.VariableNames = lower(m_tbl.Properties.VariableNames);
 
 m_tbl.session = nominal(m_tbl.session);
