@@ -36,7 +36,7 @@ if ~isempty(findobj('Tag', 'sici_icf_fig'))
 % 			app.h_radio_mep.Children(rb_ind).Value = 0;
 % 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
 			app.MmaxtoRCButton.Text = 'M-max to RC';
-			app.rc_axes.YLabel.String = 'MEP Vp-p (\muV)';
+			app.sici_axes.YLabel.String = 'MEP Vp-p (\muV)';
 	end
 	
 else
