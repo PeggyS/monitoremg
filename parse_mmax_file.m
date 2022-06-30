@@ -33,16 +33,16 @@ else
 end
 
 
-m_max = table2array(m_tbl(m_tbl.session == session & m_tbl.side == side & m_tbl.muscle == musc,{'mep_ampl_uv'}));
+m_max = table2array(m_tbl(m_tbl.session == lower(session) & m_tbl.side == side & m_tbl.muscle == musc,{'mep_ampl_uv'}));
 
 try
-	m_auc = table2array(m_tbl(m_tbl.session == session & m_tbl.side == side & m_tbl.muscle == musc,{'mep_auc_uvms'}));
+	m_auc = table2array(m_tbl(m_tbl.session == lower(session) & m_tbl.side == side & m_tbl.muscle == musc,{'mep_auc_uvms'}));
 catch
 	disp('%s does not have mep_auc_uvms variable.', mmax_fname)
 end
 
 try
-	m_dur = table2array(m_tbl(m_tbl.session == session & m_tbl.side == side & m_tbl.muscle == musc,{'mep_dur_ms'}));
+	m_dur = table2array(m_tbl(m_tbl.session == lower(session) & m_tbl.side == side & m_tbl.muscle == musc,{'mep_dur_ms'}));
 catch
 	disp('%s does not have mep_dur_ms variable.', mmax_fname)
 end
