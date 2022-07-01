@@ -68,14 +68,23 @@ try
 	if isfield(app.sici_info, 'ts_n')
 		
 		[confirm_saving, sici_info_fname] = confirm_savename(sici_info_fname);
-		
-		% get the TS & CS values
-		app.sici_info.ts_value = str2double(app.sici_ui.ts.String);
-		app.sici_info.cs_value = str2double(app.sici_ui.cs.String);
-		% default IPIs
-		app.sici_info.sici_ipi = 2;
-		app.sici_info.icf_ipi  = 10;
 		if confirm_saving
+			% get the TS & CS values
+			app.sici_info.ts_value = str2double(app.sici_ui.ts.String);
+			app.sici_info.cs_value = str2double(app.sici_ui.cs.String);
+			if isnan(app.sici_info.ts_value) || isnan(app.sici_info.cs_value)
+				beep
+				warning('Test stim and Conditioning stim values must be filled in before saving.')
+				error('ts  and cs values are nan')
+			end
+			% default IPIs
+			app.sici_info.sici_ipi = 2;
+			app.sici_info.icf_ipi  = 10;
+		
+			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
+			app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
+			app.sici_info.mep_begin_t = str2double(app.h_edit_mep_begin.String);
+			app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
 			try
 				write_fit_info(sici_info_fname, app.sici_info)
 			catch ME
