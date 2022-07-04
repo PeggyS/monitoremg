@@ -1,4 +1,5 @@
 function init_sici_fig(app)
+% create the figure showing Test Stim, SICI, ICF, and LICI
 
 % if there is already a sici fig, clear old axes & fit info
 if ~isempty(findobj('Tag', 'sici_icf_fig'))
