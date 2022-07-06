@@ -1,4 +1,5 @@
 function init_review_figs(app)
+% create the main figure with table of data and emg data for each sample
 
 % default mep begin & end times
 mep_beg_t = 15;
@@ -105,7 +106,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	
 	% emg auc line
 	app.h_emg_auc_patch = patch(app.h_disp_emg_axes, ...
-		[10 10 90 90], [10 100 100 10], [0.4 0.4 0.4]);
+		[10 10 90 90], [10 100 100 10], [0.4 0.4 0.4]); 
 	app.h_emg_auc_patch.FaceAlpha = 0.5;
 	app.h_emg_auc_patch.Visible = 'off';
 

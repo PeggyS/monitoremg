@@ -4,7 +4,12 @@ cur_dir = pwd;
 if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	% review_emg_rc app has no property for save location, use file path
 	% location
-	[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
+	try
+		[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
+	catch
+		delete(source)
+		return
+	end
 	save_loc = pname;
 	% if the current directory has '/data/' in it then change it
 	% '/analysis/' to save the output there

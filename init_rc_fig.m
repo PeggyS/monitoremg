@@ -1,5 +1,5 @@
 function init_rc_fig(app)
-% create the main figure with table of data and emg data for each sample
+% create the figure showing recruitment curve and sigmoid fit
 
 % if there is already a rc fig, clear old axes & fit info
 if ~isempty(findobj('tag', 'rc_fig'))
