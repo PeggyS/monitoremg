@@ -3,3 +3,4 @@
 *.m~
 emg_data.data
 magstim_val.data
+*.asv
