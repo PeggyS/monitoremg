@@ -95,10 +95,10 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	% min & max vertical lines - draggable
 	app.h_t_min_line = line(app.h_disp_emg_axes, [mep_beg_t mep_beg_t], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_min_line');
-	draggable(app.h_t_min_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
+	draggable(app.h_t_min_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn);
 	app.h_t_max_line = line(app.h_disp_emg_axes, [mep_end_t mep_end_t], [-1e6 1e6], ...
 	  'LineWidth', 2, 'Color', [0 0.9 0], 'UserData', app, 'Tag', 'mep_max_line');
-	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn)
+	draggable(app.h_t_max_line, 'h', [0 200], 'endfcn', @mep_line_drag_endfcn);
 	
 	% pre-stim emg line
 	app.h_pre_stim_emg_line = line(app.h_disp_emg_axes, ...
