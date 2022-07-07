@@ -13,8 +13,8 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	save_loc = pname;
 	% if the current directory has '/data/' in it then change it
 	% '/analysis/' to save the output there
-	if contains(save_loc, '/data/', 'IgnoreCase', true)
-		save_loc = strrep(lower(save_loc), '/data/', '/analysis/');
+	if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
+		save_loc = strrep(lower(save_loc), [filesep 'data' filesep], [filesep 'analysis' filesep]);
 		% ask to create the folder if it doesn't exist
 		if ~exist(save_loc, 'dir')
 			ButtonName = questdlg(['Create new directory: ' save_loc ' ?'], ...
@@ -53,9 +53,9 @@ if contains(title_str, '.csv') % it's a file read in, no need to add prefix
 		fitinfo_fname = 'fit.txt';
 	end
 else
-	datapoint_fname = [save_loc '/' fname_prefix title_str '_rc_datapoints.csv'];
+	datapoint_fname = [save_loc filesep fname_prefix title_str '_rc_datapoints.csv'];
 	if isfield(app.rc_fit_info, 'mepMethod')
-		fitinfo_fname = [save_loc '/' fname_prefix title_str '_' app.rc_fit_info.mepMethod '_fit_info.txt'];
+		fitinfo_fname = [save_loc filesep fname_prefix title_str '_' app.rc_fit_info.mepMethod '_fit_info.txt'];
 	else
 		fitinfo_fname = 'fit.txt';
 	end
