@@ -22,4 +22,5 @@ end
 % update epoch number under the axes
 app.h_edit_epoch.String = num2str(new_row);
 
+% update emg data
 update_review_emg_data_line(app, h_tbl, new_row)

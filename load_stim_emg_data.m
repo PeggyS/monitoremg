@@ -8,8 +8,6 @@ if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, d
 % 	else
  	end
 
-% why read in again, we already computed AUC and added it to h_uitable if needed  when
-% it was read in
 	data = cell2table(app.h_uitable.Data);
 	colnames = strrep(app.h_uitable.ColumnName, '<html><center>', '');
 	colnames = strrep(colnames, '</center></html>', '');

@@ -25,7 +25,9 @@ ind_mep_max = find(t<=t_mep_max, 1, 'last');
 emg.XData = app.h_emg_line.XData;
 for row_cnt = 1:length(app.h_uitable.Data)
 	
-	% get mep p-p  value 	
+	% get mep p-p  value 
+	% FIXME - after 2019-06-01, emg data has 2 values at beginning of the
+	% line - Use and magstim value
 	mep_seg = app.emg_data(row_cnt, ind_mep_min+1:ind_mep_max+1); % +1 because 1st value in emg_data is magstim value
 
 	mep_val = max(mep_seg) - min(mep_seg);

@@ -4,7 +4,13 @@ if new_row == 0 || new_row > size(h_tbl.Data,1)
 	return
 end
 % display emg data
+% shift the data by the ISI (time between conditioning stim and test stim)
+% FIXME
+% find the ISI (from the table)
+% shift data by the ISI
+% update conditioning stim line h_cs_line
 app.h_emg_line.YData = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
+
 % if y limits are the same, make them wider
 ymin = min(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
 ymax = max(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));

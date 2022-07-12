@@ -42,6 +42,40 @@ if any(isnan(tbl.MagStim_Setting))
 	tbl.MagStim_Setting = app.emg_data(:, magstim_col);
 end
 
+% if there is no ISI col, add it
+% FIXME
+if ~contains(tbl.Properties.VariableNames, 'ISI')
+	disp('Guessing ISI...')
+	n_cols = width(tbl);
+	tbl = [tbl(:,1:3) array2table(nan(height(tbl),1)) tbl(:,4:n_cols)];
+	tbl.Properties.VariableNames{4} = 'ISI_ms';
+end
+% if ISI are nan guess them
+if any(isnan(tbl.ISI_ms))
+	ts_ind = find(contains(tbl.Properties.VariableNames, 'Stim_type', 'IgnoreCase', true));
+	if ~isempty(ts_ind) % if there should be different isi values for sici and icf
+		for row_cnt = 1:height(tbl)
+			stim_type = tbl{row_cnt, ts_ind};
+			switch lower(stim_type{:})
+				case 'test stim'
+					isi = 0;
+				case 'sici'
+					isi = 2;
+				case 'icf'
+					isi = 10;
+				otherwise
+					isi = 0;
+					beep
+					disp(['init_datapoint_table.m: unknown stim type: ' stim_type])
+			end
+			tbl.ISI_ms(row_cnt) = isi;
+		end
+	else
+		% not sici icf, make ISI = 0 for all rows
+		tbl.ISI_ms = zeros(height(tbl), 1);
+	end
+end
+
 % if there is no MEPAUC col, add it
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	disp('Computing MEP AUC...')
@@ -117,6 +151,7 @@ end
 if app.CheckBoxSici.Value == 1
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
+		   '<html><center>ISI<br />ms</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
 		   '<html><center>Stim<br />Type</center></html>', ...
@@ -125,11 +160,12 @@ if app.CheckBoxSici.Value == 1
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, true, false, false, false, false, false, false];
+	colwidths = {40, 30, 50, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, true, false, false, false, false, false, false];
 else % rc or data only / average
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
+		   '<html><center>ISI<br />ms</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
            '<html><center>PreStimEmg<br />100ms</center></html>', ...
@@ -137,8 +173,8 @@ else % rc or data only / average
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	  colwidths = {40, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, false, false, false, false, false, false];
+	  colwidths = {40, 30, 50, 30, 50, 'auto', 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, false, false, false, false, false, false];
 end
 
 

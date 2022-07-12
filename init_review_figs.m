@@ -50,7 +50,8 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		'Tag', 'edit_epoch', ...
 		'String', num2str(0), 'fontsize', 16, ...
 		'Callback', {@edit_epoch, app});
-	
+
+	% MEP begin, duration, and end times
 	uicontrol('Style', 'text', 'Units', 'normalized', ...
 		'Position', [0.59 0.43 0.08 0.03], 'Fontsize', 16, ...
 		'String', 'MEP begin', ...
@@ -91,6 +92,9 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	% lines at x,y = 0,0
 	line(app.h_disp_emg_axes, app.h_disp_emg_axes.XLim, [0 0]);
 	line(app.h_disp_emg_axes, [0 0], [-1e6 1e6]);
+
+	% line at Test stim (when ISI > 0)
+	app.h_cs_line = line(app.h_disp_emg_axes, [0 0], [-1e6 1e6], 'Color', 'red', 'Visible', 'off');
 
 	% min & max vertical lines - draggable
 	app.h_t_min_line = line(app.h_disp_emg_axes, [mep_beg_t mep_beg_t], [-1e6 1e6], ...
@@ -134,11 +138,19 @@ title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
 
 % ======= rc or sici fig ===========
 if app.CheckBoxRc.Value == 1
+	% ISI conditioning stim line
+	if isgraphics(app.h_label_isi)
+		app.h_cs_line.Visible = 'off';
+	end
+	% create the recruitment curve figure
 	init_rc_fig(app)
 	if isgraphics(app.sici_fig)
 		delete(app.sici_fig)
 	end
 elseif app.CheckBoxSici.Value == 1
+	% ISI conditioning stim line
+	app.h_cs_line.Visible = 'on';
+	% create the sici, icf figure
 	init_sici_fig(app)
 	if isgraphics(app.rc_fig)
 		delete(app.rc_fig)
