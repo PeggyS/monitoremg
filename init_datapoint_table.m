@@ -6,14 +6,15 @@ function init_datapoint_table(app, tbl)
 if isempty(tbl)
 	% create the table
 	num_rows = size(app.emg_data,1);
-	tbl = table('Size', [num_rows, 10], ...
-		'VariableTypes', {'double', 'logical', 'double', 'double', 'double', ...
+	tbl = table('Size', [num_rows, 11], ...
+		'VariableTypes', {'double', 'logical', 'double', 'double', 'double', 'double', ...
 							'double', 'double', 'double', 'double', 'double'}, ...
 		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
 							'PreStimEmg_100ms', 'MonitorEMGval', 'GoalEMG', 'GoalEMGmin', 'GoalEMGmax'});
  	tbl.Epoch = (1:num_rows)';
 	tbl.Use = true(num_rows, 1);
 	tbl.MagStim_Setting = nan(num_rows, 1);
+	tbl.ISI_ms = nan(num_rows, 1);
 	tbl.MEPAmpl_uVPp = nan(num_rows, 1);
 	tbl.MEPAUC_uV_ms = nan(num_rows, 1);
 	tbl.PreStimEmg_100ms = nan(num_rows, 1);
@@ -43,7 +44,6 @@ if any(isnan(tbl.MagStim_Setting))
 end
 
 % if there is no ISI col, add it
-% FIXME
 if ~contains(tbl.Properties.VariableNames, 'ISI')
 	disp('Guessing ISI...')
 	n_cols = width(tbl);
@@ -94,7 +94,14 @@ if any(isnan(tbl.MEPAUC_uV_ms))
 		mep_start_time = app.h_t_min_line.XData(1);
 		mep_end_time = app.h_t_max_line.XData(1);
 		
+		% if ISI > 0, shift the data by ISI ms
+		if tbl.ISI_ms > 0
+			shift_ISI = round(app.params.sampFreq * tbl.ISI_ms / 1000);
+		else
+			shift_ISI = 0;
+		end
 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
+		emg.YData = [emg.YData(shift_ISI+1:end) nan(1,shift_ISI)];
 		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 		
 		auc = compute_auc(vertices);
@@ -161,7 +168,7 @@ if app.CheckBoxSici.Value == 1
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
 	colwidths = {40, 30, 50, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, true, true, false, false, false, false, false, false];
+	  coledit = [false, true, true, true, false, false, true, false, false, false, false, false];
 else % rc or data only / average
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
@@ -174,7 +181,7 @@ else % rc or data only / average
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
 	  colwidths = {40, 30, 50, 30, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, true, false, false, false, false, false, false];
+	  coledit = [false, true, true, true, false, false, false, false, false, false, false];
 end
 
 
@@ -186,17 +193,5 @@ app.h_uitable.ColumnEditable = coledit;
 app.h_uitable.CellEditCallback = {'rc_dp_tbl_edit_callback', app};
 app.h_uitable.CellSelectionCallback = {'rc_dp_tbl_select_callback', app};
 
-% keyboard
 
 
-% m = numeric handle to uitable
-% m = uitable(...); 
-% jUIScrollPane = findjobj(m);
-% jUITable = jUIScrollPane.getViewport.getView;
-% jUITable.changeSelection(row-1,col-1, false, false);
-% subtract 1 from row and col you want selected
-% the last two arguments do the following:
-% false, false: Clear the previous selection and ensure the new cell is selected.
-% false, true: Extend the previous selection (select a range of cells).
-% true, false: Toggle selection
-% true, true: Apply the selection state of the anchor to all cells between it and the specified cell.

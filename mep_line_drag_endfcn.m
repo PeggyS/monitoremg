@@ -3,50 +3,44 @@ function mep_line_drag_endfcn(h_line)
 app = h_line.UserData;
 
 % get min & max line x values
-h_min_line = findobj(h_line.Parent, 'Tag', 'mep_min_line');
-t_mep_min = h_min_line.XData(1);
-app.h_edit_mep_begin.String = num2str(t_mep_min, 3);
+mep_start_time = app.h_t_min_line.XData(1);
+mep_end_time = app.h_t_max_line.XData(1);
 
-h_max_line = findobj(h_line.Parent, 'Tag', 'mep_max_line');
-t_mep_max = h_max_line.XData(1);
-app.h_edit_mep_end.String = num2str(t_mep_max, 3);
-
-t_dur = t_mep_max - t_mep_min;
+% update values in the EMG Data figure
+app.h_edit_mep_begin.String = num2str(mep_start_time, 3);
+app.h_edit_mep_end.String = num2str(mep_end_time, 3);
+t_dur = mep_end_time - mep_start_time;
 app.h_edit_mep_dur.String = num2str(t_dur, 3);
 
-seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
-seg_num_points = round(app.params.sampFreq*seg_time);
-t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
-
-ind_mep_min = find(t>=t_mep_min, 1);
-ind_mep_max = find(t<=t_mep_max, 1, 'last');
-	
 % recompute the MEP peak to peak value and MEPAUC for all rows in the data point table
 emg.XData = app.h_emg_line.XData;
 for row_cnt = 1:length(app.h_uitable.Data)
 	
 	% get mep p-p  value 
-	% FIXME - after 2019-06-01, emg data has 2 values at beginning of the
-	% line - Use and magstim value
-	mep_seg = app.emg_data(row_cnt, ind_mep_min+1:ind_mep_max+1); % +1 because 1st value in emg_data is magstim value
-
+	
+	% find the ISI (from the table)
+	isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+	isi_ms = app.h_uitable.Data{row_cnt, isi_col}; %#ok<FNDSB>
+	
+	% if ISI > 0, shift the data by ISI ms
+	if isi_ms > 0
+		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+	else
+		isi_shift_pts = 0;
+	end
+	tmp_data = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
+	emg.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
+	
+	mep_seg = emg.YData(emg.XData >= mep_start_time & emg.XData <= mep_end_time);
 	mep_val = max(mep_seg) - min(mep_seg);
 	if app.SubtractPreEMGppButton.Value % subtract the pre stim emg
 		% compute the pre-stim emg
-		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
+% 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
 		pre_stim_val = compute_pre_stim_emg_value(app, emg);
 		mep_val = mep_val - pre_stim_val;
 	end
 	
 	% AUC
-	pre_stim_col = find_uitable_column(app.h_uitable, 'PreStim');
-	% pre_stim_val = app.h_uitable.Data{row_cnt,pre_stim_col};
-% 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
-
-	% update emg auc patch
-	mep_start_time = app.h_t_min_line.XData(1);
-	mep_end_time = app.h_t_max_line.XData(1);
-	emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
 	[vertices, faces] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 	
 	% if this row is being shown, update the patch
@@ -56,10 +50,14 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	end
 	
 	auc = compute_auc(vertices);
-	if app.h_uitable.Data{row_cnt, 4} ~= mep_val && app.h_uitable.Data{row_cnt, 5} ~= auc
+	
+	% update the uitable
+	mep_ampl_col = find(contains(app.h_uitable.ColumnName, '>MEPAmpl<'));
+	mep_auc_col = find(contains(app.h_uitable.ColumnName, '>MEPAUC<'));
+	if app.h_uitable.Data{row_cnt, mep_ampl_col} ~= mep_val && app.h_uitable.Data{row_cnt, mep_auc_col} ~= auc
 		% update the table 
-		app.h_uitable.Data{row_cnt, 4} = mep_val;
-		app.h_uitable.Data{row_cnt, 5} = auc;
+		app.h_uitable.Data{row_cnt, mep_ampl_col} = mep_val;
+		app.h_uitable.Data{row_cnt, mep_auc_col} = auc;
 		
 		% update info in rc_fig
 		update_rc_sici_datapoint(app, row_cnt, mep_val, auc);

@@ -77,10 +77,18 @@ try
 				warning('Test stim and Conditioning stim values must be filled in before saving.')
 				error('ts  and cs values are nan')
 			end
-			% default IPIs
-			app.sici_info.sici_ipi = 2;
-			app.sici_info.icf_ipi  = 10;
-		
+			% ISIs from h_uitable
+			stim_type_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
+			isi_col = contains(app.h_uitable.ColumnName, '>ISI<');
+			stim_types = unique(app.h_uitable.Data(:,stim_type_col));
+			for st_cnt = 1:length(stim_types)
+				st = stim_types{st_cnt};
+				row = find(contains(app.h_uitable.Data(:,stim_type_col), st), 1, 'first');
+				isi = app.h_uitable.Data{row, isi_col};
+				st = strrep(st, ' ', '_');
+				app.sici_info.([lower(st) '_isi']) = isi;
+			end
+			
 			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
 			app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 			app.sici_info.mep_begin_t = str2double(app.h_edit_mep_begin.String);

@@ -1,4 +1,4 @@
-function rc_dp_tbl_select_callback(h_tbl, cell_edit_data, app)
+function rc_dp_tbl_edit_callback(h_tbl, cell_edit_data, app)
 
 % cell_edit_data:
 % Indices
@@ -33,4 +33,7 @@ if cell_edit_data.Indices(2) == 2 % col2 'Use' edited
 	end
 	
 	data_point_menu_callback(h_menu, [], h_line, h_ax)
+elseif cell_edit_data.Indices(2) == 4 % col 4 ISI edited
+	update_review_emg_data_line(app, h_tbl, cell_edit_data.Indices(1))
+	mep_line_drag_endfcn(app.h_t_min_line)
 end

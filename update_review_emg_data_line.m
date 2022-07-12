@@ -5,11 +5,21 @@ if new_row == 0 || new_row > size(h_tbl.Data,1)
 end
 % display emg data
 % shift the data by the ISI (time between conditioning stim and test stim)
-% FIXME
+
 % find the ISI (from the table)
-% shift data by the ISI
+isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+isi_ms = h_tbl.Data{new_row, isi_col}; %#ok<FNDSB>
+
+% if ISI > 0, shift the data by ISI ms
+if isi_ms > 0
+	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+else
+	isi_shift_pts = 0;
+end
+tmp_data = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
+app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 % update conditioning stim line h_cs_line
-app.h_emg_line.YData = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
+app.h_cs_line.XData = -isi_ms*[1 1];
 
 % if y limits are the same, make them wider
 ymin = min(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
