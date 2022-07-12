@@ -15,11 +15,18 @@ if exist(fname, 'file')
 	txt_fname = strrep(fname, '_', '\_');
 
     % make datapoints.csv blue
- 	txt_fname = strrep(txt_fname, 'datapoints.csv', ['\color{blue}\bfdatapoints.csv\rm\color{black}']);
-    % make info file names a color, too FIXME
-%     pat = '\\(inv|uninv).*\.txt';
-%     repl = '\color{red}\bf$1\rm\color{black}';
-%     txt_fname = regexprep(txt_fname, pat, repl);
+	if contains(txt_fname, 'datapoints.csv')
+		txt_fname = strrep(txt_fname, 'datapoints.csv', '\color{blue}\bfdatapoints.csv\rm\color{black}');
+	else
+		% make info file names a color, too FIXME
+		pat = '(inv|uninv)';
+		repl = '\\color{red}\\bf$1';
+		tmp_name = regexprep(txt_fname, pat, repl);
+		pat = '\.txt';
+		repl = '\.txt\\rm\\color{black}';
+		tmp_name2 = regexprep(tmp_name, pat, repl);
+		txt_fname = tmp_name2;
+	end
 
 % 	q_str = ['\fontsize{14} ' txt_fname ...
 % 		' already exists.\newline\newline' ...
