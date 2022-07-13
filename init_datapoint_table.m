@@ -8,12 +8,14 @@ if isempty(tbl)
 	num_rows = size(app.emg_data,1);
 	tbl = table('Size', [num_rows, 11], ...
 		'VariableTypes', {'double', 'logical', 'double', 'double', 'double', 'double', ...
-							'double', 'double', 'double', 'double', 'double'}, ...
-		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
+							'double', 'double', 'double', 'double', 'double', 'double'}, ...
+		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', ...
+							'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
 							'PreStimEmg_100ms', 'MonitorEMGval', 'GoalEMG', 'GoalEMGmin', 'GoalEMGmax'});
  	tbl.Epoch = (1:num_rows)';
 	tbl.Use = true(num_rows, 1);
 	tbl.MagStim_Setting = nan(num_rows, 1);
+	tbl.BiStim_Setting = nan(num_rows, 1);
 	tbl.ISI_ms = nan(num_rows, 1);
 	tbl.MEPAmpl_uVPp = nan(num_rows, 1);
 	tbl.MEPAUC_uV_ms = nan(num_rows, 1);
@@ -43,12 +45,20 @@ if any(isnan(tbl.MagStim_Setting))
 	tbl.MagStim_Setting = app.emg_data(:, magstim_col);
 end
 
-% if there is no ISI col, add it
-if ~contains(tbl.Properties.VariableNames, 'ISI')
-	disp('Guessing ISI...')
+% if there is no Bistim col, add it
+if ~contains(tbl.Properties.VariableNames, 'BiStim_Setting')
+	disp('Adding Bistim column to datapoint table')
 	n_cols = width(tbl);
-	tbl = [tbl(:,1:3) array2table(nan(height(tbl),1)) tbl(:,4:n_cols)];
-	tbl.Properties.VariableNames{4} = 'ISI_ms';
+	tbl = [tbl(:,1:3) array2table(zeros(height(tbl),1)) tbl(:,4:n_cols)];
+	tbl.Properties.VariableNames{4} = 'BiStim_Setting';
+end
+
+% if there is no ISI col, add it
+if ~contains(tbl.Properties.VariableNames, 'ISI_ms')
+	disp('Datapoint table: Guessing ISI...')
+	n_cols = width(tbl);
+	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:n_cols)];
+	tbl.Properties.VariableNames{5} = 'ISI_ms';
 end
 % if ISI are nan guess them
 if any(isnan(tbl.ISI_ms))
@@ -80,8 +90,8 @@ end
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	disp('Computing MEP AUC...')
 	n_cols = width(tbl);
-	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:n_cols)];
-	tbl.Properties.VariableNames{5} = 'MEPAUC_uV_ms';
+	tbl = [tbl(:,1:5) array2table(nan(height(tbl),1)) tbl(:,6:n_cols)];
+	tbl.Properties.VariableNames{6} = 'MEPAUC_uV_ms';
 end
 % if MEPAUCs are nan, compute them
 if any(isnan(tbl.MEPAUC_uV_ms))
@@ -158,6 +168,7 @@ end
 if app.CheckBoxSici.Value == 1
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
+		   '<html><center>BiStim<br />Setting</center></html>', ...
 		   '<html><center>ISI<br />ms</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
@@ -167,11 +178,12 @@ if app.CheckBoxSici.Value == 1
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 30, 50, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, false, false, true, false, false, false, false, false];
+	colwidths = {40, 30, 50, 50, 30, 50, 50, 50, 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false];
 else % rc or data only / average
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
+		   '<html><center>BiStim<br />Setting</center></html>', ...
 		   '<html><center>ISI<br />ms</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
@@ -180,8 +192,8 @@ else % rc or data only / average
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	  colwidths = {40, 30, 50, 30, 50, 'auto', 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, false, false, false, false, false, false, false];
+	  colwidths = {40, 30, 50, 50, 30, 50, 50, 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, false, false, false, false, false, false, false];
 end
 
 

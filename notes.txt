@@ -1,0 +1,4 @@
+
+datapoint table
+	- in emg_rc it's saved in app.rc_axes.Userdata or app.sici_axes.Userdata
+	- in review_emg it's in the app.h_uitable

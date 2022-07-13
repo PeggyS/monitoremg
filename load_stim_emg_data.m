@@ -1,11 +1,8 @@
 function load_stim_emg_data(source,event, app)
 
 if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, data is already in this field
-% 	% but re-read it in from the file as a table
  	if any(strcmp(properties(app), 'MuscleEditField')) 
- 		filename = app.MuscleEditField.Value;
-% 		data = readtable(app.DatapointsCSVEditField.Value);
-% 	else
+ 		filename = app.MuscleEditField.Value; % used for title of axes	
  	end
 
 	data = cell2table(app.h_uitable.Data);
@@ -34,7 +31,6 @@ else % request the file name
 			data = readtable(fname);
 	end
 end
-
 
 % clear any existing points
 if isgraphics(app.rc_axes)
@@ -79,6 +75,7 @@ for cnt = 1:height(data)
  	end
 end
 
-title(strrep(filename, '_', ' '))
-
+if exist(filename, 'var')
+	title(strrep(filename, '_', ' '))
+end
 return
