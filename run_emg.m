@@ -125,13 +125,23 @@ while app.StartButton.Value
 % 					msfid = fopen('magstim_val.txt', 'r');
 % 					magstim_val = fscanf(msfid, '%d');
 % 					fclose(msfid);
-					% magstim value from magspy
+					% magstim info from magspy
 					magstim_val = app.magstim_mmap.Data(1);
+					bistim_val = app.magstim_mmap.Data(2);
+					isi_ms = app.magstim_mmap.Data(3);
+					% if in Bistim mode (both stimulators at the same
+					% time), change the bistim_val to be the same as the
+					% magstim_val
+					if isi_ms == 0
+						bistim_val = magstim_val;
+					end
 					% for the live_display channel and all save channels,
 					% put info in the emg_data_memmap
 					for c_cnt = 1:app.data_channels_mmap.Data(1).num_channels
 						if app.data_channels_mmap.Data(c_cnt).live_display
 							app.emg_data_mmap.Data(c_cnt).magstim_val = magstim_val;
+							app.emg_data_mmap.Data(c_cnt).bistim_val = bistim_val;
+							app.emg_data_mmap.Data(c_cnt).isi_ms = isi_ms;
 % 							muscle_name = app.chanInfo.names{dispChan};
 % 							if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
 							app.emg_data_mmap.Data(c_cnt).muscle_name = uint8(pad(app.chanInfo.names{c_cnt}, 30));
@@ -153,14 +163,14 @@ while app.StartButton.Value
    end
 %    drawnow;
 	pause(0)
-   num_loops = num_loops + 1;
+%    num_loops = num_loops + 1;
 %    t_while_loop = toc(t_start);
 %    fprintf('Completed a while loop in %g sec\n', t_while_loop)
 end
 % fclose(fid);
 set(app.hLine, 'YData', [0 1]);
 % fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)\
-fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
+% fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
 return
 
 % ===============================================================================

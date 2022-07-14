@@ -37,7 +37,10 @@ while app.CheckBoxDisplayMEP.Value
 		% if the emg monitor app is sending new data
 		new_data = app.emg_data_mmap.Data(1).new_data;
 		if new_data
-			magstim_val = app.emg_data_mmap.Data(live_chan_num).magstim_val;
+			stim_info.magstim_val = double(app.emg_data_mmap.Data(live_chan_num).magstim_val);
+			stim_info.bistim_val = double(app.emg_data_mmap.Data(live_chan_num).bistim_val);
+			stim_info.isi_ms = double(app.emg_data_mmap.Data(live_chan_num).isi_ms);
+			stim_info.effective_so = 
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
 			
 			% save the data 
@@ -81,7 +84,9 @@ while app.CheckBoxDisplayMEP.Value
 							end
 						end
 						fprintf(fid, '%d', app.active_sample_checkbox.Value);
-						fprintf(fid, ',%d', magstim_val);
+						fprintf(fid, ',%d', stim_info.magstim_val);
+						fprintf(fid, ',%d', stim_info.bistim_val);
+						fprintf(fid, ',%d', stim_info.isi_ms);
 						fprintf(fid, ',%f', emg_data);
 						fclose(fid);
 						app.SaveFileName.Text = [shortfilename '.txt'];
@@ -108,7 +113,7 @@ while app.CheckBoxDisplayMEP.Value
 % 			% display the data
 			[mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, ...
 				app.emg_data_mmap.Data(live_chan_num).goal_min, ...
-				app.emg_data_mmap.Data(live_chan_num).goal_max);
+				app.emg_data_mmap.Data(live_chan_num).goal_max, stim_info);
 			
 % 			% compute the pre-stim emg
 % 			left_time = app.preEmgMinEditField.Value; % 100 ms prior to stim (+ 1 ms to allow for stim artifact)
@@ -172,7 +177,9 @@ while app.CheckBoxDisplayMEP.Value
 					% values.
 				app.rc_axes.UserData.Epoch(epoch) = epoch;
 				app.rc_axes.UserData.Use(epoch) = 1; % in_goal_range
-				app.rc_axes.UserData.MagStim_Setting(epoch) = magstim_val;
+				app.rc_axes.UserData.MagStim_Setting(epoch) = stim_info.magstim_val;
+				app.rc_axes.UserData.BiStim_Setting(epoch) = stim_info.bistim_val;
+				app.rc_axes.UserData.ISI_ms(epoch) = stim_info.isi_ms;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.rc_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;
 				app.rc_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
@@ -199,7 +206,9 @@ while app.CheckBoxDisplayMEP.Value
 					% values.
 				app.sici_axes.UserData.Epoch(epoch) = epoch;
 				app.sici_axes.UserData.Use(epoch) = 1; % in_goal_range
-				app.sici_axes.UserData.MagStim_Setting(epoch) = magstim_val;
+				app.sici_axes.UserData.MagStim_Setting(epoch) = stim_info.magstim_val;
+				app.sici_axes.UserData.BiStim_Setting(epoch) = stim_info.bistim_val;
+				app.sici_axes.UserData.ISI_ms(epoch) = stim_info.isi_ms;
 				app.sici_axes.UserData.Stim_Type(epoch) = {'?'};
 				app.sici_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.sici_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;

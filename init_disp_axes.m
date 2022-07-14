@@ -21,10 +21,10 @@ line(app.h_disp_emg_axes, [0 0], [-1e6 1e6]);
 % min & max vertical lines - draggable
 app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...
   'LineWidth', 2, 'Color', [0 0.9 0]);
-draggable(app.h_t_min_line, 'h', [0 200])
+draggable(app.h_t_min_line, 'h', [0 200]);
 app.h_t_max_line = line(app.h_disp_emg_axes, [90 90], [-1e6 1e6], ...
   'LineWidth', 2, 'Color', [0 0.9 0]);
-draggable(app.h_t_max_line, 'h', [0 200])
+draggable(app.h_t_max_line, 'h', [0 200]);
 
 % text display of MEP amplitude
 app.mep_value_text = uicontrol(app.emg_data_fig, 'Style', 'text', ...

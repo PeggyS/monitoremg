@@ -1,4 +1,33 @@
 
+sharing of info between apps uses memmapfile
+	- magstim_val.data - magstim info sent to emg_activity_mvc_goal 
+		- used in updateDisplay.m and run_emg.m
+		- 3 bytes
+		- magstim value
+		- bistim value
+		- isi
+	- emg_data.data - up to 8 channels of emg data - info for each channel
+		- used in setup_memmap.m, run_emg.m, get_emg_data.m
+		- new data flag
+		- magstim, bistim, and isi
+		- goal val, min and max
+		- pre-stim emg value
+		- muscle name (30 chars)
+		- emg data
+	- data_channels.data - 
+		- number of emg channels
+		- flag for if the channel is in the activity monitor figure
+		- channel names, up to 8, 30 char each
+		- flag to store data or not
+		
+
+magspy - reads (spies on) magstim communication between Brainsight and Magstim
+	- needs special serial connector with the write pin disconnected ? (from what I recall - this could be wrong)
+	- 
+
+
 datapoint table
 	- in emg_rc it's saved in app.rc_axes.Userdata or app.sici_axes.Userdata
 	- in review_emg it's in the app.h_uitable
+
+dragging lines in real-time display mep does not have an endfcn, so dragging the lines does not update previous rc or sici datapoint values.

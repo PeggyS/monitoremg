@@ -1,7 +1,16 @@
-function [mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, goal_min, goal_max)
+function [mep_val, pre_stim_val] = draw_emg_data(app, emg_data, monitor_emg_val, ...
+								goal_min, goal_max, stim_info)
 
 % display the data
-app.h_emg_line.YData = emg_data;
+% shift the data if isi > 0
+if ~isempty(stim_info.isi_ms) && stim_info.isi_ms > 0 && stim_info.bistim_val > 0
+	isi_shift_pts = round(app.params.sampFreq * stim_info.isi_ms / 1000);
+else
+	isi_shift_pts = 0;
+end
+tmp_data = emg_data;
+app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
+
 
 % adjust y limits
 min_y = min(emg_data);
@@ -34,7 +43,7 @@ end
 t_emg = app.h_emg_line.XData;
 t_mep_min = app.h_t_min_line.XData(1);
 t_mep_max = app.h_t_max_line.XData(1);
-mep_seg = emg_data(t_emg>t_mep_min & t_emg<t_mep_max);
+mep_seg = app.h_emg_line.YData(t_emg>t_mep_min & t_emg<t_mep_max);
 
 mep_val = max(mep_seg) - min(mep_seg);
 

@@ -21,11 +21,15 @@ function updateDisplay(app, dataVec, markInfo)
 		% magstim_val = fscanf(fid, '%d');
 		% fclose(fid);
 		magstim_val = app.magstim_mmap.Data(1);
+		bistim_val = app.magstim_mmap.Data(2);
+		isi_val = app.magstim_mmap.Data(3);
         if strcmp(markInfo(1).label, ' ')
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).desc, val, magstim_val);
         else
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).label, val, magstim_val);
-            msg = sprintf('emg = %4.0f, magstim = %d', app.monitorEMGval, magstim_val);
+            msg = sprintf('emg = %4.0f', app.monitorEMGval);
+% 			msg = sprintf('emg = %4.0f, magstim = %d', app.monitorEMGval, magstim_val);
+			sprintf('magstim = %d, bistim = %d, isi = %d', magstim_val, bistim_val, isi_val)
 %             drawnow
         end
 		app.msgText.Text = msg;
