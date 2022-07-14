@@ -75,7 +75,10 @@ for cnt = 1:height(data)
  	end
 end
 
-if exist(filename, 'var')
-	title(strrep(filename, '_', ' '))
+if ~exist('filename', 'var')
+	answer_filename = inputdlg('Enter muscle (e.g. uninv_ta)');
+	filename = answer_filename{:};
 end
+title(strrep(filename, '_', ' '))
+	
 return

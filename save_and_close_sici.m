@@ -113,6 +113,7 @@ try
 catch ME
 	disp(ME)
 	warning('SICI ICF Figure not saved')
+% 	keyboard
 end
 
 % delete the figure

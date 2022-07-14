@@ -15,8 +15,9 @@ isi_col = find(contains(cell_edit_data.Source.ColumnName, '>ISI<'));
 magstim_col = find(contains(cell_edit_data.Source.ColumnName, '>MagStim<'));
 bistim_col = find(contains(cell_edit_data.Source.ColumnName, '>BiStim<'));
 
-
-switch cell_edit_data.Indices(2)
+table_row = cell_edit_data.Indices(1);
+table_col = cell_edit_data.Indices(2);
+switch table_col
 	case use_col % 'Use' edited
 		if isgraphics(app.rc_axes)
 			h_ax = app.rc_axes;
@@ -25,7 +26,7 @@ switch cell_edit_data.Indices(2)
 		else
 			return
 		end
-		h_line = find_rc_datapoint(h_ax, cell_edit_data.Indices(1));
+		h_line = find_rc_datapoint(h_ax, table_row);
 
 		% get uimenu
 		if cell_edit_data.EditData
@@ -41,13 +42,14 @@ switch cell_edit_data.Indices(2)
 
 		data_point_menu_callback(h_menu, [], h_line, h_ax)
 	case isi_col  % ISI edited
-		update_review_emg_data_line(app, h_tbl, cell_edit_data.Indices(1))
+		update_review_emg_data_line(app, h_tbl, table_row)
 		mep_line_drag_endfcn(app.h_t_min_line)
 	case magstim_col
 	case bistim_col
-		sprintf('rc_dp_tbl_edit_callback: bistim column %d edited', cell_edit_data.Indices(2))
+		sprintf('rc_dp_tbl_edit_callback: bistim column %d edited', table_col)
+		update_rc_sici_datapoint(app, table_row, [], [])
 	otherwise
 		beep
-		sprintf('rc_dp_tbl_edit_callback: unkown column %d edited', cell_edit_data.Indices(2))
+		sprintf('rc_dp_tbl_edit_callback: unkown column %d edited', table_col)
 end
 return

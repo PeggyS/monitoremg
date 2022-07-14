@@ -9,8 +9,24 @@ else
 end
 
 % update table with MEPAmpl & auc
-app.(axes_str).UserData.MEPAmpl_uVPp(table_row_num) = mep_val;
-app.(axes_str).UserData.MEPAUC_uV_ms(table_row_num) = auc;
+if ~isempty(mep_val)
+	app.(axes_str).UserData.MEPAmpl_uVPp(table_row_num) = mep_val;
+end
+if ~isempty(auc)
+	app.(axes_str).UserData.MEPAUC_uV_ms(table_row_num) = auc;
+end
+% look up magstim, bistim and ISI values
+keyboard
+magstim_ind = find(contains(lower(app.h_uitable.ColumnName), '>magstim<'));
+bistim_ind = find(contains(lower(app.h_uitable.ColumnName), '>bistim<'));
+isi_ind = find(contains(lower(app.h_uitable.ColumnName), '>isi<'));
+
+% if magstim and/or bistim values have changed, update the effective
+% stimulator output value and if rc, change the XData of the datapoint
+% FIXME
+app.(axes_str).UserData.MagStim_Setting(table_row_num) = app.h_uitable.Data{table_row_num, magstim_ind};
+app.(axes_str).UserData.BiStim_Setting(table_row_num) = app.h_uitable.Data{table_row_num, bistim_ind};
+app.(axes_str).UserData.ISI_ms(table_row_num) = app.h_uitable.Data{table_row_num, isi_ind};
 
 
 % find out if app is displaying MEP ampl or auc
