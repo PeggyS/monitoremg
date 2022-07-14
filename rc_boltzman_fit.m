@@ -8,6 +8,7 @@ mep_begin = app.h_t_min_line.XData(1);
 mep_end = app.h_t_max_line.XData(1);
 
 % the data
+% FIXME - take into account BiStim - use effective stimulator output value
 x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
 % make provision for MEPAUC:
 % find out if app is displaying MEP ampl or auc - currently only applies
