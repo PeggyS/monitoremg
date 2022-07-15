@@ -31,3 +31,22 @@ datapoint table
 	- in review_emg it's in the app.h_uitable
 
 dragging lines in real-time display mep does not have an endfcn, so dragging the lines does not update previous rc or sici datapoint values.
+
+*_emg_dat.txt each row has stim info and emg data before and after the stimulus
+	- info listed before the emg data depends on when the file was created
+	- before xxx
+	- between xxx and yyy
+	- after 2022-07-15:
+		- Use, magstim_val, bistim_val, isi_ms, effective_so
+
+
+============================================
+magstim, bistim, and simulataneous discharge
+--------------------------------------------
+After Jan 2019, the single magstim setup was replaced with Bistim setup. Later (around xxx) we started using simultaneous discharge with the Bistim setup to get higher stimulus pulses.
+
+emg_rc - during data collection the recuitment curve shows the main/master/top stimulator value. The values rc fit values are used to compute sici & icf stim levels. When simultaneous discharge was used for the rc, the rc values are converted to values to use with the bistim setup. Spreadsheet stim_bistim.numbers is used to convert.
+
+review_emg_rc - in post analysis, bistim and simultaneous discharge values are converted to effective stimulus output (SO) - the equivalent output of a single stand-alone magstim.
+
+

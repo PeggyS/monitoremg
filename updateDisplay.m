@@ -29,7 +29,7 @@ function updateDisplay(app, dataVec, markInfo)
             % msg = sprintf('Msg: %s, y = %3.1f, ms = %d', markInfo(1).label, val, magstim_val);
             msg = sprintf('emg = %4.0f', app.monitorEMGval);
 % 			msg = sprintf('emg = %4.0f, magstim = %d', app.monitorEMGval, magstim_val);
-			sprintf('magstim = %d, bistim = %d, isi = %d', magstim_val, bistim_val, isi_val)
+			%sprintf('magstim = %d, bistim = %d, isi = %d', magstim_val, bistim_val, isi_val)
 %             drawnow
         end
 		app.msgText.Text = msg;
