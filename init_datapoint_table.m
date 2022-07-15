@@ -8,15 +8,16 @@ if isempty(tbl)
 	num_rows = size(app.emg_data,1);
 	tbl = table('Size', [num_rows, 11], ...
 		'VariableTypes', {'double', 'logical', 'double', 'double', 'double', 'double', ...
-							'double', 'double', 'double', 'double', 'double', 'double'}, ...
+							'double', 'double', 'double', 'double', 'double', 'double', 'double'}, ...
 		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', ...
-							'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
+							'Effective_SO', 'MEPAmpl_uVPp', 'MEPAUC_uV_ms', ...
 							'PreStimEmg_100ms', 'MonitorEMGval', 'GoalEMG', 'GoalEMGmin', 'GoalEMGmax'});
  	tbl.Epoch = (1:num_rows)';
 	tbl.Use = true(num_rows, 1);
 	tbl.MagStim_Setting = nan(num_rows, 1);
 	tbl.BiStim_Setting = nan(num_rows, 1);
 	tbl.ISI_ms = nan(num_rows, 1);
+	tbl.Effective_SO = nan(num_rows, 1);
 	tbl.MEPAmpl_uVPp = nan(num_rows, 1);
 	tbl.MEPAUC_uV_ms = nan(num_rows, 1);
 	tbl.PreStimEmg_100ms = nan(num_rows, 1);
@@ -51,24 +52,90 @@ if ~contains(tbl.Properties.VariableNames, 'BiStim_Setting')
 	n_cols = width(tbl);
 	tbl = [tbl(:,1:3) array2table(zeros(height(tbl),1)) tbl(:,4:n_cols)];
 	tbl.Properties.VariableNames{4} = 'BiStim_Setting';
-end
+	if app.CheckBoxSici.Value == 1
+		stim_mode = 'SICI/ICF';
+	else
+		% ask the user if this was simultaneous discharge or not
+		q_str = 'Was this single pulse, Simultaneous Discharge of the stimulator, or SICI/ICF?';
+		tlt = 'Stimulator Mode';
+		app.ReviewEMGRCUIFigure.WindowStyle = 'alwaysontop';
+		stim_mode = uiconfirm(app.ReviewEMGRCUIFigure, q_str, tlt, ...
+			'Options', {'Single Pulse', 'Simultaneous Discharge'}, ...
+			'DefaultOption', 2);
+		app.ReviewEMGRCUIFigure.WindowStyle = 'normal';
+	end
+
+	disp(['stimulator mode: ' stim_mode])
+	switch stim_mode
+		case 'Single Pulse'
+			tbl.BiStim_Setting = zeros(height(tbl), 1);
+		case 'Simultaneous Discharge'
+			tbl.BiStim_Setting = tbl.MagStim_Setting;
+		case 'SICI/ICF'
+			tbl.BiStim_Setting = nan(height(tbl), 1);
+			st_ind = find(contains(tbl.Properties.VariableNames, 'Stim_type', 'IgnoreCase', true), 1);
+			if isempty(st_ind)
+				% 2nd chance: look for old variable name
+				st_ind = find(contains(tbl.Properties.VariableNames, 'Sici_or_icf_or_ts', 'IgnoreCase', true), 1);
+				if isempty(st_ind)
+					keyboard
+				end
+				% change the variable name
+				tbl.Properties.VariableNames{st_ind} = 'Stim_type';
+			end
+			if ~isempty(st_ind)
+				test_stim_msk = contains(lower(tbl.Stim_type), 'test stim');
+				test_stim_val = unique(tbl.MagStim_Setting(test_stim_msk));
+				if length(test_stim_val) > 1 || test_stim_val == 0
+					% ask the user what the test stim value was
+					q_str = 'What was the Test Stimulus value?';
+					test_stim_val = inputdlg( q_str );
+
+					% put this in the bistim_setting
+					tbl.BiStim_Setting(test_stim_msk) = test_stim_val * ones(size(tbl.BiStim_Setting(test_stim_msk)));
+					% ask what the ISI was - save this for later (when adding the isi column)
+					q_str = 'What was the Test Stimulus Interstimulus Interval?';
+					test_stim_isi_val = inputdlg( q_str );	
+				else
+					tbl.BiStim_Setting(test_stim_msk) = zeros(size(tbl.BiStim_Setting(test_stim_msk)));
+				end
+				% move the magstim values for non test stim to the bistim col & fill
+				% the test stim in the magstim col
+				tbl.BiStim_Setting(~test_stim_msk) = tbl.MagStim_Setting(~test_stim_msk);
+				tbl.MagStim_Setting(~test_stim_msk) = test_stim_val * ones(size(tbl.MagStim_Setting(~test_stim_msk)));
+			end
+	end % switch stim_mode
+end % if there is no Bistim col
 
 % if there is no ISI col, add it
 if ~contains(tbl.Properties.VariableNames, 'ISI_ms')
-	disp('Datapoint table: Guessing ISI...')
+	disp('Datapoint table: adding ISI...')
 	n_cols = width(tbl);
 	tbl = [tbl(:,1:4) array2table(nan(height(tbl),1)) tbl(:,5:n_cols)];
 	tbl.Properties.VariableNames{5} = 'ISI_ms';
 end
 % if ISI are nan guess them
 if any(isnan(tbl.ISI_ms))
-	ts_ind = find(contains(tbl.Properties.VariableNames, 'Stim_type', 'IgnoreCase', true));
-	if ~isempty(ts_ind) % if there should be different isi values for sici and icf
+	disp('Datapoint table: guessing ISI...')
+	st_ind = find(contains(tbl.Properties.VariableNames, 'Stim_type', 'IgnoreCase', true));
+	if isempty(st_ind)
+		% look for 'Sici_or_icf_or_ts'
+		st_ind = find(contains(tbl.Properties.VariableNames, 'Sici_or_icf_or_ts', 'IgnoreCase', true));
+		if isempty(st_ind)
+			keyboard
+		end
+		tbl.Properties.VariableNames{st_ind} = 'Stim_type';
+	end
+	if ~isempty(st_ind) % if there should be different isi values for sici and icf
 		for row_cnt = 1:height(tbl)
-			stim_type = tbl{row_cnt, ts_ind};
+			stim_type = tbl{row_cnt, st_ind};
 			switch lower(stim_type{:})
 				case 'test stim'
-					isi = 0;
+					if exist('test_stim_isi_val', 'var')
+						isi = test_stim_isi_val;
+					else
+						isi = 0;
+					end
 				case 'sici'
 					isi = 2;
 				case 'icf'
@@ -81,8 +148,39 @@ if any(isnan(tbl.ISI_ms))
 			tbl.ISI_ms(row_cnt) = isi;
 		end
 	else
-		% not sici icf, make ISI = 0 for all rows
-		tbl.ISI_ms = zeros(height(tbl), 1);
+		% not sici icf, check stim_mode
+		if ~exist('stim_mode', 'var')
+			beep
+			disp('init_datapoint_table: stim_mode should have been created!')
+			disp('setting all ISI to zero')
+			tbl.ISI_ms = zeros(height(tbl), 1);
+		else
+			switch stim_mode
+				case 'Single Pulse'
+					tbl.ISI_ms = ones(height(tbl), 1);
+				case 'Simultaneous Discharge'
+					tbl.ISI_ms = zeros(height(tbl), 1);
+			end
+		end
+	end
+end
+
+next_col_num = 6;
+% for rc, if there is no Effective SO col, add it
+if ~app.CheckBoxSici.Value == 1
+	if ~contains(tbl.Properties.VariableNames, 'Effective_SO')
+		disp('Datapoint table: Adding Effective Stimulator Output ...')
+		n_cols = width(tbl);
+		tbl = [tbl(:,1:next_col_num-1) array2table(nan(height(tbl),1)) tbl(:,next_col_num:n_cols)];
+		tbl.Properties.VariableNames{next_col_num} = 'Effective_SO';
+		next_col_num = next_col_num + 1;
+	end
+	% if effective so are nan compute them
+	if any(isnan(tbl.Effective_SO))
+		for row_cnt = 1:height(tbl)
+			tbl.Effective_SO(row_cnt) = compute_effective_so(tbl.MagStim_Setting(row_cnt), ...
+				tbl.BiStim_Setting(row_cnt), tbl.ISI_ms(row_cnt), app.h_stim_setup_text.String);
+		end
 	end
 end
 
@@ -90,8 +188,8 @@ end
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	disp('Computing MEP AUC...')
 	n_cols = width(tbl);
-	tbl = [tbl(:,1:5) array2table(nan(height(tbl),1)) tbl(:,6:n_cols)];
-	tbl.Properties.VariableNames{6} = 'MEPAUC_uV_ms';
+	tbl = [tbl(:,1:next_col_num-1) array2table(nan(height(tbl),1)) tbl(:,next_col_num:n_cols)];
+	tbl.Properties.VariableNames{next_col_num} = 'MEPAUC_uV_ms';
 end
 % if MEPAUCs are nan, compute them
 if any(isnan(tbl.MEPAUC_uV_ms))
@@ -178,13 +276,14 @@ if app.CheckBoxSici.Value == 1
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 30, 50, 50, 50, 'auto', 'auto', 60, 50, 50};
+	colwidths = {40, 30, 50, 50, 30, 60, 50, 50, 'auto', 'auto', 60, 50, 50};
 	  coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false];
 else % rc or data only / average
 	headers = {'Epoch', 'Use', ...
            '<html><center>MagStim<br />Setting</center></html>', ...
 		   '<html><center>BiStim<br />Setting</center></html>', ...
 		   '<html><center>ISI<br />ms</center></html>', ...
+		   '<html><center>Effective<br />SO</center></html>', ...
            '<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		   '<html><center>MEPAUC<br />uV*ms</center></html>', ...
            '<html><center>PreStimEmg<br />100ms</center></html>', ...
@@ -192,8 +291,8 @@ else % rc or data only / average
            '<html><center>Goal<br />EMG</center></html>', ...
            '<html><center>Goal<br />Min</center></html>', ...
            '<html><center>Goal<br />Max</center></html>'};
-	  colwidths = {40, 30, 50, 50, 30, 50, 50, 'auto', 'auto', 60, 50, 50};
-	  coledit = [false, true, true, true, true, false, false, false, false, false, false, false];
+	  colwidths = {40, 30, 50, 50, 30, 50, 60, 50, 'auto', 'auto', 60, 50, 50};
+	  coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false];
 end
 
 

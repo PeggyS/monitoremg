@@ -1,4 +1,4 @@
-function add_point2sici(app, table_row_num, magstim_val, mep_val)
+function add_point2sici(app, table_row_num, mep_val)
 
 h_ax = app.sici_axes;
 if strcmp(h_ax.UserData.Stim_Type(table_row_num), '?') 

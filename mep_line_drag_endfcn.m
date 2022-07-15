@@ -60,7 +60,7 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		app.h_uitable.Data{row_cnt, mep_auc_col} = auc;
 		
 		% update info in rc_fig
-		update_rc_sici_datapoint(app, row_cnt, mep_val, auc);
+		update_rc_sici_datapoint(app, row_cnt, mep_val, auc, false);
 	end
 
 end

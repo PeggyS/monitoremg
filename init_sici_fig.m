@@ -55,8 +55,8 @@ else
 
 
 	% userdata is a table with the data
-	app.sici_axes.UserData = cell2table(cell(0,4), ...
-		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'MEPAmpl_uVPp'});
+	app.sici_axes.UserData = cell2table(cell(0,3), ...
+		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting'});
 
 	% edit boxes for test & conditioning stim values
 	uicontrol(app.sici_fig, 'Style', 'text', ...

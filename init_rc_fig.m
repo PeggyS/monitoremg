@@ -54,8 +54,8 @@ else
 	xlabel('Magstim Power')
 
 	% userdata is a table with the data
-	app.rc_axes.UserData = cell2table(cell(0,4), ...
-		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting', 'MEPAmpl_uVPp'});
+	app.rc_axes.UserData = cell2table(cell(0,3), ...
+		'VariableNames', {'Epoch', 'Use', 'MagStim_Setting'});
 
 	% button to compute curve fit
 	h = uicontrol(app.rc_fig, 'Style', 'pushbutton', ...

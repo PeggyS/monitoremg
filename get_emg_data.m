@@ -40,7 +40,15 @@ while app.CheckBoxDisplayMEP.Value
 			stim_info.magstim_val = double(app.emg_data_mmap.Data(live_chan_num).magstim_val);
 			stim_info.bistim_val = double(app.emg_data_mmap.Data(live_chan_num).bistim_val);
 			stim_info.isi_ms = double(app.emg_data_mmap.Data(live_chan_num).isi_ms);
-			stim_info.effective_so = 
+			stim_info.effective_so = [];
+			% single magstim (upper/master stimulator)
+			if stim_info.magstim_val > 0 && stim_info.bistim_val == 0
+				stim_info.effective_so = round(0.9 * stim_info.magstim_val);
+			% simultaneous discharge of bistim
+			elseif stim_info.magstim_val == stim_info.bistim_val && ...
+					stim_info.isi_ms == 0
+				stim_info.effective_so = round(1.13 * stim_info.magstim_val);
+			end
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
 			
 			% save the data 
@@ -87,6 +95,7 @@ while app.CheckBoxDisplayMEP.Value
 						fprintf(fid, ',%d', stim_info.magstim_val);
 						fprintf(fid, ',%d', stim_info.bistim_val);
 						fprintf(fid, ',%d', stim_info.isi_ms);
+						fprintf(fid, ',%d', stim_info.effective_so);
 						fprintf(fid, ',%f', emg_data);
 						fclose(fid);
 						app.SaveFileName.Text = [shortfilename '.txt'];
@@ -180,6 +189,7 @@ while app.CheckBoxDisplayMEP.Value
 				app.rc_axes.UserData.MagStim_Setting(epoch) = stim_info.magstim_val;
 				app.rc_axes.UserData.BiStim_Setting(epoch) = stim_info.bistim_val;
 				app.rc_axes.UserData.ISI_ms(epoch) = stim_info.isi_ms;
+				app.rc_axes.UserData.Effective_SO(epoch) = stim_info.effective_so;
 				app.rc_axes.UserData.MEPAmpl_uVPp(epoch) = mep_val;
 				app.rc_axes.UserData.PreStimEmg_100ms(epoch) = pre_stim_val;
 				app.rc_axes.UserData.MonitorEMGval(epoch) = monitor_emg_val;
@@ -189,7 +199,7 @@ while app.CheckBoxDisplayMEP.Value
 				% norm factor
 				norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
-				add_point2rc(app.rc_axes, epoch, magstim_val, mep_val/norm_factor)
+				add_point2rc(app.rc_axes, epoch, stim_info.magstim_val, mep_val/norm_factor)
 			end
 
 			% if sici figure exists, plot the point
@@ -219,7 +229,7 @@ while app.CheckBoxDisplayMEP.Value
 				% norm factor
 				norm_factor = 1;  %str2double(app.rc_fit_ui.edNormFactor.String);
 				% add point to axes
-				add_point2sici(app, epoch, magstim_val, mep_val/norm_factor)	
+				add_point2sici(app, epoch, mep_val/norm_factor)	
 			end
 			% if the average figure exists, update it
 			avg_fig = findobj(0, 'Name', 'Average EMG');

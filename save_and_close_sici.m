@@ -1,7 +1,7 @@
 function save_and_close_sici(source, event, app)
 try
 	
-	if ~any(strcmp(properties(app), 'SaveLocationEditField'))
+	if ~isprop(app, 'SaveLocationEditField')
 		[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
 		save_loc = pname;
 		% if the current directory has '/data/' in it then change it
@@ -78,21 +78,46 @@ try
 				error('ts  and cs values are nan')
 			end
 			% ISIs from h_uitable
-			stim_type_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
-			isi_col = contains(app.h_uitable.ColumnName, '>ISI<');
-			stim_types = unique(app.h_uitable.Data(:,stim_type_col));
-			for st_cnt = 1:length(stim_types)
-				st = stim_types{st_cnt};
-				row = find(contains(app.h_uitable.Data(:,stim_type_col), st), 1, 'first');
-				isi = app.h_uitable.Data{row, isi_col};
-				st = strrep(st, ' ', '_');
-				app.sici_info.([lower(st) '_isi']) = isi;
+			if isprop(app, 'h_uitable')
+				stim_type_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
+				isi_col = contains(app.h_uitable.ColumnName, '>ISI<');
+				stim_types = unique(app.h_uitable.Data(:,stim_type_col));
+				for st_cnt = 1:length(stim_types)
+					st = stim_types{st_cnt};
+					row = find(contains(app.h_uitable.Data(:,stim_type_col), st), 1, 'first');
+					isi = app.h_uitable.Data{row, isi_col};
+					st = strrep(st, ' ', '_');
+					app.sici_info.([lower(st) '_isi']) = isi;
+				end
+			else
+				sici_tbl = app.sici_axes.UserData;
+				stim_types = unique(sici_tbl.Stim_Type);
+				for st_cnt = 1:length(stim_types)
+					st = stim_types{st_cnt};
+					row = find(contains(sici_tbl.Stim_Type, st), 1, 'first');
+					isi = sici_tbl.ISI_ms(row);
+					st = strrep(st, ' ', '_');
+					app.sici_info.([lower(st) '_isi']) = isi;
+				end
 			end
-			
 			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
-			app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
-			app.sici_info.mep_begin_t = str2double(app.h_edit_mep_begin.String);
-			app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
+			if isprop(app, 'rc_fit_ui')
+				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); % FIXME is this correct?
+			end
+			% for review_emg:
+			if isprop(app, 'h_edit_mep_begin')
+				app.sici_info.mep_begin_t = str2double(app.h_edit_mep_begin.String);
+			end
+			if isprop(app, 'h_edit_mep_end')
+				app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
+			end
+			% for emg_rc:
+			if isprop(app, 'h_t_min_line') && isgraphics(app.h_t_min_line)
+				app.sici_info.mep_begin_t = app.h_t_min_line.XData(1);
+			end
+			if isprop(app, 'h_t_max_line') && isgraphics(app.h_t_max_line)
+				app.sici_info.mep_end_t = app.h_t_max_line.XData(1);
+			end
 			try
 				write_fit_info(sici_info_fname, app.sici_info)
 			catch ME

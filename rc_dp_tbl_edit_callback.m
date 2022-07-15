@@ -46,10 +46,10 @@ switch table_col
 		mep_line_drag_endfcn(app.h_t_min_line)
 	case magstim_col
 	case bistim_col
-		sprintf('rc_dp_tbl_edit_callback: bistim column %d edited', table_col)
-		update_rc_sici_datapoint(app, table_row, [], [])
+		fprintf('rc_dp_tbl_edit_callback: bistim column %d edited\n', table_col)
+		update_rc_sici_datapoint(app, table_row, [], [], true)
 	otherwise
 		beep
-		sprintf('rc_dp_tbl_edit_callback: unkown column %d edited', table_col)
+		fprintf('rc_dp_tbl_edit_callback: unkown column %d edited\n', table_col)
 end
 return
