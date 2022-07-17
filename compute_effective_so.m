@@ -23,9 +23,11 @@ if nargin < 4
 	stimulator_setup = [];
 end
 
+effective_so = 0;
+
 if isempty(stimulator_setup)
 	emg_data_fig = findwind('EMG Data', 'Name');
-	if emg_data_fig < 0
+	if ~ishandle(emg_data_fig)
 		% ask if magstim or bistim setup
 		q_str = 'What stimulator setup was used?';
 		tlt = 'Stimulator Setup';
@@ -48,7 +50,7 @@ end
 
 switch lower(stimulator_setup)
 	case 'magstim'
-
+		effective_so = magstim_val;
 	case 'bistim'
 		if magstim_val > 0 && bistim_val == 0
 			effective_so = 0.9 * magstim_val;

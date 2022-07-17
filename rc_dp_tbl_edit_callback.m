@@ -43,13 +43,13 @@ switch table_col
 		data_point_menu_callback(h_menu, [], h_line, h_ax)
 	case isi_col  % ISI edited
 		update_review_emg_data_line(app, h_tbl, table_row)
-		mep_line_drag_endfcn(app.h_t_min_line)
-	case magstim_col
-	case bistim_col
-		fprintf('rc_dp_tbl_edit_callback: bistim column %d edited\n', table_col)
+		update_rc_sici_datapoint(app, table_row, [], [], true)
+% 		mep_line_drag_endfcn(app.h_t_min_line)
+	case {magstim_col, bistim_col}
+		fprintf('rc_dp_tbl_edit_callback: table row %d, col %d edited\n', table_row, table_col)
 		update_rc_sici_datapoint(app, table_row, [], [], true)
 	otherwise
 		beep
-		fprintf('rc_dp_tbl_edit_callback: unkown column %d edited\n', table_col)
+		fprintf('rc_dp_tbl_edit_callback: unkown row %d, col %d edited\n', table_row, table_col)
 end
 return

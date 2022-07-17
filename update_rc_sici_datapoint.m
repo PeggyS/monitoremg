@@ -38,6 +38,9 @@ if stim_changed
 	if ~isempty(effective_so_ind)
 		effective_so = compute_effective_so(app.h_uitable.Data{table_row_num, magstim_ind}, ...
 			app.h_uitable.Data{table_row_num, bistim_ind}, app.h_uitable.Data{table_row_num, isi_ind});
+		if effective_so == 0
+% 			keyboard
+		end
 		app.h_uitable.Data{table_row_num, effective_so_ind} = effective_so;
 		app.(axes_str).UserData.Effective_SO(table_row_num) = effective_so;
 	end
