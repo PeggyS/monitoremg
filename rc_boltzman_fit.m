@@ -31,8 +31,8 @@ else
 	% running in review_emg_rc.mlapp
 	use_ind = find(contains(app.h_uitable.ColumnName, 'use', 'IgnoreCase', true));
 	effective_so_ind = find(contains(app.h_uitable.ColumnName, '>effective<', 'IgnoreCase', true));
-	use_msk = cell2array(app.h_uitable.Data(:,use_ind));
-	x_data = cell2array(app.h_uitable.Data(use_msk, effective_so_ind));
+	use_msk = cell2mat(app.h_uitable.Data(:,use_ind));
+	x_data = cell2mat(app.h_uitable.Data(use_msk, effective_so_ind));
 
 	% from the data_var, generate the unique part of h_uitable's column name
 	reg_result = regexp(data_var, '(?<first>[^_]*)_(?<units>.*)', 'names');
@@ -44,7 +44,7 @@ else
 	%   units: 'uV_ms'
 	table_var = ['>' reg_result.first '<'];
 	y_data_ind = find(contains(app.h_uitable.ColumnName, table_var, 'IgnoreCase', true));
-	y_data = cell2array(app.h_uitable.Data(use_msk, y_data_ind));
+	y_data = cell2mat(app.h_uitable.Data(use_msk, y_data_ind));
 
 	% from the magstim and bistim values in the table, determine the
 	% stimulator_mode
@@ -52,11 +52,11 @@ else
 	if strcmpi(stimulator_setup, 'bistim')
 		magstim_ind = find(contains(app.h_uitable.ColumnName, '>MagStim<', 'IgnoreCase', true));
 		bistim_ind = find(contains(app.h_uitable.ColumnName, '>BiStim<', 'IgnoreCase', true));
-		magstim_equals_bistim = cell2array(app.h_uitable.Data(use_msk, magstim_ind)) == ...
-			cell2array(app.h_uitable.Data(use_msk, bistim_ind));
+		magstim_equals_bistim = cell2mat(app.h_uitable.Data(use_msk, magstim_ind)) == ...
+			cell2mat(app.h_uitable.Data(use_msk, bistim_ind));
 		if all(magstim_equals_bistim)
 			stimulator_mode = 'simultaneous_discharge';
-		elseif all(cell2array(app.h_uitable.Data(use_msk, bistim_ind)) == 0)
+		elseif all(cell2mat(app.h_uitable.Data(use_msk, bistim_ind)) == 0)
 			stimulator_mode = 'bistim';
 		else
 % 			keyboard
