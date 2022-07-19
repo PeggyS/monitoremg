@@ -4,16 +4,29 @@ function rc_dp_tbl_select_callback(h_tbl, cell_select_data, app)
 % Indices
 % Source 
 % EventName = 'CellSelection'
-persistent most_recent_selected all_selected h_lines
+persistent most_recent_selected all_selected h_lines just_called_mep_line_drag_endfcn
+if just_called_mep_line_drag_endfcn == true
+	% cell selection changed because mep_line_drag_endfcn changed values in
+	% the table and no cells are selected
+	return
+end
 
 fprintf('start: most_recent: %d, all: %s\n', most_recent_selected, mat2str(all_selected))
 % fprintf('start: h_lines:  %s\n', mat2str(h_lines))
 
 % remove previous lines
-if ~isempty(h_lines)
-	delete(h_lines)
-	h_lines = [];
+h_l = findobj('Tag', 'emg_select_line');
+if ~isempty(h_l)
+	delete(h_l)
 end
+h_l = findobj('Tag', 'mean_mep_line');
+if ~isempty(h_l)
+	delete(h_l)
+end
+% if ~isempty(h_lines)
+% 	delete(h_lines)
+	h_lines = [];
+% end
 
 new_row_to_show = most_recent_selected;
 
@@ -55,7 +68,7 @@ if length(all_selected) > 1
 	ymin = 0;
 	ymax = 0;
 	y_data_matrix = [];
-	% add a line for each row
+	% add a line for each selected row
 	for l_cnt = 1:length(all_selected)
 		row = all_selected(l_cnt);
 		x = app.h_emg_line.XData;
@@ -72,7 +85,7 @@ if length(all_selected) > 1
 		tmp_data = app.emg_data(row, app.emg_data_num_vals_ignore+1:end);
 		y = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 		
-		h_lines(l_cnt) = line(x,y, 'Color', [0.8 0.8 0.8]);
+		h_lines(l_cnt) = line(x,y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line');
 		ymin = min([ymin min(y)]);
 		ymax = max([ymax max(y)]);
 		y_data_matrix(l_cnt,:) = y; %#ok<AGROW> 
@@ -95,8 +108,8 @@ if length(all_selected) > 1
 	if app.h_autocompute_mep.Value == 1
 		% use the mean emg line
 		abs_mean_emg = abs(mean_emg);
-		[min_emg, min_emg_ind] = min(mean_emg, [], 'omitnan');
-		[max_emg, max_emg_ind] = max(mean_emg, [], 'omitnan');
+		[~, min_emg_ind] = min(mean_emg, [], 'omitnan');
+		[~, max_emg_ind] = max(mean_emg, [], 'omitnan');
 		% min index is the first peak
 		min_ind = min([min_emg_ind max_emg_ind]);
 		% search for the last time before the min_ind that is below the pre_stim_val
@@ -118,7 +131,25 @@ if length(all_selected) > 1
 		end
 		% change the mep start line
 		app.h_t_min_line.XData = [mep_begin mep_begin];
+		
+		% set flag so that we don't run this whole function again as
+		% mep_line_drag_endfcn removes all cell selection in the table
+		just_called_mep_line_drag_endfcn = true; %#ok<NASGU>
 		mep_line_drag_endfcn(app.h_t_min_line) % FIXME - this is unselecting cells in the table
+		
+		% reselect the cells
+		jUIScrollPane = findjobj(h_tbl);
+		jUITable = jUIScrollPane.getViewport.getView;
+		for r_cnt = 1:length(all_selected)
+			row = all_selected(r_cnt);
+			col = 1;
+			jUITable.changeSelection(row-1,col-1, true, false);
+		end
+		pause(0.1)
+		% reset the flag
+		just_called_mep_line_drag_endfcn = false;
+		
+% 		keyboard
 		% save info used to compute mep_begin
 		% save in the analysis folder with datapoints.csv file
 		save_file = strrep(app.DatapointsCSVEditField.Value, 'datapoints.csv', 'mep_auto_compute_info.txt');
@@ -133,7 +164,7 @@ if length(all_selected) > 1
                     'Create new directory', ...
                     'Yes', 'No', 'Yes');
                 if strcmp(ButtonName, 'Yes')
-                    [success, msg, msg_id] = mkdir(save_loc);
+                    [success, msg, msg_id] = mkdir(save_loc); %#ok<ASGLU>
                 else
                     disp('Choose where to save output')
                     save_loc = uigetdir();
