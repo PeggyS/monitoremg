@@ -6,13 +6,13 @@ mep_beg_t = 15;
 mep_end_t = 90;
 	
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [466 86  1160  1000], 'Name', 'EMG Data', ...
+	app.emg_data_fig = figure('Position', [466 86  1160  900], 'Name', 'EMG Data', ...
 		'NumberTitle', 'off');
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', 16);
 	ylabel('EMG (\muV)')
 	xlabel('Time (msec)')
 	
-	app.h_uitable = uitable('Position', [31 66 580 837], 'RowName', [], 'Tag', 'review_emg_uitable');
+	app.h_uitable = uitable('Position', [25,26,592,779], 'RowName', [], 'Tag', 'review_emg_uitable');
 	
 	% radiobuttons to choose how to compute MEP 
 	app.h_radio_mep = uibuttongroup('Position', [0.1 0.92 0.125 0.065], ...
@@ -89,6 +89,10 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		'String', num2str(mep_end_t), 'fontsize', 16, ...
 		'Callback', {@edit_mep_limits, app});
 	    
+	app.h_autocompute_mep = uicontrol('Style', 'checkbox', ...
+		'Units', 'normalized', 'Position', [0.6 0.3 0.4 0.03], ...
+		'Tag', 'autocompute_mep_checkbox', ...
+		'String', 'autocompute MEP begin', 'fontsize', 16, 'Value', 0);
    
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
