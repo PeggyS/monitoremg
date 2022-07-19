@@ -23,7 +23,7 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	isi_ms = app.h_uitable.Data{row_cnt, isi_col}; %#ok<FNDSB>
 	
 	% if ISI > 0, shift the data by ISI ms
-	if isi_ms > 0
+	if app.CheckBoxSici.Value == 1 && isi_ms > 0
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 	else
 		isi_shift_pts = 0;
@@ -60,7 +60,7 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		app.h_uitable.Data{row_cnt, mep_auc_col} = auc;
 		
 		% update info in rc_fig
-		update_rc_sici_datapoint(app, row_cnt, mep_val, auc);
+		update_rc_sici_datapoint(app, row_cnt, mep_val, auc, false);
 	end
 
 end

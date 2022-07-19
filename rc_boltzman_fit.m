@@ -1,4 +1,4 @@
-function rc_boltzman_fit(source,event, app)
+function rc_boltzman_fit(source,event, app) %#ok<INUSL> 
 
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
@@ -26,7 +26,60 @@ end
 % when using the review_emg app
 [data_var, mep_method] = get_data_var_mep_method(app);
 
-y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
+% Take into account BiStim - use effective stimulator output value
+% in review_emg_rc.mlapp only. In emg_rc.mlapp, keep using the magstim setting.
+% stimulator_mode: magstim, bistim, simultaneous_discharge
+
+if isprop(app, 'EMGDisplayRCUIFigure') 
+	% runnng in emg_rc.mlapp
+	x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
+	stimulator_mode = 'bistim'; % default single pulse on the bistim setup
+	if any(app.rc_axes.UserData.ISI_ms(logical(app.rc_axes.UserData.Use)) == 0)
+		stimulator_mode = 'simultaneous_discharge';
+	end
+
+	y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
+
+else
+	% running in review_emg_rc.mlapp
+	use_ind = find(contains(app.h_uitable.ColumnName, 'use', 'IgnoreCase', true));
+	effective_so_ind = find(contains(app.h_uitable.ColumnName, '>effective<', 'IgnoreCase', true));
+	use_msk = cell2mat(app.h_uitable.Data(:,use_ind));
+	x_data = cell2mat(app.h_uitable.Data(use_msk, effective_so_ind));
+
+	% from the data_var, generate the unique part of h_uitable's column name
+	reg_result = regexp(data_var, '(?<first>[^_]*)_(?<units>.*)', 'names');
+	% returns:
+	% 	first: 'MEPAmpl'
+	%   units: 'uVPp'
+	% or
+	% 	first: 'MEPAUC'
+	%   units: 'uV_ms'
+	table_var = ['>' reg_result.first '<'];
+	y_data_ind = find(contains(app.h_uitable.ColumnName, table_var, 'IgnoreCase', true));
+	y_data = cell2mat(app.h_uitable.Data(use_msk, y_data_ind));
+
+	% from the magstim and bistim values in the table, determine the
+	% stimulator_mode
+	stimulator_setup = app.h_stim_setup_text.String;
+	if strcmpi(stimulator_setup, 'bistim')
+		magstim_ind = find(contains(app.h_uitable.ColumnName, '>MagStim<', 'IgnoreCase', true));
+		bistim_ind = find(contains(app.h_uitable.ColumnName, '>BiStim<', 'IgnoreCase', true));
+		magstim_equals_bistim = cell2mat(app.h_uitable.Data(use_msk, magstim_ind)) == ...
+			cell2mat(app.h_uitable.Data(use_msk, bistim_ind));
+		if all(magstim_equals_bistim)
+			stimulator_mode = 'simultaneous_discharge';
+		elseif all(cell2mat(app.h_uitable.Data(use_msk, bistim_ind)) == 0)
+			stimulator_mode = 'bistim';
+		else
+% 			keyboard
+			stimulator_mode = 'mixed_bistim_and_simultaneous_discharge';
+		end
+	else
+		stimulator_mode = 'magstim';
+	end
+end
+
 
 % the sigmoid function with 4 parameters to fit
 % func = inline('p(3)./(1+exp(p(1)*(p(2)-x)))','p','x');
@@ -49,14 +102,15 @@ p0 = [str2double(app.rc_fit_ui.edSlope.String), ...
 options = statset('nlinfit');
 options = statset(options, 'MaxIter', 1e4);
 
-% fit the curve
-[p,r,j,covb,mse] = nlinfit(x_data, y_data, func, p0, options );
+% fit the y_data curve using x_data and p0 as inputs to 'func' 
+[p,r,j,covb,mse] = nlinfit(x_data, y_data, func, p0, options ); %#ok<ASGLU> 
 
 % x values for plotting lines
 x = unique(x_data);
 
-% confidence intervals
-[yp, ci] = nlpredci(func,x,p,r,j);
+% confidence intervals using x, p as inputs to 'func'
+[yp, ci] = nlpredci(func,x,p,r,j); %#ok<ASGLU> 
+
 axes(app.rc_axes)
 % remove old errLines if any
 hErr = findobj(app.rc_axes, 'Tag', 'errLine');
@@ -145,13 +199,13 @@ stimLevels = unique(x_data);
 meanY = nan(size(stimLevels));
 % mean at each stim level
 for st = 1:length(stimLevels)
-	meanY(st) = nanmean(y_data(x_data==stimLevels(st)));
+	meanY(st) = mean(y_data(x_data==stimLevels(st)), 'omitnan');
 end
 % remove old meanLine if any
 hMean = findobj(app.rc_axes, 'Tag', 'meanLine');
 if ~isempty(hMean), delete(hMean); end
 
-hMean = line(stimLevels, meanY, 'Color', [0 0.7 0], 'Tag', 'meanLine');
+line(stimLevels, meanY, 'Color', [0 0.7 0], 'Tag', 'meanLine');
 % area under the curve
 auc = polyarea([stimLevels(1); stimLevels; stimLevels(end)], ...
 				[0; meanY; 0]);
@@ -175,4 +229,5 @@ app.rc_fit_info.auc = auc;
 app.rc_fit_info.aucMeanVals = meanY;
 app.rc_fit_info.stimLevels = stimLevels;
 app.rc_fit_info.stimulator_mode = stimulator;
+app.rc_fit_info.stimulator_mode = stimulator_mode;
 return

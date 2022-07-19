@@ -10,18 +10,19 @@ end
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 isi_ms = h_tbl.Data{new_row, isi_col}; %#ok<FNDSB>
 
-% if ISI > 0, shift the data by ISI ms
-if isi_ms > 0
+% if sici/icf and ISI > 0, shift the data by ISI ms
+if app.CheckBoxSici.Value == 1 && isi_ms > 0
 	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 else
 	isi_shift_pts = 0;
+	isi_ms = 0;
 end
 tmp_data = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
 app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 % update conditioning stim line h_cs_line
 app.h_cs_line.XData = -isi_ms*[1 1];
 
-% if y limits are the same, make them wider
+% if axes y limits are the same (i.e. ymin == ymax), make them wider
 ymin = min(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
 ymax = max(app.emg_data(new_row, app.emg_data_num_vals_ignore:end));
 if ymax - ymin < eps

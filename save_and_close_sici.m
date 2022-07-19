@@ -103,6 +103,7 @@ try
 			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
 			if isprop(app, 'rc_fit_ui')
 				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); % FIXME is this correct?
+				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); 
 			end
 			% for review_emg:
 			if isprop(app, 'h_edit_mep_begin')
