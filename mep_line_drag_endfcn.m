@@ -44,10 +44,10 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	[vertices, faces] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 	
 	% if this row is being shown, update the patch
-	%if row_cnt == app.row_displayed
+	if row_cnt == app.row_displayed
 		app.h_emg_auc_patch.Vertices = vertices;
 		app.h_emg_auc_patch.Faces = faces;
-	%end
+	end
 	
 	auc = compute_auc(vertices);
 	

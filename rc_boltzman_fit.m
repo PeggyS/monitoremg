@@ -7,20 +7,9 @@ norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
 mep_begin = app.h_t_min_line.XData(1);
 mep_end = app.h_t_max_line.XData(1);
 
-% the data
-% FIXME - take into account BiStim - use effective stimulator output value
-% in review_emg_rc.mlapp only. In emg_rc.mlapp, keep using the magstim setting.
+
 stimulator = []; % stimulator & mode: magstim, bistim, simultaneous_discharge
-if isprop(app, 'EMGDisplayRCUIFigure') 
-	% runnng in emg_rc.mlapp
-	x_data = app.rc_axes.UserData.MagStim_Setting(logical(app.rc_axes.UserData.Use));
-	stimulator = 'bistim'; % default single pulse on the bistim setup
-	if any(app.rc_axes.UserData.ISI_ms(logical(app.rc_axes.UserData.Use)) == 0)
-		stimulator = 'simultaneous_discharge';
-	end
-else
-	%keyboard
-end
+
 % make provision for MEPAUC:
 % find out if app is displaying MEP ampl or auc - currently only applies
 % when using the review_emg app
