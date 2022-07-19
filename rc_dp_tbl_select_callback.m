@@ -137,14 +137,20 @@ if length(all_selected) > 1
 		just_called_mep_line_drag_endfcn = true; %#ok<NASGU>
 		mep_line_drag_endfcn(app.h_t_min_line) % FIXME - this is unselecting cells in the table
 		
-		% reselect the cells
+		% reselect the cells (if needed)
 		jUIScrollPane = findjobj(h_tbl);
 		jUITable = jUIScrollPane.getViewport.getView;
-		for r_cnt = 1:length(all_selected)
-			row = all_selected(r_cnt);
-			col = 1;
-			jUITable.changeSelection(row-1,col-1, true, false);
-		end
+        j_selected_rows = jUITable.getSelectedRows;
+        if isempty(j_selected_rows)
+            fprintf('table cells unselected .. reselecting them\n')
+            for r_cnt = 1:length(all_selected)
+                row = all_selected(r_cnt);
+                col = 1;
+                jUITable.changeSelection(row-1,col-1, true, false);
+            end
+        else
+            fprintf('table cells stayed selected\n')
+        end
 		pause(0.1)
 		% reset the flag
 		just_called_mep_line_drag_endfcn = false;
