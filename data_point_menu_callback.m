@@ -45,10 +45,30 @@ switch source.Label
 		end
 		source.Label = 'Disable All';
 	case 'Show in Table'
-		hf=h_ax.Parent;
-		hf.UserData.app.h_edit_epoch.String = num2str(h_line.UserData.table_row_num);
-		edit_epoch(hf.UserData.app.h_edit_epoch, [], hf.UserData.app)
+		h_emg_data_fig = findwind('EMG Data', 'Name');
+		if ishandle(h_emg_data_fig)
+			% runing in review_emg_rc.mlapp
+			%  update the uitable
+			hf=h_ax.Parent;
+			hf.UserData.app.h_edit_epoch.String = num2str(h_line.UserData.table_row_num);
+			edit_epoch(hf.UserData.app.h_edit_epoch, [], hf.UserData.app) % update the epoch number edit box
+% 			% select the row in the uitable
+% 			h_uitable = findobj(h_emg_data_fig, 'Tag', 'review_emg_uitable');
+% 			jUIScrollPane = findjobj(h_uitable);
+% 			jUITable = jUIScrollPane.getViewport.getView;
+% 			j_selected_rows = jUITable.getSelectedRows;
+% 			if ~isempty(j_selected_rows)
+% 				fprintf('table cells already selected ..unselecting them\n')
+% 				for r_cnt = 1:length(j_selected_rows)
+% 					col = 1;
+% 					jUITable.changeSelection(j_selected_rows(r_cnt),col-1, true, false); % toggle selection
+% 				end
+% 			end
+% 			% toggle newly selected epoch/row number
+% 			col = 1;
+% 			jUITable.changeSelection(h_line.UserData.table_row_num-1,col-1, true, false);
+		end
 end
 
-% if in the review_emg app, update the uitable
 return
+end % function
