@@ -19,7 +19,7 @@ if isprop(app, 'EMGDisplayRCUIFigure')
 		stimulator = 'simultaneous_discharge';
 	end
 else
-	keyboard
+	%keyboard
 end
 % make provision for MEPAUC:
 % find out if app is displaying MEP ampl or auc - currently only applies
