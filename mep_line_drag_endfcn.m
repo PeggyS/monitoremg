@@ -12,6 +12,16 @@ app.h_edit_mep_end.String = num2str(mep_end_time, 3);
 t_dur = mep_end_time - mep_start_time;
 app.h_edit_mep_dur.String = num2str(t_dur, 3);
 
+% get the selected rows, so if values change and cells become unselected,
+% they can be reselected
+% reselect the cells (if needed)
+jUIScrollPane = findjobj(app.h_uitable);
+jUITable = jUIScrollPane.getViewport.getView;
+j_original_selected_rows = jUITable.getSelectedRows;
+if ~isempty(j_original_selected_rows)
+	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
+end
+
 % recompute the MEP peak to peak value and MEPAUC for all rows in the data point table
 emg.XData = app.h_emg_line.XData;
 for row_cnt = 1:length(app.h_uitable.Data)
@@ -62,6 +72,21 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		% update info in rc_fig
 		update_rc_sici_datapoint(app, row_cnt, mep_val, auc, false);
 	end
-
 end
+
+% reselect the cells (if needed)
+jUIScrollPane = findjobj(app.h_uitable);
+jUITable = jUIScrollPane.getViewport.getView;
+j_now_selected_rows = jUITable.getSelectedRows;
+if isempty(j_now_selected_rows)
+	fprintf('mep_line_drag_endfcn: table cells unselected .. reselecting them\n')
+	for r_cnt = 1:length(j_original_selected_rows)
+		row = j_original_selected_rows(r_cnt);
+		col = 1;
+		jUITable.changeSelection(row,col-1, true, false);
+	end
+else
+	fprintf('mep_line_drag_endfcn: table cells stayed selected\n')
+end
+% pause(0.1)
 
