@@ -46,7 +46,7 @@ else
 	%   units: 'uV_ms'
 	table_var = ['>' reg_result.first '<'];
 	y_data_ind = find(contains(app.h_uitable.ColumnName, table_var, 'IgnoreCase', true));
-	y_data = cell2mat(app.h_uitable.Data(use_msk, y_data_ind));
+	y_data = cell2mat(app.h_uitable.Data(use_msk, y_data_ind)) / norm_factor;
 
 	% from the magstim and bistim values in the table, determine the
 	% stimulator_mode
