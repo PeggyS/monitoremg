@@ -11,8 +11,8 @@ if just_called_mep_line_drag_endfcn == true
 	return
 end
 
-fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
-fprintf('rc_dp_tbl_select_callback: start: cell_select: %s\n', mat2str(cell_select_data.Indices))
+% fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
+% fprintf('rc_dp_tbl_select_callback: start: cell_select: %s\n', mat2str(cell_select_data.Indices))
 % fprintf('start: h_lines:  %s\n', mat2str(h_lines))
 
 % remove previous lines
@@ -87,7 +87,7 @@ if length(all_selected) > 1
 		tmp_data = app.emg_data(row, app.emg_data_num_vals_ignore+1:end);
 		y = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 		
-		h_lines(l_cnt) = line(x,y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line'); %#ok<AGROW>
+		h_lines(l_cnt) = line(app.h_disp_emg_axes, x, y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line'); %#ok<AGROW>
 		ymin = min([ymin min(y)]);
 		ymax = max([ymax max(y)]);
 		y_data_matrix(l_cnt,:) = y; %#ok<AGROW> 
@@ -102,7 +102,7 @@ if length(all_selected) > 1
 	% increase the resolution on the mean line using spline interpolation
 	fine_res_x = min(x) : diff(x(1:2))/10 : max(x);
 	fine_res_mean_emg = spline(x, mean_emg, fine_res_x);
-	h_mean_emg_line = line(fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 1.5, ...
+	h_mean_emg_line = line(app.h_disp_emg_axes, fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 1.5, ...
 		'Tag', 'mean_mep_line');
 	h_lines(l_cnt+1) = h_mean_emg_line;
 	% compute mean prestim value for mean line
@@ -112,5 +112,5 @@ if length(all_selected) > 1
 
 end
 
-fprintf('rc_dp_tbl_select_callback: exit: most_recent: %d, all: %s\n', most_recent_selected, mat2str(all_selected))
+% fprintf('rc_dp_tbl_select_callback: exit: most_recent: %d, all: %s\n', most_recent_selected, mat2str(all_selected))
 % fprintf('exit: h_lines:  %s\n', mat2str(h_lines))
