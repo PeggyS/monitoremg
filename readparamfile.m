@@ -20,16 +20,16 @@ function param = readparamfile(varargin)
 %
 
 % parse the input argument
-if nargin < 2,
-	error(['readparamfile requires at least 2 input arguments']);
+if nargin < 2
+	error('readparamfile requires at least 2 input arguments');
 end
 pfile = varargin{1};
 keywords = varargin{2};
 default = [];
-if nargin > 2,
+if nargin > 2
 	default = varargin{3};
-	if length(keywords) ~= length(default),
-		error(['KEYWORDS and DEFAULT arguments to readparamfile must be equal lengths']);
+	if length(keywords) ~= length(default)
+		error('KEYWORDS and DEFAULT arguments to readparamfile must be equal lengths');
 	end
 end
 
@@ -43,31 +43,31 @@ txt = readtextfile(pfile); 	% cell array of strings, one row for each line in th
 txt = cellfun(@(x)(regexp(x,':','split')), txt, 'uniformoutput', false);
 
 % look for each keyword
-for i = 1:length(keywords),
+for i = 1:length(keywords)
 	% find the keyword in col 1 of txt cell
 	c = cellfun(@(x)(strfind(lower(x{1}), lower(keywords{i}))), txt, 'uniformoutput', false);
     % which row in txt?
     foundMsk = ~cellfun(@isempty,c);
     
-    switch sum(foundMsk),
-        case 0,         % keyword not found
+    switch sum(foundMsk)
+        case 0       % keyword not found
             param{i} = [];
-        case 1,
+        case 1
             param{i} = strtrim(txt{foundMsk}{2});
         otherwise           % more than one instance of the keyword found
             error(['more than one instance of keyword ' upper(keywords{i}) ' found']);
     end
 end
 
-if ~isempty(default),
+if ~isempty(default)
 	
 	% apply default values
 	msk = cellfun(@isempty, param);
 	param(msk) = default(msk);
 	
-	for i = 1:length(param),
+	for i = 1:length(param)
 		% convert strings to number if default is a number
-		if isstr(param{i}) && isnumeric(default{i}),
+		if ischar(param{i}) && isnumeric(default{i})
 			param{i} = str2double(param{i});
 		end
 	end
