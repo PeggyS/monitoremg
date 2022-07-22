@@ -1,4 +1,4 @@
-function save_computed_mep_info(app)
+function save_computed_mep_info(~, ~, app)
 
 % save info used to compute mep_begin
 % save in the analysis folder with datapoints.csv file
@@ -27,8 +27,8 @@ if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
 end
 
 save_file = fullfile(save_loc, [save_f save_ext]);
-info.mep_begin_time = app.h_t_min_line.XData(1);
-info.mep_end_time = app.h_t_max_line.XData(1);
+info.mep_begin_time = round(app.h_t_min_line.XData(1), 1);
+info.mep_end_time = round(app.h_t_max_line.XData(1), 1);
 
 % get what epochs are selected from the h_uitable
 jUIScrollPane = findjobj(app.h_uitable);

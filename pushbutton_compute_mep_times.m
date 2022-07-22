@@ -6,7 +6,8 @@ pushbutton_adj_mep_end(src, evt, app)
 
 if app.mep_times_changed_flag == true
 	% save info used 
-	save_computed_mep_info(app)
+	save_computed_mep_info([], [], app)
+	app.mep_times_changed_flag = false; % reset the flag
 end
 
 return

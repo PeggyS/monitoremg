@@ -4,12 +4,13 @@ function rc_dp_tbl_select_callback(h_tbl, cell_select_data, app)
 % Indices
 % Source 
 % EventName = 'CellSelection'
-persistent most_recent_selected all_selected h_lines just_called_mep_line_drag_endfcn
-if just_called_mep_line_drag_endfcn == true
-	% cell selection changed because mep_line_drag_endfcn changed values in
-	% the table and no cells are selected
-	return
-end
+persistent most_recent_selected all_selected 
+%just_called_mep_line_drag_endfcn
+% if just_called_mep_line_drag_endfcn == true
+% 	% cell selection changed because mep_line_drag_endfcn changed values in
+% 	% the table and no cells are selected
+% 	return
+% end
 
 % fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
 % fprintf('rc_dp_tbl_select_callback: start: cell_select: %s\n', mat2str(cell_select_data.Indices))
@@ -24,10 +25,9 @@ h_l = findobj('Tag', 'mean_mep_line');
 if ~isempty(h_l)
 	delete(h_l)
 end
-% if ~isempty(h_lines)
-% 	delete(h_lines)
-	h_lines = [];
-% end
+
+h_lines = [];
+
 
 new_row_to_show = most_recent_selected;
 
@@ -104,7 +104,7 @@ if length(all_selected) > 1
 	fine_res_mean_emg = spline(x, mean_emg, fine_res_x);
 	h_mean_emg_line = line(app.h_disp_emg_axes, fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 1.5, ...
 		'Tag', 'mean_mep_line');
-	h_lines(l_cnt+1) = h_mean_emg_line;
+	h_lines(l_cnt+1) = h_mean_emg_line; %#ok<NASGU> 
 	% compute mean prestim value for mean line
 	pre_stim_val = compute_pre_stim_emg_value(app, h_mean_emg_line);
 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];

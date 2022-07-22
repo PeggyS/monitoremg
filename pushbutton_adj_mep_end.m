@@ -54,12 +54,15 @@ assert(~isnan(mep_end), 'pushbutton_adj_mep_end: mep_end computed as nan')
 assert(~isempty(mep_end), 'pushbutton_adj_mep_end: mep_end computed as empty')
 
 if mep_end_time ~= mep_end
+	fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
 	% change the mep end line
 	app.h_t_max_line.XData = [mep_end mep_end];
 	mep_line_drag_endfcn(app.h_t_min_line)		
 	% update the analysis date
 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd');
 	app.mep_times_changed_flag = true;
+	% update done by
+	app.h_edit_mep_done_by.String = app.AnalysisdonebyEditField.Value;
 end
 return
 end % pushbutton_adj_mep_beg

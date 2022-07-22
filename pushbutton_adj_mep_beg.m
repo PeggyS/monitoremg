@@ -73,13 +73,15 @@ assert(~isempty(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as empty
 
 % change the mep start line
 if mep_begin ~= mep_beg_time
+	fprintf('  MEP beg changed from %f to %f\n', mep_beg_time, mep_begin)
 	app.h_t_min_line.XData = [mep_begin mep_begin];
 	mep_line_drag_endfcn(app.h_t_min_line)
 	% update the analysis date
 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd');
 	app.mep_times_changed_flag = true;
+	% update done by
+	app.h_edit_mep_done_by.String = app.AnalysisdonebyEditField.Value;
 end
-
 
 return
 end % pushbutton_adj_mep_beg
