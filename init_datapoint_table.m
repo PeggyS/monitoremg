@@ -222,7 +222,7 @@ if any(isnan(tbl.MEPAUC_uV_ms))
 		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, 0);
 
 		auc = compute_auc(vertices);
-		tbl.MEPAUC_uV_ms(row_cnt) = auc;
+		tbl.MEPAUC_uV_ms(row_cnt) = round(auc);
 	end
 end
 
@@ -236,7 +236,7 @@ if any(isnan(tbl.PreStimEmg_100ms))
 	emg.XData = app.h_emg_line.XData;
 	for row_cnt  = 1:height(tbl)
 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
-		tbl.PreStimEmg_100ms(row_cnt) = compute_pre_stim_emg_value(app, emg);
+		tbl.PreStimEmg_100ms(row_cnt) = round(compute_pre_stim_emg_value(app, emg), 2);
 	end
 end
 
@@ -246,10 +246,15 @@ if any(isnan(tbl.MEPAmpl_uVPp))
 	emg.XData = app.h_emg_line.XData;
 	for row_cnt  = 1:height(tbl)
 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
-		tbl.MEPAmpl_uVPp(row_cnt) = max(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
-			emg.XData < str2double(app.h_edit_mep_end.String))) ...
-			- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
-			emg.XData < str2double(app.h_edit_mep_end.String))) ;
+		mep_seg = emg.YData(emg.XData >= str2double(app.h_edit_mep_begin.String) & ...
+			emg.XData <= str2double(app.h_edit_mep_end.String));
+		mep_val = max(mep_seg) - min(mep_seg);
+		tbl.MEPAmpl_uVPp(row_cnt) = round(mep_val);
+% 		tbl.MEPAmpl_uVPp(row_cnt) = max(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+% 			emg.XData < str2double(app.h_edit_mep_end.String))) ...
+% 			- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+% 			emg.XData < str2double(app.h_edit_mep_end.String))) ;
+		
 	end
 end
 
@@ -312,7 +317,12 @@ else % rc or data only / average
 	coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false];
 end
 
-%
+
+% round mep p2p and auc values
+tbl(:,'MEPAmpl_uVPp') = table(round(table2array(tbl(:,'MEPAmpl_uVPp'))));
+tbl(:,'MEPAUC_uV_ms' ) = table(round(table2array(tbl(:,'MEPAUC_uV_ms'))));
+tbl(:,'PreStimEmg_100ms' ) = table(round(table2array(tbl(:,'PreStimEmg_100ms'))));
+
 app.h_uitable.Data = table2cell(tbl);
 app.h_uitable.ColumnName = headers';
 app.h_uitable.ColumnWidth = colwidths;

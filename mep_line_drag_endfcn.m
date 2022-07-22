@@ -42,12 +42,12 @@ for row_cnt = 1:length(app.h_uitable.Data)
 	emg.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 	
 	mep_seg = emg.YData(emg.XData >= mep_start_time & emg.XData <= mep_end_time);
-	mep_val = max(mep_seg) - min(mep_seg);
+	mep_val = round(max(mep_seg) - min(mep_seg)); % 2022-07-22 added round
 	if app.SubtractPreEMGppButton.Value % subtract the pre stim emg
 		% compute the pre-stim emg
 % 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore:end);
 		pre_stim_val = compute_pre_stim_emg_value(app, emg);
-		mep_val = mep_val - pre_stim_val;
+		mep_val = round(mep_val - pre_stim_val); % 2022-07-22 added round
 	end
 	
 	% AUC
@@ -59,7 +59,7 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		app.h_emg_auc_patch.Faces = faces;
 	end
 	
-	auc = compute_auc(vertices);
+	auc = round(compute_auc(vertices)); % 2022-07-22 added round
 	
 	% update the uitable
 	mep_ampl_col = find(contains(app.h_uitable.ColumnName, '>MEPAmpl<'));
