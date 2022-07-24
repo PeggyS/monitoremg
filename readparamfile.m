@@ -39,23 +39,36 @@ param = cell(1, length(keywords));
 % read in the text file
 txt = readtextfile(pfile); 	% cell array of strings, one row for each line in the file
 
-% separate each line at the colon ':'
-txt = cellfun(@(x)(regexp(x,':','split')), txt, 'uniformoutput', false);
+% separate each line at the colon ' : '
+% txt = cellfun(@(x)(regexp(x,' : ','split')), txt, 'uniformoutput', false);
+txt = split(txt, ' : ');
 
 % look for each keyword
+foundMsk = false(size(txt,1),1);
+
 for i = 1:length(keywords)
 	% find the keyword in col 1 of txt cell
-	c = cellfun(@(x)(strfind(lower(x{1}), lower(keywords{i}))), txt, 'uniformoutput', false);
+	for cnt = 1:size(txt,1)
+		if strcmp(txt{cnt,1}, keywords{i})
+			foundMsk(cnt) = true;
+		else
+			foundMsk(cnt) = false;
+		end
+	end
+
+% 	c = cellfun(@(x)(strfind(lower(x{1}), lower(keywords{i}))), txt, 'uniformoutput', false);
+
     % which row in txt?
-    foundMsk = ~cellfun(@isempty,c);
+%     foundMsk = ~cellfun(@isempty,c);
     
     switch sum(foundMsk)
         case 0       % keyword not found
             param{i} = [];
         case 1
-            param{i} = strtrim(txt{foundMsk}{2});
+%             param{i} = strtrim(txt{foundMsk}{2});
+			param{i} = strtrim(txt{foundMsk, 2});
         otherwise           % more than one instance of the keyword found
-            error(['more than one instance of keyword ' upper(keywords{i}) ' found']);
+            error(['more than one instance of keyword ' keywords{i} ' found']);
     end
 end
 
@@ -66,9 +79,9 @@ if ~isempty(default)
 	param(msk) = default(msk);
 	
 	for i = 1:length(param)
-		% convert strings to number if default is a number
-		if ischar(param{i}) && isnumeric(default{i})
-			param{i} = str2double(param{i});
+		
+		if ischar(param{i}) && isnumeric(default{i}) % convert strings to number if default is a number
+			param{i} = str2num(param{i}); %#ok<ST2NM> 
 		end
 	end
 end

@@ -1,5 +1,5 @@
-function save_and_close_rc(source, event, app)
-cur_dir = pwd;
+function save_and_close_rc(source, event, app) %#ok<INUSL> 
+% cur_dir = pwd;
 
 if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	% review_emg_rc app has no property for save location, use file path
@@ -21,7 +21,7 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
                          'Create new directory', ...
                          'Yes', 'No', 'Yes');
 			if strcmp(ButtonName, 'Yes')
-				[success, msg, msg_id] = mkdir(save_loc);
+				[success, msg, msg_id] = mkdir(save_loc); %#ok<ASGLU> 
 			else
 				disp('Choose where to save output')
 				save_loc = uigetdir();
@@ -83,6 +83,12 @@ end % confirmed saving
 if isfield(app.rc_fit_info, 'mepMethod')
 	[confirm_saving, fitinfo_fname] = confirm_savename(fitinfo_fname);
 	if confirm_saving
+		% add analyzed by and when
+		app.rc_fit_info.analyzed_by = upper(app.user_initials);
+		app.AnalyzedbyEditField.Value = upper(app.user_initials);
+		app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+		app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
+		
 		try
 			write_fit_info(fitinfo_fname, app.rc_fit_info)
 		catch ME

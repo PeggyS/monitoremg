@@ -1,4 +1,4 @@
-function save_and_close_sici(source, event, app)
+function save_and_close_sici(source, event, app) %#ok<INUSL> 
 try
 	
 	if ~isprop(app, 'SaveLocationEditField')
@@ -14,7 +14,7 @@ try
 					'Create new directory', ...
 					'Yes', 'No', 'Yes');
 				if strcmp(ButtonName, 'Yes')
-					[success, msg, msg_id] = mkdir(save_loc);
+					[success, msg, msg_id] = mkdir(save_loc); %#ok<ASGLU> 
 				else
 					disp('Choose where to save output')
 					save_loc = uigetdir();
@@ -107,18 +107,27 @@ try
 			end
 			% for review_emg:
 			if isprop(app, 'h_edit_mep_begin')
-				app.sici_info.mep_begin_t = str2double(app.h_edit_mep_begin.String);
+				app.sici_info.mep_beg_t = str2double(app.h_edit_mep_begin.String);
 			end
 			if isprop(app, 'h_edit_mep_end')
 				app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
 			end
 			% for emg_rc:
 			if isprop(app, 'h_t_min_line') && isgraphics(app.h_t_min_line)
-				app.sici_info.mep_begin_t = app.h_t_min_line.XData(1);
+				app.sici_info.mep_beg_t = app.h_t_min_line.XData(1);
 			end
 			if isprop(app, 'h_t_max_line') && isgraphics(app.h_t_max_line)
 				app.sici_info.mep_end_t = app.h_t_max_line.XData(1);
 			end
+
+			if isprop(app, 'AnalyzedbyEditField')
+				app.sici_info.analyzed_by = app.AnalyzedbyEditField.Value;
+				app.sici_info.analyzed_when = app.AnalyzedWhenEditField.Value;
+			end
+			if isprop(app, 'AnalyzedbyEditField')
+				app.sici_info.analyzed_by = app.AnalyzedbyEditField.Value;
+			end
+
 			try
 				write_fit_info(sici_info_fname, app.sici_info)
 			catch ME

@@ -85,7 +85,7 @@ if length(all_selected) > 1
 			isi_shift_pts = 0;
 		end
 		tmp_data = app.emg_data(row, app.emg_data_num_vals_ignore+1:end);
-		y = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
+		y = [tmp_data(isi_shift_pts+1:end) tmp_data(end)*ones(1,isi_shift_pts)];
 		
 		h_lines(l_cnt) = line(app.h_disp_emg_axes, x, y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line'); %#ok<AGROW>
 		ymin = min([ymin min(y)]);

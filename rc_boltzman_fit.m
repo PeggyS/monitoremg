@@ -100,6 +100,9 @@ x = unique(x_data);
 % confidence intervals using x, p as inputs to 'func'
 [yp, ci] = nlpredci(func,x,p,r,j); %#ok<ASGLU> 
 
+% parameter confidence intervals
+pci = nlparci(p, r, 'jacobian', j);
+
 axes(app.rc_axes)
 % remove old errLines if any
 hErr = findobj(app.rc_axes, 'Tag', 'errLine');
@@ -109,8 +112,6 @@ y = func(p,x);
 hErr = errorbar(x,y,ci,ci);
 set(hErr, 'Tag', 'errLine', 'LineWidth', 3, 'Color', [0.8 0 0]);
 
-% parameter confidence intervals
-pci = nlparci(p, r, 'jacobian', j);
 
 % app.rc_fit_ui.txtSlope.String = num2str(p(1));
 % app.rc_fit_ui.txtSlopeCI1.String = ['[' num2str(pci(1,1))];
@@ -203,7 +204,7 @@ app.rc_fit_ui.txtAUC.String = ['AUC = ' num2str(round(auc, 2))];
 % info saved in app struct for easy saving
 app.rc_fit_info.mepMethod = mep_method;
 app.rc_fit_info.norm_factor = norm_factor;
-app.rc_fit_info.mep_begin_t = mep_begin;
+app.rc_fit_info.mep_beg_t = mep_begin;
 app.rc_fit_info.mep_end_t = mep_end;
 app.rc_fit_info.slope = p(1);
 app.rc_fit_info.s50 = p(2);

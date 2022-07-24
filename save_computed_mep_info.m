@@ -26,9 +26,19 @@ if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
 	end
 end
 
+% remove rc or sici from the name
+rc_or_sici = '';
+if contains(save_f, 'rc_')
+	rc_or_sici = 'rc';
+	save_f = strrep(save_f, 'rc_', '');
+elseif contains(save_f, 'sici_' )
+	rc_or_sici = 'sici';
+	save_f = strrep(save_f, 'sici_', '');
+end
 save_file = fullfile(save_loc, [save_f save_ext]);
-info.mep_begin_time = round(app.h_t_min_line.XData(1), 1);
-info.mep_end_time = round(app.h_t_max_line.XData(1), 1);
+app.mep_info.file_name = save_file;
+app.mep_info.mep_beg_t = round(app.h_t_min_line.XData(1), 1);
+app.mep_info.mep_end_t = round(app.h_t_max_line.XData(1), 1);
 
 % get what epochs are selected from the h_uitable
 jUIScrollPane = findjobj(app.h_uitable);
@@ -36,15 +46,24 @@ jUITable = jUIScrollPane.getViewport.getView;
 j_now_selected_rows = jUITable.getSelectedRows; % selected rows - zero indexed (java)
 assert(~isempty(j_now_selected_rows), 'save_computed_mep_info: no rows found selected in uitable')
 selected_epochs = j_now_selected_rows + 1;
-info.epochs_used = selected_epochs;
+app.mep_info.epochs_used = selected_epochs;
 
-info.analyzed_by = app.h_edit_mep_done_by.String;
-info.analyzed_when = app.h_edit_mep_done_when.String;
+% make sure real initials will be saved look at emg data window 
+% if strcmpi(app.AnalysisdonebyEditField, '???')
+% 	% fill in who is doing the analysis
+% 	app.AnalysisdonebyEditField = app.user_initials;
+% end
+if isempty(app.h_edit_mep_done_by.String)
+	app.h_edit_mep_done_by.String = upper(app.user_initials);
+end
+app.mep_info.analyzed_by = app.h_edit_mep_done_by.String;
+app.mep_info.analyzed_when = app.h_edit_mep_done_when.String;
+app.mep_info.using_rc_or_sici_data = rc_or_sici;
 
 % write info to file
-write_fit_info(save_file, info)
+write_fit_info(save_file, app.mep_info)
 fprintf('save_computed_mep_info: file\n %s\n with mep times = [%f %f]\n', save_file, ...
-	info.mep_begin_time, info.mep_end_time)
+	app.mep_info.mep_beg_t, app.mep_info.mep_end_t)
 
 return
 end

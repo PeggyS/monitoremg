@@ -25,8 +25,8 @@ if isempty(match_list)
 	return
 end
 
-% read in each matching fit info file, parse for the mep_begin_t
-keywords = {'mep_begin_t' 'mep_end_t'};
+% read in each matching fit info file, parse for the mep_beg_t
+keywords = {'mep_beg_t' 'mep_end_t'};
 defaults = {0, 0};
 mep_beg_vec = zeros(1,length(match_list));
 mep_end_vec = zeros(1,length(match_list));

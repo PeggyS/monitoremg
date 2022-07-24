@@ -1,4 +1,4 @@
-function load_stim_emg_data(source,event, app)
+function load_stim_emg_data(source,event, app) %#ok<INUSL> 
 
 if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, data is already in this field
  	if any(strcmp(properties(app), 'MuscleEditField')) 

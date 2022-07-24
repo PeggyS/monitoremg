@@ -8,6 +8,8 @@ if app.mep_times_changed_flag == true
 	% save info used 
 	save_computed_mep_info([], [], app)
 	app.mep_times_changed_flag = false; % reset the flag
+else
+	disp('MEP times did not change. No file saved.')
 end
 
 return

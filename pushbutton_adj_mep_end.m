@@ -57,12 +57,17 @@ if mep_end_time ~= mep_end
 	fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
 	% change the mep end line
 	app.h_t_max_line.XData = [mep_end mep_end];
-	mep_line_drag_endfcn(app.h_t_min_line)		
+	mep_line_drag_endfcn(app.h_t_min_line)
+end
+% if the value has changed from the one stored in the app (most likely from
+% being read in from the info file)
+if abs(app.mep_info.mep_end_t - mep_end) > 0.05 
+	% update info and flag it to be saved
 	% update the analysis date
-	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd');
-	app.mep_times_changed_flag = true;
+	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 	% update done by
-	app.h_edit_mep_done_by.String = app.AnalysisdonebyEditField.Value;
+	app.h_edit_mep_done_by.String = upper(app.user_initials);
+	app.mep_times_changed_flag = true;
 end
 return
 end % pushbutton_adj_mep_beg

@@ -1,4 +1,4 @@
-function rc_change_norm_factor(source,event, app)
+function rc_change_norm_factor(source,event, app) %#ok<INUSL> 
 
 % norm factor
 norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
