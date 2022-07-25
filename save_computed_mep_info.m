@@ -59,6 +59,7 @@ end
 app.mep_info.analyzed_by = app.h_edit_mep_done_by.String;
 app.mep_info.analyzed_when = app.h_edit_mep_done_when.String;
 app.mep_info.using_rc_or_sici_data = rc_or_sici;
+app.mep_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ');
 
 % write info to file
 write_fit_info(save_file, app.mep_info)

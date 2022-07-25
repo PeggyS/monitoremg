@@ -9,7 +9,7 @@ info = struct();
 side_muscle = regexprep(fname, '_((rc)|(sici))_datapoints', '');
 
 % always look in the analysis folder path
-pname = strrep(pname, '/data/', '/analysis/');
+pname = strrep(pname, [filesep, 'data', filesep],  [filesep 'analysis' filesep]);
 
 % dir_struct = dir(pname); % all the files in the directory with the datapoint csv file
 % dir_cell_list = arrayfun(@(x)(x.name), dir_struct, 'UniformOutput', false);
@@ -34,8 +34,9 @@ if exist(file_name, 'file') ~= 2
 end
 
 % read in file, parse for the info
-keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used' 'analyzed_by' 'analyzed_when' 'using_rc_or_sici_data'  };
-defaults = {0, 0, [], '', '', ''};
+keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used' 'analyzed_by' 'analyzed_when' ...
+    'using_rc_or_sici_data' 'comments' };
+defaults = {0, 0, [], '', '', '', ''};
 
 try
 	paramscell = readparamfile(file_name, keywords, defaults);
@@ -50,6 +51,7 @@ info.epochs_used = paramscell{3};
 info.analyzed_by = paramscell{4};
 info.analyzed_when = paramscell{5};
 info.using_rc_or_sici_data  = paramscell{6};
+info.comments  = paramscell{7};
 
 return
 end
