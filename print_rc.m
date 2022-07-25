@@ -1,7 +1,6 @@
-function print_rc(source, event, app)
-cur_dir = pwd;
+function print_rc(source, event, app) %#ok<INUSL>
 
-if ~any(strcmp(properties(app), 'SaveLocationEditField')) 
+if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	% review_emg_rc app has no property for save location
 	[pname, ~, ~] = fileparts(app.EMGDataTxtEditField.Value);
 	save_loc = pname;
@@ -15,7 +14,7 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
                          'Create new directory', ...
                          'Yes', 'No', 'Yes');
 			if strcmp(ButtonName, 'Yes')
-				[success, msg, msg_id] = mkdir(save_loc);
+				[success, msg, msg_id] = mkdir(save_loc); %#ok<ASGLU>
 			else
 				disp('Choose where to save output')
 				save_loc = uigetdir();
@@ -49,6 +48,11 @@ end
 % if norm value > 1, change not_norm to norm in fitinfo_fname
 if str2double(app.rc_fit_ui.edNormFactor.String) > 1
 	fname = strrep(fname, '_not_norm', '_norm');
+end
+
+if isprop(app,'DatapointsCSVEditField')
+    fname = get_rc_fit_info_file_name(app);
+    fname = strrep(fname, '.txt', '.png');
 end
 
 print(app.rc_fig, '-dpng', fname);
