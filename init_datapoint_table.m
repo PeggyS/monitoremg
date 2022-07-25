@@ -197,17 +197,21 @@ end
 if ~contains(tbl.Properties.VariableNames, 'MEPAUC')
 	disp('Computing MEP AUC...')
 	n_cols = width(tbl);
+	% put it after the MEPAmpl_uVPp col
+	next_col_num = find(contains(tbl.Properties.VariableNames, 'MEPAmpl_uVPp')) + 1;
 	tbl = [tbl(:,1:next_col_num-1) array2table(nan(height(tbl),1)) tbl(:,next_col_num:n_cols)];
 	tbl.Properties.VariableNames{next_col_num} = 'MEPAUC_uV_ms';
 end
+
 % if MEPAUCs are nan, compute them
 if any(isnan(tbl.MEPAUC_uV_ms))
-	% compute all the MEPAUCs
+	% compute all the MEPAUCs and recompute MEPAmpl_uVPp using the current
+	% mep_beg_t and mep_end_t
+	
 	emg.XData = app.h_emg_line.XData;
 	for row_cnt = 1:height(tbl)
-		% pre_stim_val = tbl.PreStimEmg_100ms(row_cnt);
 
-		% update emg auc patch
+		% mep beg & end times 
 		mep_start_time = app.h_t_min_line.XData(1);
 		mep_end_time = app.h_t_max_line.XData(1);
 
@@ -219,8 +223,20 @@ if any(isnan(tbl.MEPAUC_uV_ms))
 		end
 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
 		emg.YData = [emg.YData(shift_ISI+1:end) nan(1,shift_ISI)];
+		
+		mep_seg = emg.YData(emg.XData >= mep_start_time & emg.XData <= mep_end_time);
+		mep_val = max(mep_seg) - min(mep_seg);
+		
+		if app.SubtractPreEMGppButton.Value % subtract the pre stim emg
+			% compute the pre-stim emg
+			pre_stim_val = compute_pre_stim_emg_value(app, emg);
+			mep_val = mep_val - pre_stim_val;
+		end
+		tbl.MEPAmpl_uVPp(row_cnt) = round(mep_val);
+	
+		% update emg auc patch
 		[vertices, ~] = compute_patch(mep_start_time, mep_end_time, emg, 0);
-
+		% auc
 		auc = compute_auc(vertices);
 		tbl.MEPAUC_uV_ms(row_cnt) = round(auc);
 	end
@@ -240,23 +256,23 @@ if any(isnan(tbl.PreStimEmg_100ms))
 	end
 end
 
-% if mep ampl is nan, compute it
-if any(isnan(tbl.MEPAmpl_uVPp))
-	disp('Computing MEP Ampl...')
-	emg.XData = app.h_emg_line.XData;
-	for row_cnt  = 1:height(tbl)
-		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
-		mep_seg = emg.YData(emg.XData >= str2double(app.h_edit_mep_begin.String) & ...
-			emg.XData <= str2double(app.h_edit_mep_end.String));
-		mep_val = max(mep_seg) - min(mep_seg);
-		tbl.MEPAmpl_uVPp(row_cnt) = round(mep_val);
-% 		tbl.MEPAmpl_uVPp(row_cnt) = max(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
-% 			emg.XData < str2double(app.h_edit_mep_end.String))) ...
-% 			- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
-% 			emg.XData < str2double(app.h_edit_mep_end.String))) ;
-		
-	end
-end
+% % if mep ampl is nan, compute it
+% if any(isnan(tbl.MEPAmpl_uVPp))
+% 	disp('Computing MEP Ampl...')
+% 	emg.XData = app.h_emg_line.XData;
+% 	for row_cnt  = 1:height(tbl)
+% 		emg.YData = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
+% 		mep_seg = emg.YData(emg.XData >= str2double(app.h_edit_mep_begin.String) & ...
+% 			emg.XData <= str2double(app.h_edit_mep_end.String));
+% 		mep_val = max(mep_seg) - min(mep_seg);
+% 		tbl.MEPAmpl_uVPp(row_cnt) = round(mep_val);
+% % 		tbl.MEPAmpl_uVPp(row_cnt) = max(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+% % 			emg.XData < str2double(app.h_edit_mep_end.String))) ...
+% % 			- min(emg.YData(emg.XData > str2double(app.h_edit_mep_begin.String) & ...
+% % 			emg.XData < str2double(app.h_edit_mep_end.String))) ;
+% 		
+% 	end
+% end
 
 % if monitorEMG or goal cols are missing, add them MonitorEMGval,GoalEMG,GoalEMGmin,GoalEMGmax
 if ~any(contains(tbl.Properties.VariableNames, 'MonitorEMGval') | ...

@@ -1,4 +1,4 @@
-function mep_button_selection(source,event, app)
+function mep_button_selection(source,event, app) %#ok<INUSL>
 % disp(['Previous: ' event.OldValue.String]);
 % disp(['Current: ' event.NewValue.String]);
 % disp('------------------');
@@ -15,18 +15,27 @@ else
 	return
 end
 
+% rc or sici
+rc_sici = '';
+if app.CheckBoxRc.Value == 1
+	rc_sici = 'RC';
+end
+if app.CheckBoxSici.Value == 1
+	rc_sici = 'SICI';
+end
+
 % which is displayed Auc or ampl p-p
 switch event.NewValue.String
 	case 'Area Under the Curve'
 		app.h_emg_auc_patch.Visible = 'on';
 		tbl_var_str = 'MEPAUC_uV_ms';
 		app.(axes_str).YLabel.String = 'MEP AUC (µV*ms)';
-		app.MmaxtoRCButton.Text = 'M AUC to RC';
+		app.MmaxtoRCButton.Text = ['M AUC to ' rc_sici];
 	case 'Amplitude'
 		app.h_emg_auc_patch.Visible = 'off';
 		tbl_var_str = 'MEPAmpl_uVPp';
 		app.(axes_str).YLabel.String = 'MEP Vp-p (µV)';
-		app.MmaxtoRCButton.Text = 'M-max to RC';
+		app.MmaxtoRCButton.Text = ['M-max to ' rc_sici];
 end
 
 
@@ -55,3 +64,6 @@ end
 if strcmp(axes_str, 'sici_axes')
 	recalc_sici([], [], app)
 end
+
+% get already computed rc or sici info
+get_previous_rc_or_sici_info(app)

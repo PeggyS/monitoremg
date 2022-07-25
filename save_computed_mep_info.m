@@ -35,6 +35,7 @@ elseif contains(save_f, 'sici_' )
 	rc_or_sici = 'sici';
 	save_f = strrep(save_f, 'sici_', '');
 end
+
 save_file = fullfile(save_loc, [save_f save_ext]);
 app.mep_info.file_name = save_file;
 app.mep_info.mep_beg_t = round(app.h_t_min_line.XData(1), 1);
@@ -48,11 +49,7 @@ assert(~isempty(j_now_selected_rows), 'save_computed_mep_info: no rows found sel
 selected_epochs = j_now_selected_rows + 1;
 app.mep_info.epochs_used = selected_epochs;
 
-% make sure real initials will be saved look at emg data window 
-% if strcmpi(app.AnalysisdonebyEditField, '???')
-% 	% fill in who is doing the analysis
-% 	app.AnalysisdonebyEditField = app.user_initials;
-% end
+% change initials to the current user
 if isempty(app.h_edit_mep_done_by.String)
 	app.h_edit_mep_done_by.String = upper(app.user_initials);
 end
@@ -60,6 +57,9 @@ app.mep_info.analyzed_by = app.h_edit_mep_done_by.String;
 app.mep_info.analyzed_when = app.h_edit_mep_done_when.String;
 app.mep_info.using_rc_or_sici_data = rc_or_sici;
 app.mep_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ');
+
+% update string with 'using data'
+app.h_using_data_txt.String = ['Using ' app.mep_info.using_rc_or_sici_data ' data'];
 
 % write info to file
 write_fit_info(save_file, app.mep_info)

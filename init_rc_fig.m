@@ -1,6 +1,25 @@
 function init_rc_fig(app)
 % create the figure showing recruitment curve and sigmoid fit
 
+% switch rb to default displaying MEP ampl
+tag = find_selected_radio_button(app.h_radio_mep);
+switch tag
+	case 'rb_mep_ampl'
+		% do nothing
+	case 'rb_mep_auc'
+		% make rb_mep_ampl selected
+		for c_cnt=1:length(app.h_radio_mep.Children)
+			if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
+				app.h_radio_mep.Children(c_cnt).Value = 1;
+			else
+				app.h_radio_mep.Children(c_cnt).Value = 0;
+			end
+		end
+		% 			app.h_radio_mep.Children(rb_ind).Value = 0;
+		% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
+		app.MmaxtoRCButton.Text = 'M-max to RC';
+end
+
 % if there is already a rc fig, clear old axes & fit info
 if ~isempty(findobj('tag', 'rc_fig'))
 	app.rc_axes;
@@ -19,27 +38,11 @@ if ~isempty(findobj('tag', 'rc_fig'))
 	app.rc_fit_ui.txtMEPminCI.String = '[x, x]';
 	app.rc_fit_ui.txtRsq.String = 'Rsq = 0.0';
 	app.rc_fit_ui.txtAUC.String = 'AUC = 0.0';
-	% switch rb to default displaying MEP ampl 
-	tag = find_selected_radio_button(app.h_radio_mep);
-	switch tag
-		case 'rb_mep_ampl'
-			% do nothing
-		case 'rb_mep_auc'
-			% make rb_mep_ampl selected
-			for c_cnt=1:length(app.h_radio_mep.Children)
-				if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
-					app.h_radio_mep.Children(c_cnt).Value = 1;
-				else
-					app.h_radio_mep.Children(c_cnt).Value = 0;
-				end
-			end
-% 			app.h_radio_mep.Children(rb_ind).Value = 0;
-% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
-			app.MmaxtoRCButton.Text = 'M-max to RC';
-	end
+	
 	app.rc_axes.YLabel.String = 'MEP Vp-p (\muV)';
 else
-
+	app.MmaxtoRCButton.Text = 'M-max to RC';
+	
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'Recruitment Curve', ...
 		'Tag', 'rc_fig', ...

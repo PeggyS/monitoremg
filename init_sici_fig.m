@@ -1,6 +1,26 @@
 function init_sici_fig(app)
 % create the figure showing Test Stim, SICI, ICF, and LICI
 
+% switch rb to default displaying MEP ampl
+tag = find_selected_radio_button(app.h_radio_mep);
+switch tag
+	case 'rb_mep_ampl'
+		% do nothing
+	case 'rb_mep_auc'
+		% make rb_mep_ampl selected
+		for c_cnt=1:length(app.h_radio_mep.Children)
+			if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
+				app.h_radio_mep.Children(c_cnt).Value = 1;
+			else
+				app.h_radio_mep.Children(c_cnt).Value = 0;
+			end
+		end
+		% 			app.h_radio_mep.Children(rb_ind).Value = 0;
+		% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
+		app.MmaxtoRCButton.Text = 'M-max to SICI';
+		
+end
+
 % if there is already a sici fig, clear old axes & fit info
 if ~isempty(findobj('Tag', 'sici_icf_fig'))
 	app.sici_axes;
@@ -20,28 +40,11 @@ if ~isempty(findobj('Tag', 'sici_icf_fig'))
 % 	app.sici_info.sd_icf.String = '';
 % 	app.sici_info.n_icf.String = '0';
 
-% switch rb to default displaying MEP ampl 
-	tag = find_selected_radio_button(app.h_radio_mep);
-	switch tag
-		case 'rb_mep_ampl'
-			% do nothing
-		case 'rb_mep_auc'
-			% make rb_mep_ampl selected
-			for c_cnt=1:length(app.h_radio_mep.Children)
-				if contains(app.h_radio_mep.Children(c_cnt).Tag, 'rb_mep_ampl')
-					app.h_radio_mep.Children(c_cnt).Value = 1;
-				else
-					app.h_radio_mep.Children(c_cnt).Value = 0;
-				end
-			end
-% 			app.h_radio_mep.Children(rb_ind).Value = 0;
-% 			app.h_radio_mep.Children(rb_other_ind).Value = 1;
-			app.MmaxtoRCButton.Text = 'M-max to SICI';
-			app.sici_axes.YLabel.String = 'MEP Vp-p (\muV)';
-	end
+	app.sici_axes.YLabel.String = 'MEP Vp-p (\muV)';
 	
 else
 
+	app.MmaxtoRCButton.Text = 'M-max to SICI';
 	app.sici_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'SICI & ICF', ...
 		'Tag', 'sici_icf_fig' , 'ToolBar', 'none', ...
