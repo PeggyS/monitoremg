@@ -84,11 +84,12 @@ if isfield(app.rc_fit_info, 'mepMethod')
 	[confirm_saving, fitinfo_fname] = confirm_savename(fitinfo_fname);
 	if confirm_saving
 		% add analyzed by and when
-		app.rc_fit_info.analyzed_by = upper(app.user_initials);
-		app.AnalyzedbyEditField.Value = upper(app.user_initials);
-		app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
-		app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
-		
+		if isprop(app, 'ReviewEMGRCUIFigure') % if in review_emg_rc app
+			app.rc_fit_info.analyzed_by = upper(app.user_initials);
+			app.AnalyzedbyEditField.Value = upper(app.user_initials);
+			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+			app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
+		end
 		try
 			write_fit_info(fitinfo_fname, app.rc_fit_info)
 		catch ME

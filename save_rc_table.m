@@ -8,7 +8,9 @@ stimulator_setup = 'bistim'; % default when recording new data
 emg_fig = findwind('EMG Data', 'Name');
 if ishandle(emg_fig)
 	h_stim_setup = findobj(emg_fig, 'Tag', 'stim_setup_text');
-	stimulator_setup = lower(h_stim_setup.String);
+	if ~isempty(h_stim_setup)
+		stimulator_setup = lower(h_stim_setup.String);
+	end
 end
 
 if height(data) > 0
@@ -21,7 +23,11 @@ if height(data) > 0
 		error(['save_rc_table: could not open file ' fname])
 	end
 	% append the data
-	writetable(data, fname, 'WriteMode','Append','WriteVariableNames',true)
+	if verLessThan('matlab', '9.10')
+		writetable(data, fname, 'WriteVariableNames',true)
+	else
+		writetable(data, fname, 'WriteMode','Append','WriteVariableNames',true)
+	end
 else
 	disp('no data points to save')
 end
