@@ -39,3 +39,6 @@ info.stimLevels      = paramscell{16};
 info.stimulator_mode = paramscell{17};
 info.analyzed_by     = paramscell{18};
 info.analyzed_when   = paramscell{19};
+
+return
+end % read_fit_info

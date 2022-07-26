@@ -40,6 +40,8 @@ dragging lines in real-time display mep does not have an endfcn, so dragging the
 		- Use, magstim_val, bistim_val, isi_ms, effective_so
 
 review_emg_rc - first looks in the analysis hierarchy for *_datapoints.csv. If it's not found there, then it looks in the data hierarchy.
+	- rc datapoints are read in and put in rc fig then previous rc_fit_info.txt is looked for and if exists, read in and then info is updated in the figure. display_rc_fit_info_on_axes.m is called from get_previous_rc_or_sici_info.m
+	- sici datapoints are read in, as they are added to the figure, the mean and confidence interval lines are computed and updated in the sici figure. If an existing sici_info.txt file is found and read in, then read in values are compared to what is in the sici fig. If the figure mean values are not the same as the ones in the file, then info is sent to the command window and beeps.
 
 
 ============================================

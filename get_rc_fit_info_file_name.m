@@ -25,6 +25,7 @@ end
 [~, mep_method] = get_data_var_mep_method(app);
 
 fit_info_fname = strrep(starting_f_name, 'rc_datapoints',  mep_method);
+fit_info_fname = strrep(starting_f_name, 'sici_datapoints',  mep_method);
 if str2double(app.rc_fit_ui.edNormFactor.String) > 1
 	norm_str = '_fit_info_norm.txt';
 else
