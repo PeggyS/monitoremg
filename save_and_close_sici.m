@@ -112,20 +112,18 @@ try
 			if isprop(app, 'h_edit_mep_end')
 				app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
 			end
+			if isprop(app, 'AnalyzedbyEditField')
+				app.sici_info.analyzed_by = upper(app.user_initials);
+				app.AnalyzedbyEditField.Value = upper(app.user_initials);
+				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+				app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
+			end
 			% for emg_rc:
 			if isprop(app, 'h_t_min_line') && isgraphics(app.h_t_min_line)
 				app.sici_info.mep_beg_t = app.h_t_min_line.XData(1);
 			end
 			if isprop(app, 'h_t_max_line') && isgraphics(app.h_t_max_line)
 				app.sici_info.mep_end_t = app.h_t_max_line.XData(1);
-			end
-
-			if isprop(app, 'AnalyzedbyEditField')
-				app.sici_info.analyzed_by = app.AnalyzedbyEditField.Value;
-				app.sici_info.analyzed_when = app.AnalyzedWhenEditField.Value;
-			end
-			if isprop(app, 'AnalyzedbyEditField')
-				app.sici_info.analyzed_by = app.AnalyzedbyEditField.Value;
 			end
 
 			try

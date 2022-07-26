@@ -40,7 +40,7 @@ set(app.sici_fig,'PaperOrientation', orient, ...
 	'PaperPosition', [0 0 7 8]);
 
 % 	'PaperSize', [6 7], ..
-fname = [save_loc filesep fname_prefix strrep(app.sici_axes.Title.String, ' ', '_') '_' mep_method '_sici_not_norm.png'];
+fname = [save_loc filesep fname_prefix strrep(app.sici_axes.Title.String, ' ', '_') '_' mep_method '_sici_info_not_norm.png'];
 
 % if norm value > 1, change not_norm to norm in fitinfo_fname
 if str2double(app.rc_fit_ui.edNormFactor.String) > 1

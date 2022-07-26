@@ -41,7 +41,7 @@ if ~isempty(findobj('Tag', 'sici_icf_fig'))
 % 	app.sici_info.n_icf.String = '0';
 
 	app.sici_axes.YLabel.String = 'MEP Vp-p (\muV)';
-	
+	app.rc_fit_ui.edNormFactor.String = '1.0';
 else
 
 	app.MmaxtoRCButton.Text = 'M-max to SICI';

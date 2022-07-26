@@ -25,17 +25,7 @@ if app.CheckBoxSici.Value == 1
 	fname = strrep(fname, '_fit_', '_sici_');
 	read_in_info = read_sici_info(fname);
 	% display the info
-	if isfield(app.sici_info, 'analyzed_by')
-		app.AnalyzedbyEditField.Value = upper(app.sici_info.analyzed_by);
-	else
-		app.AnalyzedbyEditField.Value = '???';
-	end
-	if isfield(app.sici_info, 'analyzed_when')
-		app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
-	else
-		app.AnalyzedWhenEditField.Value = '2022-00-00';
-	end
-	if isfield(app.sici_info, 'ts_n')
+	if isfield(read_in_info, 'ts_n')
 		% compare info in sici figure - which were computed with the data
 		% points read in - to what was saved in the file
 		st_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
@@ -46,18 +36,31 @@ if app.CheckBoxSici.Value == 1
 				st = 'ts';
 			end
 			mean_var = [st '_mean'];
-			if abs(app.sici_info.(mean_var) - read_in_info.(mean_var)) > eps
+			if abs(app.sici_info.(mean_var) - read_in_info.(mean_var)) > 1e-5
 				fprintf('%s: figure value = %f; info file value = %f\n', ...
 					mean_var, app.sici_info.(mean_var), read_in_info.(mean_var))
 				disp('verify values and save as needed')
 				beep
 			else
 				fprintf('%s: figure & info file value are the same\n', mean_var)
+				app.sici_info = read_in_info;
 			end
+		end
+		if isfield(read_in_info, 'analyzed_by')
+			app.AnalyzedbyEditField.Value = upper(read_in_info.analyzed_by);
+		else
+			app.AnalyzedbyEditField.Value = '???';
+		end
+		if isfield(read_in_info, 'analyzed_when')
+			app.AnalyzedWhenEditField.Value = read_in_info.analyzed_when;
+		else
+			app.AnalyzedWhenEditField.Value = '2022-00-00';
 		end
 
 	else
 		disp('no previous sici_info.txt read in')
+		app.AnalyzedbyEditField.Value = '???';
+		app.AnalyzedWhenEditField.Value = '2022-00-00';
 	end
 end % sici
 
