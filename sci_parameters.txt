@@ -1,4 +1,4 @@
-ip address : 10.83.111.17
+ip address : 10.83.111.6
 sampling frequency (Hz) : 5000
 average time period (sec) : 0.5
 emg channel : 1
