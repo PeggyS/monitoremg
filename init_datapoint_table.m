@@ -97,13 +97,15 @@ if ~contains(tbl.Properties.VariableNames, 'BiStim_Setting')
 				if length(test_stim_val) > 1 || test_stim_val == 0
 					% ask the user what the test stim value was
 					q_str = 'What was the Test Stimulus value?';
-					test_stim_val = inputdlg( q_str );
+					dlg_ans = inputdlg( q_str );
+					test_stim_val = str2double(dlg_ans);
 
 					% put this in the bistim_setting
 					tbl.BiStim_Setting(test_stim_msk) = test_stim_val * ones(size(tbl.BiStim_Setting(test_stim_msk)));
 					% ask what the ISI was - save this for later (when adding the isi column)
 					q_str = 'What was the Test Stimulus Interstimulus Interval?';
-					test_stim_isi_val = inputdlg( q_str );
+					dlg_ans = inputdlg( q_str );
+					test_stim_isi_val = str2double(dlg_ans);
 				else
 					tbl.BiStim_Setting(test_stim_msk) = zeros(size(tbl.BiStim_Setting(test_stim_msk)));
 				end
