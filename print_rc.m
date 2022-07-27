@@ -6,8 +6,8 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 	save_loc = pname;
 	% if the current directory has '/data/' in it then change it
 	% '/analysis/' to save the output there
-	if contains(save_loc, '/data/', 'IgnoreCase', true)
-		save_loc = strrep(save_loc, '/data/', '/analysis/');
+	if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
+		save_loc = strrep(save_loc, [filesep 'data' filesep], [filesep 'analysis' filesep]);
 		% ask to create the folder if it doesn't exist
 		if ~exist(save_loc, 'dir')
 			ButtonName = questdlg(['Create new directory: ' save_loc ' ?'], ...
@@ -40,9 +40,9 @@ set(app.rc_fig,'PaperOrientation', orient, ...
 % 	'PaperSize', [6 7], ..
 % add mep method to fname
 if isfield(app.rc_fit_info, 'mepMethod')
-	fname = [save_loc '/' fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_' app.rc_fit_info.mepMethod '_rc_not_norm.png'];
+	fname = [save_loc filesep fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_' app.rc_fit_info.mepMethod '_rc_not_norm.png'];
 else
-	fname = [save_loc '/' fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_rc_not_norm.png'];
+	fname = [save_loc filesep fname_prefix strrep(app.rc_axes.Title.String, ' ', '_') '_rc_not_norm.png'];
 end
 
 % if norm value > 1, change not_norm to norm in fitinfo_fname

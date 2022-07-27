@@ -21,7 +21,7 @@ if isprop(app, 'ReviewEMGRCUIFigure')
 			app.MmaxtoRCButton.Text = 'M-max to SICI';
 			
 	end
-	% rest the m-max to sici button
+	% reset the m-max to sici button
 	app.MmaxtoRCButton.Text = 'M-max to SICI';
 end
 % if there is already a sici fig, clear old axes & fit info
