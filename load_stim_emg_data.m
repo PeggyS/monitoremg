@@ -71,7 +71,7 @@ for cnt = 1:height(data)
 		case 'rc_axes'
 			add_point2rc(app.rc_axes, data.Epoch(cnt), data.Effective_SO(cnt), data.(data_var)(cnt)/norm_factor)
 		case 'sici_axes'
-			add_point2sici(app, data.Epoch(cnt), data.(data_var)(cnt)/norm_factor)
+				add_point2sici(app, data.Epoch(cnt), data.(data_var)(cnt)/norm_factor)
  	end
 end
 
