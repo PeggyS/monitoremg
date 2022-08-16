@@ -42,12 +42,22 @@ while app.CheckBoxDisplayMEP.Value
 			stim_info.isi_ms = double(app.emg_data_mmap.Data(live_chan_num).isi_ms);
 			stim_info.effective_so = [];
 			% single magstim (upper/master stimulator)
-			if stim_info.magstim_val > 0 && stim_info.bistim_val == 0
+			if stim_info.magstim_val > 0 && stim_info.bistim_val == 0 && stim_info.isi_ms > 0
+% 				disp('master stimulator')
 				stim_info.effective_so = round(0.9 * stim_info.magstim_val);
+			% single slave stimulator
+			elseif stim_info.magstim_val == 0 && stim_info.bistim_val > 0
+% 				disp('slave stimulator')
+				stim_info.effective_so = round(0.9 * stim_info.bistim_val);
 			% simultaneous discharge of bistim
 			elseif stim_info.magstim_val == stim_info.bistim_val && ...
 					stim_info.isi_ms == 0
+% 				disp('simultaneous discharge')
 				stim_info.effective_so = round(1.13 * stim_info.magstim_val);
+			% single magstim hardware setup
+			elseif stim_info.bistim_val == 0 && stim_info.isi_ms == 0
+% 				disp('magstim only')
+				stim_info.effective_so = stim_info.magstim_val;
 			end
 			% 		disp(['magstim_val = ', num2str(magstim_val)]);
 			

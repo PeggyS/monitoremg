@@ -132,9 +132,11 @@ while app.StartButton.Value
 					% if in Bistim mode (both stimulators at the same
 					% time), change the bistim_val to be the same as the
 					% magstim_val
-					if isi_ms == 0
-						bistim_val = magstim_val;
-					end
+% 					if isi_ms == 0
+% 						bistim_val = magstim_val;
+% 					end
+				% NO! use the magstim and bistim values sent from magspy!
+				
 					% for the live_display channel and all save channels,
 					% put info in the emg_data_memmap
 					for c_cnt = 1:app.data_channels_mmap.Data(1).num_channels
