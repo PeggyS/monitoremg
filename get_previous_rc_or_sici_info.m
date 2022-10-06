@@ -14,6 +14,19 @@ if app.CheckBoxRc.Value == 1
 	else
 		app.AnalyzedWhenEditField.Value = '2022-00-00';
 	end
+	% if norm factor in the file does not agree with the value in the rc
+	% figure field
+	if abs(app.rc_fit_info.norm_factor - str2double(app.rc_fit_ui.edNormFactor.String)) > eps
+		msg = ['Norm factor in app does not agree with norm factor read in from saved file.' ...
+			 ' Use ' app.rc_fit_ui.edNormFactor.String ' from Review EMG RC app or ' ...
+			 num2str(app.rc_fit_info.norm_factor) ' from saved file?'];
+		selection = uiconfirm(app.ReviewEMGRCUIFigure, msg, 'Norm Factor', 'Options', ...
+			{app.rc_fit_ui.edNormFactor.String, num2str(app.rc_fit_info.norm_factor)});
+		if contains(selection, app.rc_fit_ui.edNormFactor.String)
+			app.rc_fit_info.norm_factor = str2double(app.rc_fit_ui.edNormFactor.String);
+% 			keyboard
+		end
+	end
 	if isfield(app.rc_fit_info, 'slope')
 		display_rc_fit_info_on_axes(app)
 	end
