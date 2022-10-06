@@ -16,11 +16,11 @@ if exist(fname, 'file')
 
     % make datapoints.csv blue
 	if contains(txt_fname, 'datapoints.csv')
-		txt_fname = strrep(txt_fname, 'datapoints.csv', '\color{blue}\bfdatapoints.csv\rm\color{black}');
+		txt_fname = strrep(txt_fname, 'datapoints.csv', ' \color{blue}\bf datapoints.csv\rm\color{black}');
 	else
-		% make info file names a color, too FIXME
+		% make info file names a color, too 
 		pat = '(inv|uninv)';
-		repl = '\\color{red}\\bf$1';
+		repl = ' \\color{red}\\bf $1';
 		tmp_name = regexprep(txt_fname, pat, repl);
 		pat = '\.txt';
 		repl = '\.txt\\rm\\color{black}';
