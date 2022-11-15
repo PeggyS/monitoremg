@@ -1,5 +1,5 @@
-ip address : 10.83.111.6
-sampling frequency (Hz) : 1000
+ip address : 172.16.2.22
+sampling frequency (Hz) : 10000
 average time period (sec) : 0.5
 emg channel : 1
 activation goal : 0.2
