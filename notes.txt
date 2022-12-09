@@ -34,8 +34,8 @@ dragging lines in real-time display mep does not have an endfcn, so dragging the
 
 *_emg_dat.txt each row has stim info and emg data before and after the stimulus
 	- info listed before the emg data depends on when the file was created
-	- before xxx
-	- between xxx and yyy
+	- before 2019-06-01
+	- between 2019-06-01 and 2022-07-15
 	- after 2022-07-15:
 		- Use, magstim_val, bistim_val, isi_ms, effective_so
 
