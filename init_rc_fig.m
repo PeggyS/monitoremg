@@ -48,8 +48,12 @@ else
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'Recruitment Curve', ...
 		'Tag', 'rc_fig', ...
-		'ToolBar', 'none', 'MenuBar', 'none', ...
-        'CreateFcn',@movegui); 
+		'ToolBar', 'none', 'MenuBar', 'none');
+	% if not on brainsight, move the window to be on the screen
+	[~, computer_name] = system('hostname');
+	if ~contains(computer_name, 'Brainsight')
+        movegui(app.rc_fig)
+	end
 
 	app.rc_fig.UserData.app = app;
 	
