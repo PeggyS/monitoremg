@@ -109,6 +109,10 @@ if length(all_selected) > 1
 	pre_stim_val = compute_pre_stim_emg_value(app, h_mean_emg_line);
 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
+	std_val = compute_pre_stim_emg_std_value(app, h_mean_emg_line) * str2double(app.h_num_std.String);
+	disp(['pre stim ' app.h_num_std.String '*std for mean epochs = ' num2str(std_val)])
+	app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
+	app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
 
 end
 

@@ -35,7 +35,14 @@ app.row_displayed = new_row;
 % update pre-stim line
 pre_stim_col = find_uitable_column(h_tbl, 'PreStim');
 pre_stim_val = app.h_uitable.Data{new_row,pre_stim_col};
+pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
 app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
+
+% update std line
+std_val = compute_pre_stim_emg_std_value(app, app.h_emg_line) * str2double(app.h_num_std.String);
+disp(['pre stim ' app.h_num_std.String '*std for epoch ' num2str(new_row) ' = ' num2str(std_val)])
+app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
+app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
 
 % update emg auc patch
 mep_start_time = app.h_t_min_line.XData(1);
