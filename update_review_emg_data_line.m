@@ -40,7 +40,7 @@ app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
 % update std line
 std_val = compute_pre_stim_emg_std_value(app, app.h_emg_line) * str2double(app.h_num_std.String);
-disp(['pre stim ' app.h_num_std.String '*std for epoch ' num2str(new_row) ' = ' num2str(std_val)])
+% disp(['pre stim ' app.h_num_std.String '*std for epoch ' num2str(new_row) ' = ' num2str(std_val)])
 app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
 app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
 
@@ -51,7 +51,7 @@ mep_end_time = app.h_t_max_line.XData(1);
 
 app.h_emg_auc_patch.Vertices = vertices;
 app.h_emg_auc_patch.Faces = faces;
-auc = compute_auc(vertices);
+% auc = compute_auc(vertices);
 
 % highlight data point in rc_fig or sici_fig
 if isgraphics(app.rc_axes)

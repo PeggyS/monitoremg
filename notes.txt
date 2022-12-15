@@ -63,5 +63,7 @@ MEP latency and MEP-max amplitude
 2022-12-12: Discussion between S Pundik & P Skelly: decided to use methods from Cerins 2022 to determine active MEP latency. We will extract the MEP latency and the mean MEP-max amplitude of the highest stimulator output recorded for the recruitment curve.
 	- ref: Cerins et al, “Assessment of cortical inhibition depends on inter individual differences in the excitatory neural populations activated by transcranial magnetic stimulation”, Nature Scientific Reports, 2022
 	- examine each epoch/trial/trace and roughly define MEP window. Only use trials where the EMG spike in the window is consistent with other probable MEPs. If the spike in the window seems like spontaneous activity (often also seen in the pre-stim EMG time period), then exclude that trial from latency calculation.
-	
+	- select the multiple trials to average. Each individual trace should have some activity that exceeds the std dev lines in the approximate MEP window.
+	- Using 3 std dev (of the prestim emg). The # of std dev can be changed. Cerins used 5. Hamada 2013 used 2 std dev.
+	- click buttons to move the mep begin and end lines. Begin line will move to the right to the first point where the mean mep line exceeds the std dev line.
 

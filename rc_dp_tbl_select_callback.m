@@ -64,13 +64,15 @@ update_review_emg_data_line(app, h_tbl, new_row_to_show)
 
 all_selected = selected_rows;
 
+% find the ISI (from the table)
+isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+
+
 % if more than 1 row is selected, show all selected and the mean
 if length(all_selected) > 1
 	ymin = 0;
 	ymax = 0;
 	y_data_matrix = [];
-	% find the ISI (from the table)
-	isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 	
 	% add a line for each selected row
 	for l_cnt = 1:length(all_selected)
@@ -110,7 +112,7 @@ if length(all_selected) > 1
 	app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
 	std_val = compute_pre_stim_emg_std_value(app, h_mean_emg_line) * str2double(app.h_num_std.String);
-	disp(['pre stim ' app.h_num_std.String '*std for mean epochs = ' num2str(std_val)])
+% 	disp(['pre stim ' app.h_num_std.String '*std for mean epochs = ' num2str(std_val)])
 	app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
 	app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
 
@@ -118,3 +120,17 @@ end
 
 % fprintf('rc_dp_tbl_select_callback: exit: most_recent: %d, all: %s\n', most_recent_selected, mat2str(all_selected))
 % fprintf('exit: h_lines:  %s\n', mat2str(h_lines))
+
+% effective SO col from the table
+effective_so_col = find(contains(app.h_uitable.ColumnName, 'Effective'));
+% update the MEP-max SO edit field
+so_list = h_tbl.Data(all_selected, effective_so_col);
+so = unique([so_list{:}]);
+if length(so) > 1
+	disp('more than 1 stimulator setting chosen')
+	app.h_edit_mep_max_so.String = '?';
+else
+	app.h_edit_mep_max_so.String = num2str(so);
+end
+
+end % function

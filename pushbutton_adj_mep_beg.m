@@ -6,7 +6,7 @@ function pushbutton_adj_mep_beg(src, evt, app) %#ok<INUSL>
 % FIXME - more description of the algorithm:
 %	move the 
 
-disp('pushbutton_adj_mep_beg')
+% disp('pushbutton_adj_mep_beg')
 mep_beg_time = app.h_t_min_line.XData(1);
 
 % mean_emg_data line
@@ -84,7 +84,7 @@ mep_begin = h_mean_mep_line.XData(mep_beg_ind);
 
 % change the mep start line
 if mep_begin ~= mep_beg_time
-	fprintf('  MEP beg changed from %f to %f\n', mep_beg_time, mep_begin)
+% 	fprintf('  MEP beg changed from %f to %f\n', mep_beg_time, mep_begin)
 	app.h_t_min_line.XData = [mep_begin mep_begin];
 	mep_line_drag_endfcn(app.h_t_min_line)
 end

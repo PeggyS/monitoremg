@@ -19,8 +19,8 @@ if isprop(app, 'mep_info')
 			return
 		end
 
-	if isfield(app.mep_info, 'epochs_used')
-		if ~isempty(app.mep_info.epochs_used)
+	if isfield(app.mep_info, 'epochs_used_for_mep_latency')
+		if ~isempty(app.mep_info.epochs_used_for_latency)
 
 			% select the cells
 			jUIScrollPane = findjobj(app.h_uitable);
@@ -28,9 +28,9 @@ if isprop(app, 'mep_info')
 			j_now_selected_rows = jUITable.getSelectedRows;
 
 			% rows that are selected and should not be
-			tmp1 = setdiff(j_now_selected_rows+1, app.mep_info.epochs_used);
+			tmp1 = setdiff(j_now_selected_rows+1, app.mep_info.epochs_used_for_latency);
 			% rows that are not selected but should be
-			tmp2 = setdiff(app.mep_info.epochs_used, j_now_selected_rows+1);
+			tmp2 = setdiff(app.mep_info.epochs_used_for_latency, j_now_selected_rows+1);
 
 			rows2toggle = union(tmp1, tmp2);
 

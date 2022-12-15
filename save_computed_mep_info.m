@@ -1,3 +1,4 @@
+
 function save_computed_mep_info(~, ~, app)
 
 % save info used to compute mep_begin
@@ -30,10 +31,10 @@ end
 rc_or_sici = '';
 if contains(save_f, 'rc_')
 	rc_or_sici = 'rc';
-	save_f = strrep(save_f, 'rc_', '');
+% 	save_f = strrep(save_f, 'rc_', '');
 elseif contains(save_f, 'sici_' )
 	rc_or_sici = 'sici';
-	save_f = strrep(save_f, 'sici_', '');
+% 	save_f = strrep(save_f, 'sici_', '');
 end
 
 save_file = fullfile(save_loc, [save_f save_ext]);
@@ -47,7 +48,32 @@ jUITable = jUIScrollPane.getViewport.getView;
 j_now_selected_rows = jUITable.getSelectedRows; % selected rows - zero indexed (java)
 assert(~isempty(j_now_selected_rows), 'save_computed_mep_info: no rows found selected in uitable')
 selected_epochs = j_now_selected_rows + 1;
-app.mep_info.epochs_used = selected_epochs;
+app.mep_info.epochs_used_for_latency = selected_epochs;
+
+% num std dev
+app.mep_info.num_std_dev = str2double(app.h_num_std.String);
+
+% MEP-max SO
+app.mep_info.mep_max_so = str2double(app.h_edit_mep_max_so.String);
+
+% rc plateau
+app.mep_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
+
+% mep values at the stimulator level
+% column indices from the table
+epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
+use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
+effective_so_col = find(contains(app.h_uitable.ColumnName, 'Effective'));
+mep_ampl_col = find(contains(app.h_uitable.ColumnName, 'MEPAmpl'));
+
+use_msk = [app.h_uitable.Data{:,use_col}];
+so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
+
+% mep_max amplitudes
+app.mep_info.mep_max_data = [app.h_uitable.Data{use_msk & so_msk, mep_ampl_col}];
+app.mep_info.epochs_used_for_mep_max = [app.h_uitable.Data{use_msk & so_msk, epoch_col}];
+app.mep_info.mep_max_mean = mean(app.mep_info.mep_max_data);
+app.mep_info.mep_max_n = length(app.mep_info.mep_max_data);
 
 % change initials to the current user
 if isempty(app.h_edit_mep_done_by.String)

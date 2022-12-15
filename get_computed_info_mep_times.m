@@ -34,7 +34,7 @@ if exist(file_name, 'file') ~= 2
 end
 
 % read in file, parse for the info
-keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used' 'analyzed_by' 'analyzed_when' ...
+keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used_for_mep_latency' 'analyzed_by' 'analyzed_when' ...
     'using_rc_or_sici_data' 'comments' };
 defaults = {0, 0, [], '', '', '', ''};
 
@@ -47,7 +47,7 @@ end
 
 info.mep_beg_t = paramscell{1};
 info.mep_end_t = paramscell{2};
-info.epochs_used = paramscell{3};
+info.epochs_used_for_latency = paramscell{3};
 info.analyzed_by = paramscell{4};
 info.analyzed_when = paramscell{5};
 info.using_rc_or_sici_data  = paramscell{6};
