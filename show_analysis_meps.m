@@ -19,7 +19,7 @@ if isprop(app, 'mep_info')
 			return
 		end
 
-	if isfield(app.mep_info, 'epochs_used_for_mep_latency')
+	if isfield(app.mep_info, 'epochs_used_for_latency')
 		if ~isempty(app.mep_info.epochs_used_for_latency)
 
 			% select the cells
@@ -27,15 +27,26 @@ if isprop(app, 'mep_info')
 			jUITable = jUIScrollPane.getViewport.getView;
 			j_now_selected_rows = jUITable.getSelectedRows;
 
-			% rows that are selected and should not be
-			tmp1 = setdiff(j_now_selected_rows+1, app.mep_info.epochs_used_for_latency);
-			% rows that are not selected but should be
-			tmp2 = setdiff(app.mep_info.epochs_used_for_latency, j_now_selected_rows+1);
+			% toggle currently selected rows
+			for r_cnt = 1:length(j_now_selected_rows)
+				row = j_now_selected_rows(r_cnt);
+				col = 1;
+				% toggle the row
+				jUITable.changeSelection(row,col-1, true, false);
+			end
+			
+% 			% rows that are selected and should not be
+% 			tmp1 = setdiff(j_now_selected_rows+1, app.mep_info.epochs_used_for_latency);
+% 			
+% 			
+% 			% rows that are not selected but should be
+% 			tmp2 = setdiff(app.mep_info.epochs_used_for_latency, j_now_selected_rows+1);
+% 
+% 			rows2toggle = union(tmp1, tmp2);
 
-			rows2toggle = union(tmp1, tmp2);
-
-			for r_cnt = 1:length(rows2toggle)
-				row = rows2toggle(r_cnt);
+			% select the rows used
+			for r_cnt = 1:length(app.mep_info.epochs_used_for_latency)
+				row = app.mep_info.epochs_used_for_latency(r_cnt);
 				col = 1;
 				% toggle the row
 				jUITable.changeSelection(row-1,col-1, true, false);

@@ -6,7 +6,8 @@ info = struct();
 
 % datapoint_csv_filename should be named <side>_<muscle>_rc_datapoints.csv, e.g. uninv_ta_rc_datapoints.csv
 [pname, fname, ~] = fileparts(datapoint_csv_filename);
-side_muscle = regexprep(fname, '_((rc)|(sici))_datapoints', '');
+% side_muscle = regexprep(fname, '_((rc)|(sici))_datapoints', '');
+side_muscle = strrep(fname, '_datapoints', '');
 
 % always look in the analysis folder path
 pname = strrep(pname, [filesep, 'data', filesep],  [filesep 'analysis' filesep]);
@@ -34,9 +35,12 @@ if exist(file_name, 'file') ~= 2
 end
 
 % read in file, parse for the info
-keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used_for_mep_latency' 'analyzed_by' 'analyzed_when' ...
-    'using_rc_or_sici_data' 'comments' };
-defaults = {0, 0, [], '', '', '', ''};
+keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used_for_latency' 'analyzed_by' 'analyzed_when' ...
+    'using_rc_or_sici_data' 'comments', 'num_std_dev', 'mep_max_so', 'rc_plateau', ...
+	'mep_max_data', 'epochs_used_for_mep_max', 'mep_max_mean', 'mep_max_n'};
+defaults = {0, 0, [], '', '', ...
+	'', '', [], [], [], ...
+	[], [], [], []};
 
 try
 	paramscell = readparamfile(file_name, keywords, defaults);
@@ -52,6 +56,13 @@ info.analyzed_by = paramscell{4};
 info.analyzed_when = paramscell{5};
 info.using_rc_or_sici_data  = paramscell{6};
 info.comments  = paramscell{7};
+info.num_std_dev = paramscell{8};
+info.mep_max_so = paramscell{9};
+info.rc_plateau = paramscell{10};
+info.mep_max_data = paramscell{11};
+info.epochs_used_for_mep_max = paramscell{12};
+info.mep_max_mean = paramscell{13};
+info.mep_max_n = paramscell{14};
 
 return
 end

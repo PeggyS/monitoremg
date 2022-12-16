@@ -127,7 +127,7 @@ effective_so_col = find(contains(app.h_uitable.ColumnName, 'Effective'));
 so_list = h_tbl.Data(all_selected, effective_so_col);
 so = unique([so_list{:}]);
 if length(so) > 1
-	disp('more than 1 stimulator setting chosen')
+ 	disp('more than 1 stimulator setting chosen')
 	app.h_edit_mep_max_so.String = '?';
 else
 	app.h_edit_mep_max_so.String = num2str(so);
