@@ -40,7 +40,7 @@ while app.CheckBoxDisplayMEP.Value
 			stim_info.magstim_val = double(app.emg_data_mmap.Data(live_chan_num).magstim_val);
 			stim_info.bistim_val = double(app.emg_data_mmap.Data(live_chan_num).bistim_val);
 			stim_info.isi_ms = double(app.emg_data_mmap.Data(live_chan_num).isi_ms);
-			stim_info.effective_so = [];
+			stim_info.effective_so = nan;
 			% single magstim (upper/master stimulator)
 			if stim_info.magstim_val > 0 && stim_info.bistim_val == 0 && stim_info.isi_ms > 0
 % 				disp('master stimulator')
