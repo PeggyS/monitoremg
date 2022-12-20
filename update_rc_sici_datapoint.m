@@ -65,7 +65,8 @@ end
 % update the line in the figure
 h_line = find_rc_datapoint(app.(axes_str), table_row_num);
 h_line.YData = new_display_value;
-if isgraphics(app.rc_axes) && stim_changed
+% if isgraphics(app.rc_axes) && stim_changed
+if ~isempty(app.rc_axes) && stim_changed
 	h_line.XData = effective_so;
 end
 

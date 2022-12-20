@@ -225,29 +225,29 @@ else
 		'Position', [0.75 0.11 0.122 0.04], ...
 		'FontSize', 14);
 	
-	app.sici_ui.ts_mline = line([0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
-	app.sici_ui.ts_sdupline = line([0.7 1.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.ts_ciupline = line([0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
-	app.sici_ui.ts_sddownline = line([0.7 1.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.ts_cidownline = line([0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.ts_mline = line(app.sici_axes, [0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
+	app.sici_ui.ts_sdupline = line(app.sici_axes, [0.7 1.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.ts_ciupline = line(app.sici_axes, [0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.ts_sddownline = line(app.sici_axes, [0.7 1.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.ts_cidownline = line(app.sici_axes, [0.7 1.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 	
-	app.sici_ui.sici_mline = line([1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
-	app.sici_ui.sici_sdupline = line([1.7 2.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.sici_sddownline = line([1.7 2.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.sici_ciupline = line([1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
-	app.sici_ui.sici_cidownline = line([1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.sici_mline = line(app.sici_axes, [1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
+	app.sici_ui.sici_sdupline = line(app.sici_axes, [1.7 2.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.sici_sddownline = line(app.sici_axes, [1.7 2.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.sici_ciupline = line(app.sici_axes, [1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.sici_cidownline = line(app.sici_axes, [1.7 2.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 
-	app.sici_ui.icf_mline = line([2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
-	app.sici_ui.icf_sdupline = line([2.7 3.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.icf_sddownline = line([2.7 3.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.icf_ciupline = line([2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
-	app.sici_ui.icf_cidownline = line([2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.icf_mline = line(app.sici_axes, [2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
+	app.sici_ui.icf_sdupline = line(app.sici_axes, [2.7 3.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.icf_sddownline = line(app.sici_axes, [2.7 3.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.icf_ciupline = line(app.sici_axes, [2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.icf_cidownline = line(app.sici_axes, [2.7 3.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 
-	app.sici_ui.lici_mline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
-	app.sici_ui.lici_sdupline = line([3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.lici_sddownline = line([3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
-	app.sici_ui.lici_ciupline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
-	app.sici_ui.lici_cidownline = line([3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.lici_mline = line(app.sici_axes, [3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410]);
+	app.sici_ui.lici_sdupline = line(app.sici_axes, [3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.lici_sddownline = line(app.sici_axes, [3.7 4.3],[nan nan], 'LineWidth', 1, 'Color', [0.8 0.8 0.8], 'LineStyle', '--');
+	app.sici_ui.lici_ciupline = line(app.sici_axes, [3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
+	app.sici_ui.lici_cidownline = line(app.sici_axes, [3.7 4.3],[nan nan], 'LineWidth', 3, 'Color', [0 0.4470 0.7410], 'LineStyle', '--');
 
 end
 

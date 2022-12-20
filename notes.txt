@@ -67,3 +67,9 @@ MEP latency and MEP-max amplitude
 	- Using 3 std dev (of the prestim emg). The # of std dev can be changed. Cerins used 5. Hamada 2013 used 2 std dev.
 	- click buttons to move the mep begin and end lines. Begin line will move to the right to the first point where the mean mep line exceeds the std dev line.
 
+
+++++++++++
+TODO
+++++++++++
+2022-12-20: on Brainsight, activity monitor, the yticks were missing. I manually defined them in the startupfcn as 0:50:500.
+2022-12-20: on Brainsight, SICI figure, mean and CI lines are missing
