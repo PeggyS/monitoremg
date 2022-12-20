@@ -58,15 +58,16 @@ app.h_cs_line.XData = -isi_val*[1 1];
 mep_beg_time = app.h_t_min_line.XData(1);
 mep_end_time = app.h_t_max_line.XData(1);
 for r_cnt = 1:length(all_rows)
+	this_row = all_rows(r_cnt);
 	% this row's data
-	tmp_data = app.emg_data(all_rows(r_cnt), app.emg_data_num_vals_ignore+1:end);
+	tmp_data = app.emg_data(this_row, app.emg_data_num_vals_ignore+1:end);
 	app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 
 	std_val = compute_pre_stim_emg_std_value(app, app.h_emg_line) * str2double(app.h_num_std.String);
 	if any(abs(app.h_emg_line.YData(app.h_emg_line.XData >= mep_beg_time & ...
 		app.h_emg_line.XData <= mep_end_time)) > std_val)
 		% data exceeds std val betw mep_beg_time & mep_end_time
-		mep_rows = [mep_rows r_cnt]; %#ok<AGROW>
+		mep_rows = [mep_rows this_row]; %#ok<AGROW>
 	end
 end
 
