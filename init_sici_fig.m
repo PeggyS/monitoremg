@@ -54,7 +54,7 @@ else
 
 
 	app.sici_axes = axes(app.sici_fig, 'Position', [0.16 0.3 0.775 0.6], ...
-		'Fontsize', 20, 'xlim', [0.5 4.5], 'xtick', 1:4, 'xticklabel', {'TS', 'SICI', 'ICF', 'LICI'});
+		'Fontsize', 20, 'xlim', [0.5 3.5], 'xtick', 1:4, 'xticklabel', {'TS', 'SICI', 'ICF'}); %, 'LICI'});
 	ylabel('MEP Vp-p (\muV)')
 	% xlabel('Stim Type')
 
