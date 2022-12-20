@@ -72,4 +72,4 @@ MEP latency and MEP-max amplitude
 TODO
 ++++++++++
 2022-12-20: on Brainsight, activity monitor, the yticks were missing. I manually defined them in the startupfcn as 0:50:500.
-2022-12-20: on Brainsight, SICI figure, mean and CI lines are missing
+2022-12-20: on Brainsight, SICI figure, mean and CI lines are missing. 2022-12-20 should be fixed by adding sici_axes when creating the lines. Need to verify operation on Brainsight.
