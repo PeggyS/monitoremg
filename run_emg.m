@@ -17,7 +17,7 @@ while app.StartButton.Value
    % higher thann 63. These are the auxiliary emg channels
    % Once the start msg is received, the variable emg_first_chan_num is created.
    % It's the total number of channels in the emg or eeg system
-   if exist('emg_first_chan_num', 'var')==1 && num_channels > 63
+   if exist('emg_first_chan_num', 'var')==1   %% && num_channels > 63
        dataDispChan = emg_first_chan_num + figMenuDispChan - 1; % channel number relative to eeg/emg data sent
    end
 
