@@ -22,22 +22,45 @@ j_original_selected_rows = jUITable.getSelectedRows;
 % 	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
 % end
 
-% recompute the MEP peak to peak value and MEPAUC for all rows in the data point table
-emg.XData = app.h_emg_line.XData;
-for row_cnt = 1:length(app.h_uitable.Data)
-	
-	% get mep p-p  value 
-	
-	% find the ISI (from the table)
+% recompute the MEP peak to peak value and MEPAUC for 
+% all rows in the data point table if rc display
+% rows with matching stimulator values (stim type) if sici display
+if app.CheckBoxSici.Value == true % doing sici
+	% find the column indices in the table
+	magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
+	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 	isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
-	isi_ms = app.h_uitable.Data{row_cnt, isi_col}; %#ok<FNDSB>
+
+	% get stimulator settings
+	magstim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, magstim_col};
+	bistim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, bistim_col};
+	isi_val = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
+
+	% find all rows in the table with these stimulator settings
+	m_rows = find(cell2array(app.h_uitable.Data(:, magstim_col)) == magstim_val);
+	b_rows = find(cell2array(app.h_uitable.Data(:, bistim_col)) == bistim_val);
+	i_rows = find(cell2array(app.h_uitable.Data(:, isi_col)) == isi_val);
+
+	tmp_rows = intersect(m_rows, b_rows);
+	row_indices = intersect(tmp_rows, i_rows)';
 	
 	% if ISI > 0, shift the data by ISI ms
-	if app.CheckBoxSici.Value == 1 && isi_ms > 0
+	isi_ms = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
+	isi_shift_pts = 0;
+	if isi_ms > 0
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
-	else
-		isi_shift_pts = 0;
 	end
+elseif app.CheckBoxRc.Value == true % doing rc
+	row_indices = 1:length(app.h_uitable.Data);
+	isi_shift_pts = 0;
+end
+
+
+emg.XData = app.h_emg_line.XData;
+for row_cnt = row_indices
+	
+	% get mep p-p  value 	
+	
 	tmp_data = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
 	emg.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 	
