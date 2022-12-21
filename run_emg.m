@@ -220,8 +220,10 @@ msgBlock = int8([]);
 blockSize = blockSize - 24;		%% rest of block (header = 24 bytes)
 if blockSize < 0, error('header was < 24 bytes???'); end
 if blockSize > 0
+%     disp(['blockSize = ' num2str(blockSize)]);
+%     disp(['blockSize * size = ' num2str(blockSize*8)]);
    msgBlock = int8(fread(t, blockSize, 'int8'));
-   %    disp(msgBlock(1:4))
+%    disp(msgBlock(1:4))
    %    size(msgBlock)
 end
 
