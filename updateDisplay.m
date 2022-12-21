@@ -65,16 +65,28 @@ function updateDisplay(app, dataVec, markInfo)
 	if app.monitorFlg
 		if app.monitorEMGval >= app.goalMin && app.monitorEMGval <= app.goalMax		%% in the green
 			set(app.hLine, 'Color', [40 224 47]/255);
+            if app.inGreenFlag == true
+                green_time_duration = toc(app.inGreenTstart);
+                app.msgText.Text = ['t = ' num2str(green_time_duration,2)];
+            else
+                app.inGreenFlag = true;
+                app.inGreenTstart = tic;
+            end
+
 		elseif app.monitorEMGval > app.goalMax && ...
 				app.monitorEMGval <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
 			set(app.hLine, 'Color', [170 100 245]/255);
+            app.inGreenFlag = false;
 		elseif app.monitorEMGval > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
 			set(app.hLine, 'Color', [209 36 36]/255);
+            app.inGreenFlag = false;
 		elseif app.monitorEMGval > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
 			app.monitorEMGval <= (app.goalVal - 0.05*app.peakVal)
 			set(app.hLine, 'Color', [255 193 59]/255)
+            app.inGreenFlag = false;
 		else
 			set(app.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)
+            app.inGreenFlag = false;
 		end
 	end
 
