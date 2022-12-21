@@ -10,17 +10,8 @@ while app.StartButton.Value
    % get message from server
    t_start = tic;
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
-   % emg display channel number for the figure drop down menu
-   figMenuDispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
-
-   % for eeg system (with over 63 channels) only look at the channels
-   % higher thann 63. These are the auxiliary emg channels
-   % Once the start msg is received, the variable emg_first_chan_num is created.
-   % It's the total number of channels in the emg or eeg system
-   if exist('emg_first_chan_num', 'var')==1 && num_channels > 63
-       dataDispChan = emg_first_chan_num + figMenuDispChan - 1; % channel number relative to eeg/emg data sent
-   end
-
+   dispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
+		
    % 	set(app.hLine, 'YData', [0 10]);
    switch msgType
       case 0		%% no socket open, not reading data
@@ -34,33 +25,23 @@ while app.StartButton.Value
 			 app.param_fname, app.params.sampFreq, app.chanInfo.samp_freq)
 		 
 		 num_channels = length(app.chanInfo.names);
-         % for eeg system (with over 63 channels) only look at the channels
-         % higher thann 63. These are the auxiliary emg channels
-         if num_channels > 63
-             emg_first_chan_num = 64;
-         elseif num_channels > 8
-             % more than 8 channels, but not more than 64 - not sure what
-             % system this is
-             error('run_emg.m - more than 8 channels, but not more than 63 - What Brainvision system is this?')
-         else
-             emg_first_chan_num = 1;
-         end
 		 % save number of muscle names in data_channels_mmap
-		 app.data_channels_mmap.Data(1).num_channels = uint8(num_channels-emg_first_chan_num + 1);
-		 for ch_num = emg_first_chan_num:num_channels
-             ch_cnt = ch_num - emg_first_chan_num + 1;
+		 app.data_channels_mmap.Data(1).num_channels = uint8(num_channels);
+		 for ch_cnt = 1:num_channels
 			 % rename the emg channels from number to the muscle name
-			 app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_num};
+			 app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_cnt};
 			 % save muscle names in data_channels_mmap
-			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels-emg_first_chan_num + 1);
-			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_num}, 30));
+			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels);
+			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_cnt}, 30));
 			 app.data_channels_mmap.Data(ch_cnt).live_display = uint8(0);
 		 end
 		 % set dispChan in data_channels mmap
-		 app.data_channels_mmap.Data(figMenuDispChan).live_display = uint8(1);
+		 app.data_channels_mmap.Data(dispChan).live_display = uint8(1);
 		 % init matrix to store emg data relative to the trigger
 		 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
-		 app.emgTriggerDataMat = zeros(num_channels, round(app.params.sampFreq*seg_time));	
+		 app.emgTriggerDataMat = zeros(num_channels, round(app.params.sampFreq*seg_time));
+
+	
 		 
       case 2		%% Data Message
 %          fprintf('\n');
@@ -76,9 +57,8 @@ while app.StartButton.Value
 			 warning('Problem reading in data. Try to run again.')
 			 app.StartButton.Value = 0;
           return
-         end
-         
-         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan,:));
+		 end
+         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dispChan,:));
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
          app.emgBarDataVec(1:numPoints) = newHpFiltData;
          
@@ -260,9 +240,7 @@ p = 13+len;	%% position in byte block
 %    if p > length(msg), return; end
 %    
 % end
-
-% for eeg system, change from hard-coded 4 channels to scanning for nChannels
-tmp = textscan(char(msg(p:end)), '%s',nChannels, 'Delimiter', sprintf('\0'));  % a 1x1 cell containing a 4x1 cell with the names
+tmp = textscan(char(msg(p:end)), '%s',4, 'Delimiter', sprintf('\0'));  % a 1x1 cell containing a 4x1 cell with the names
 chanInfo.names = tmp{1};
 return
 
