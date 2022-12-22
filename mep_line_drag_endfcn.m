@@ -18,6 +18,9 @@ app.h_edit_mep_dur.String = num2str(t_dur, 3);
 jUIScrollPane = findjobj(app.h_uitable);
 jUITable = jUIScrollPane.getViewport.getView;
 j_original_selected_rows = jUITable.getSelectedRows;
+if isempty(j_original_selected_rows)
+	return
+end
 % if ~isempty(j_original_selected_rows)
 % 	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
 % end
@@ -60,7 +63,6 @@ emg.XData = app.h_emg_line.XData;
 for row_cnt = row_indices
 	
 	% get mep p-p  value 	
-	
 	tmp_data = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
 	emg.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 	
@@ -111,5 +113,20 @@ if isempty(j_now_selected_rows)
 else
 % 	fprintf('mep_line_drag_endfcn: table cells stayed selected\n')
 end
-% pause(0.1)
+
+if isgraphics(app.sici_axes) && isfield(app.sici_ui, 'ts_latency')
+	stim_type = app.sici_axes.UserData.Stim_Type{j_original_selected_rows(r_cnt)};
+	switch stim_type
+		case 'Test Stim'
+			info_var = 'ts';
+		case 'SICI'
+			info_var = 'sici';
+		case 'ICF'
+			info_var = 'icf';
+	end
+	update_sici_mep_latency(app, info_var, j_original_selected_rows'+1)
+end
+
+end %function
+
 
