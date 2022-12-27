@@ -133,4 +133,14 @@ else
 	app.h_edit_mep_max_so.String = num2str(so);
 end
 
+% if sici/icf, update the mep begin and end times
+if isgraphics(app.sici_fig)
+	if isfield(app.sici_ui, 'ts_latency') && isfield(app.sici_ui.ts_latency.UserData, 'mep_beg_t')
+		app.sici_ui.ts_latency.UserData.mep_beg_t = read_in_info.ts_mep_beg_t;
+		app.sici_ui.ts_latency.UserData.mep_end_t = read_in_info.ts_mep_end_t;
+		app.sici_ui.ts_latency.UserData.epochs_used = read_in_info.ts_epochs_used;
+		app.sici_ui.ts_latency.UserData.num_sd = read_in_info.ts_num_sd;
+	end
+end
+
 end % function
