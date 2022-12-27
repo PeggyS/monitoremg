@@ -6,13 +6,13 @@ function pushbutton_adj_mep_end(src, evt, app) %#ok<INUSL>
 % FIXME - more description of the algorithm:
 %	move the 
 
-disp('pushbutton_adj_mep_end')
+% disp('pushbutton_adj_mep_end')
 mep_end_time = app.h_t_max_line.XData(1);
 
 % mean_emg_data line
 h_mean_mep_line = findobj(app.h_disp_emg_axes, 'Tag', 'mean_mep_line');
 if isempty(h_mean_mep_line)
-	disp('There must be more than 1 epoch chosen to adjust the MEP begin line.')
+	disp('There must be more than 1 epoch chosen to adjust the MEP end line.')
 	keyboard
 	return
 end

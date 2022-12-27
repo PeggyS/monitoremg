@@ -132,6 +132,9 @@ try
 				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 				app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
 			end
+			if isprop(app, 'h_mep_analysis_comments')
+				app.sici_info.comments = app.h_mep_analysis_comments.String;
+			end
 			% for emg_rc:
 			if isprop(app, 'EMGDisplayRCUIFigure') && isgraphics(app.h_t_min_line)
 				app.sici_info.mep_beg_t = app.h_t_min_line.XData(1);

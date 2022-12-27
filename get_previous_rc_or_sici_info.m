@@ -40,35 +40,58 @@ if app.CheckBoxSici.Value == 1
 	read_in_info = read_sici_info(fname);
 	% display the info
 	if isfield(read_in_info, 'ts_n')
+		% put latency info in the sici figure
+		app.sici_ui.ts_latency.String = num2str(read_in_info.ts_mep_beg_t);
+		app.sici_ui.ts_latency.UserData.mep_beg_t = read_in_info.ts_mep_beg_t;
+		app.sici_ui.ts_latency.UserData.mep_end_t = read_in_info.ts_mep_end_t;
+		app.sici_ui.ts_latency.UserData.epochs_used = read_in_info.ts_epochs_used;
+		app.sici_ui.ts_latency.UserData.num_sd = read_in_info.ts_num_sd;
+		app.sici_ui.sici_latency.String = num2str(read_in_info.sici_mep_beg_t);
+		app.sici_ui.sici_latency.UserData.mep_beg_t = read_in_info.sici_mep_beg_t;
+		app.sici_ui.sici_latency.UserData.mep_end_t = read_in_info.sici_mep_end_t;
+		app.sici_ui.sici_latency.UserData.epochs_used = read_in_info.sici_epochs_used;
+		app.sici_ui.sici_latency.UserData.num_sd = read_in_info.sici_num_sd;
+		app.sici_ui.icf_latency.String = num2str(read_in_info.icf_mep_beg_t);
+		app.sici_ui.icf_latency.UserData.mep_beg_t = read_in_info.icf_mep_beg_t;
+		app.sici_ui.icf_latency.UserData.mep_end_t = read_in_info.icf_mep_end_t;
+		app.sici_ui.icf_latency.UserData.epochs_used = read_in_info.icf_epochs_used;
+		app.sici_ui.icf_latency.UserData.num_sd = read_in_info.icf_num_sd;
+		
 		% compare info in sici figure - which were computed with the data
 		% points read in - to what was saved in the file
-		st_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
-		st_list = unique(app.h_uitable.Data(:,st_col));
-		for st_cnt = 1:length(st_list)
-			st = lower(st_list{st_cnt});
-			if contains(st, 'test')
-				st = 'ts';
-			end
-			mean_var = [st '_mean'];
-			if abs(app.sici_info.(mean_var) - read_in_info.(mean_var)) > 1e-5
-				fprintf('%s: figure value = %f; info file value = %f\n', ...
-					mean_var, app.sici_info.(mean_var), read_in_info.(mean_var))
-				disp('verify values and save as needed')
-				beep
-			else
-				fprintf('%s: figure & info file value are the same\n', mean_var)
-				app.sici_info = read_in_info;
-			end
-		end
+% 		st_col = find(contains(app.h_uitable.ColumnName, '>Stim<'));
+% 		st_list = unique(app.h_uitable.Data(:,st_col));
+% 		for st_cnt = 1:length(st_list)
+% 			st = lower(st_list{st_cnt});
+% 			if contains(st, 'test')
+% 				st = 'ts';
+% 			end
+% 			mean_var = [st '_mean'];
+% 			if abs(app.sici_info.(mean_var) - read_in_info.(mean_var)) > 1e-5
+% 				fprintf('%s: figure value = %f; info file value = %f\n', ...
+% 					mean_var, app.sici_info.(mean_var), read_in_info.(mean_var))
+% 				disp('verify values and save as needed')
+% 				beep
+% 			else
+% 				fprintf('%s: figure & info file value are the same\n', mean_var)
+% 				app.sici_info = read_in_info;
+% 			end
+% 		end
 		if isfield(read_in_info, 'analyzed_by')
 			app.AnalyzedbyEditField.Value = upper(read_in_info.analyzed_by);
+			app.h_edit_mep_done_by.String  = upper(read_in_info.analyzed_by);
+			app.h_using_data_txt.String = 'Using:';
 		else
 			app.AnalyzedbyEditField.Value = '???';
 		end
 		if isfield(read_in_info, 'analyzed_when')
 			app.AnalyzedWhenEditField.Value = read_in_info.analyzed_when;
+			app.h_edit_mep_done_when.String = read_in_info.analyzed_when;
 		else
 			app.AnalyzedWhenEditField.Value = '2022-00-00';
+		end
+		if isfield(read_in_info, 'comments')
+			app.h_mep_analysis_comments.String = read_in_info.comments;
 		end
 
 	else

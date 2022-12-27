@@ -89,6 +89,7 @@ if isfield(app.rc_fit_info, 'mepMethod')
 			app.AnalyzedbyEditField.Value = upper(app.user_initials);
 			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 			app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
+			app.rc_fit_info.comments = app.h_mep_analysis_comments.String;
 		end
 		try
 			write_fit_info(fitinfo_fname, app.rc_fit_info)
