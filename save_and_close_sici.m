@@ -102,15 +102,29 @@ try
 			end
 			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
 			if isprop(app, 'rc_fit_ui')
-				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); % FIXME is this correct?
 				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); 
 			end
 			% for review_emg:
-			if isprop(app, 'h_edit_mep_begin')
-				app.sici_info.mep_beg_t = str2double(app.h_edit_mep_begin.String);
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency') && ...
+					isfield(app.sici_ui.ts_latency.UserData, 'mep_beg_t')
+				app.sici_info.ts_mep_beg_t = app.sici_ui.ts_latency.UserData.mep_beg_t;
+				app.sici_info.ts_mep_end_t = app.sici_ui.ts_latency.UserData.mep_end_t;
+				app.sici_info.ts_epochs_used = app.sici_ui.ts_latency.UserData.epochs_used;
+				app.sici_info.ts_num_sd = app.sici_ui.ts_latency.UserData.num_sd;
 			end
-			if isprop(app, 'h_edit_mep_end')
-				app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'sici_latency') && ...
+					isfield(app.sici_ui.sici_latency.UserData, 'mep_beg_t')
+				app.sici_info.sici_mep_beg_t = app.sici_ui.sici_latency.UserData.mep_beg_t;
+				app.sici_info.sici_mep_end_t = app.sici_ui.sici_latency.UserData.mep_end_t;
+				app.sici_info.sici_epochs_used = app.sici_ui.sici_latency.UserData.epochs_used;
+				app.sici_info.sici_num_sd = app.sici_ui.sici_latency.UserData.num_sd;
+			end
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'icf_latency') && ...
+					isfield(app.sici_ui.icf_latency.UserData, 'mep_beg_t')
+				app.sici_info.icf_mep_beg_t = app.sici_ui.icf_latency.UserData.mep_beg_t;
+				app.sici_info.icf_mep_end_t = app.sici_ui.icf_latency.UserData.mep_end_t;
+				app.sici_info.icf_epochs_used = app.sici_ui.icf_latency.UserData.epochs_used;
+				app.sici_info.icf_num_sd = app.sici_ui.icf_latency.UserData.num_sd;
 			end
 			if isprop(app, 'AnalyzedbyEditField')
 				app.sici_info.analyzed_by = upper(app.user_initials);
@@ -119,10 +133,10 @@ try
 				app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
 			end
 			% for emg_rc:
-			if isprop(app, 'h_t_min_line') && isgraphics(app.h_t_min_line)
+			if isprop(app, 'EMGDisplayRCUIFigure') && isgraphics(app.h_t_min_line)
 				app.sici_info.mep_beg_t = app.h_t_min_line.XData(1);
 			end
-			if isprop(app, 'h_t_max_line') && isgraphics(app.h_t_max_line)
+			if isprop(app, 'isgraphics(app.h_t_min_line)') && isgraphics(app.h_t_max_line)
 				app.sici_info.mep_end_t = app.h_t_max_line.XData(1);
 			end
 
