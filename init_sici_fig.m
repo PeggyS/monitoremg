@@ -47,6 +47,14 @@ if ~isempty(findobj('Tag', 'sici_icf_fig'))
 
 	app.sici_axes.YLabel.String = 'MEP Vp-p (\muV)';
 	app.rc_fit_ui.edNormFactor.String = '1.0';
+	if running_review_app == true
+		app.sici_ui.ts_latency.String = '0';
+		app.sici_ui.sici_latency.String = '0';
+		app.sici_ui.icf_latency.String = '0';
+		app.sici_ui.ts_latency.UserData = [];
+		app.sici_ui.sici_latency.UserData = [];
+		app.sici_ui.icf_latency.UserData = [];
+	end
 else
 	app.sici_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'SICI & ICF', ...
