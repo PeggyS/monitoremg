@@ -160,11 +160,15 @@ if isgraphics(app.sici_fig)
 		if abs(str2double(app.h_edit_mep_begin.String) - val) > 0.05
 			app.h_edit_mep_begin.String = num2str(val);
 			app.h_t_min_line.XData = [val val];
+			dur = str2double(app.h_edit_mep_end.String) - val;
+			app.h_edit_mep_dur.String = num2str(dur);
 		end
 		val = app.sici_ui.(st_var_latency).UserData.mep_end_t;
 		if abs(str2double(app.h_edit_mep_end.String) - val) > 0.05
 			app.h_edit_mep_end.String = num2str(val);
 			app.h_t_max_line.XData = [val val];
+			dur = val - str2double(app.h_edit_mep_begin.String);
+			app.h_edit_mep_dur.String = num2str(dur);
 		end
 		if abs(str2double(app.h_num_std.String) - app.sici_ui.(st_var_latency).UserData.num_sd) > 0.5
 			app.h_num_std.String = num2str(app.sici_ui.(st_var_latency).UserData.num_sd);
