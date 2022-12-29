@@ -173,6 +173,8 @@ if isgraphics(app.sici_fig)
 		if abs(str2double(app.h_num_std.String) - app.sici_ui.(st_var_latency).UserData.num_sd) > 0.5
 			app.h_num_std.String = num2str(app.sici_ui.(st_var_latency).UserData.num_sd);
 		end
+		
+		app.h_using_data_txt.String = ['Using ' upper(st_var) ' sici data'];
 	end
 end
 
