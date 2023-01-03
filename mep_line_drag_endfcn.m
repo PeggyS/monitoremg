@@ -114,7 +114,7 @@ else
 % 	fprintf('mep_line_drag_endfcn: table cells stayed selected\n')
 end
 
-if isgraphics(app.sici_axes) && isfield(app.sici_ui, 'ts_latency')
+if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency')
 	stim_type = app.sici_axes.UserData.Stim_Type{j_original_selected_rows(r_cnt)};
 	switch stim_type
 		case 'Test Stim'
