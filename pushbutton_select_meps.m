@@ -23,7 +23,7 @@ for r_cnt = 1:length(j_now_selected_rows)
 end
 
 % find the column indices in the table
-epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
+% epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
 use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
 magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
 bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
