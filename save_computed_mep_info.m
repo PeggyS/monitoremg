@@ -1,4 +1,3 @@
-
 function save_computed_mep_info(~, ~, app)
 
 % save info used to compute mep_begin
@@ -66,14 +65,25 @@ use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
 effective_so_col = find(contains(app.h_uitable.ColumnName, 'Effective'));
 mep_ampl_col = find(contains(app.h_uitable.ColumnName, 'MEPAmpl'));
 
-use_msk = [app.h_uitable.Data{:,use_col}];
+use_msk = [app.h_uitable.Data{:,use_col}]; %#ok<*FNDSB>
 so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
 
 % mep_max amplitudes
 app.mep_info.mep_max_data = [app.h_uitable.Data{use_msk & so_msk, mep_ampl_col}];
 app.mep_info.epochs_used_for_mep_max = [app.h_uitable.Data{use_msk & so_msk, epoch_col}];
-app.mep_info.mep_max_mean = mean(app.mep_info.mep_max_data);
+app.mep_info.mep_max_mean_uV = mean(app.mep_info.mep_max_data);
 app.mep_info.mep_max_n = length(app.mep_info.mep_max_data);
+
+% c-map from electrical stim for normalization
+if app.MmaxEditField.Value == 1
+	msg = 'Electrical stimulation c-map value = 1. Sure you want to save MEP info?';
+	sel = questdlg(msg, 'Confirm Save', 'Yes', 'No', 'No');
+	if isempty(sel) || strcmp(sel, 'No')
+		disp('Not saving MEP info.')
+		return
+	end
+end
+app.mep_info.e_stim_m_max_uV = app.MmaxEditField.Value;
 
 % change initials to the current user
 if isempty(app.h_edit_mep_done_by.String)
@@ -87,10 +97,15 @@ app.mep_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ')
 % update string with 'using data'
 app.h_using_data_txt.String = ['Using ' app.mep_info.using_rc_or_sici_data ' data'];
 
-% write info to file
-write_fit_info(save_file, app.mep_info)
-fprintf('save_computed_mep_info: file\n %s\n with mep times = [%f %f]\n', save_file, ...
-	app.mep_info.mep_beg_t, app.mep_info.mep_end_t)
+% confirm saving
+[confirm_saving, save_file] = confirm_savename(save_file);
+if confirm_saving
+	% write info to file
+	write_fit_info(save_file, app.mep_info)
+% 	fprintf('save_computed_mep_info: file\n %s\n with mep times = [%f %f]\n', save_file, ...
+% 		app.mep_info.mep_beg_t, app.mep_info.mep_end_t)
+end
+
 
 return
 end
