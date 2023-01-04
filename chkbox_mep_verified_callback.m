@@ -9,6 +9,12 @@ if evt.Value == 1 % box got checked
 	app.mep_info.verified_by = app.h_edit_mep_verified_by.String;
 	app.mep_info.verified_when = app.h_edit_mep_verified_when.String;
 else % unchecked
+	% remove info emg data figure
+	app.h_edit_mep_verified_by.String = '';
+	app.h_edit_mep_verified_when.String = '';
+	% blank the info to the mep_computed_info.txt file
+	app.mep_info.verified_by = app.h_edit_mep_verified_by.String;
+	app.mep_info.verified_when = app.h_edit_mep_verified_when.String;
 end
 
 return

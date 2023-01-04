@@ -37,10 +37,11 @@ end
 % read in file, parse for the info
 keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used_for_latency' 'analyzed_by' 'analyzed_when' ...
     'using_rc_or_sici_data' 'comments', 'num_std_dev', 'mep_max_so', 'rc_plateau', ...
-	'mep_max_data', 'epochs_used_for_mep_max', 'mep_max_mean_uV', 'mep_max_n', 'e_stim_m_max_uV'};
+	'mep_max_data', 'epochs_used_for_mep_max', 'mep_max_mean_uV', 'mep_max_n', 'e_stim_m_max_uV', ...
+	'verified_by', 'verified_when'};
 defaults = {0, 0, [], '', '', ...
 	'', '', [], [], [], ...
-	[], [], [], [], []};
+	[], [], [], [], [], '', ''};
 
 try
 	paramscell = readparamfile(file_name, keywords, defaults);
@@ -64,6 +65,8 @@ info.epochs_used_for_mep_max = paramscell{12};
 info.mep_max_mean_uV = paramscell{13};
 info.mep_max_n = paramscell{14};
 info.e_stim_m_max_uV = paramscell{15};
+info.verified_by = paramscell{16};
+info.verified_when = paramscell{17};
 
 return
 end
