@@ -69,6 +69,7 @@ use_msk = [app.h_uitable.Data{:,use_col}]; %#ok<*FNDSB>
 so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
 
 % mep_max amplitudes
+% FIXME - error when called when saving sici and so_msk is empty
 app.mep_info.mep_max_data = [app.h_uitable.Data{use_msk & so_msk, mep_ampl_col}];
 app.mep_info.epochs_used_for_mep_max = [app.h_uitable.Data{use_msk & so_msk, epoch_col}];
 app.mep_info.mep_max_mean_uV = mean(app.mep_info.mep_max_data);
