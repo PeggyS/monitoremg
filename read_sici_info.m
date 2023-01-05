@@ -60,4 +60,4 @@ info.analyzed_when	= paramscell{30};
 info.comments	= paramscell{31};
 
 return
-end % read_fit_info
+end % read_sici_info

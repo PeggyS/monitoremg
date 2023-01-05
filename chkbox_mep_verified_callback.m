@@ -1,6 +1,5 @@
-function chkbox_mep_verified_callback(evt, src, app) %#ok<INUSD> 
+function chkbox_mep_verified_callback(evt, ~, app) 
 
-keyboard
 if evt.Value == 1 % box got checked
 	% put info in the emg data figure
 	app.h_edit_mep_verified_by.String = upper(app.user_initials);
