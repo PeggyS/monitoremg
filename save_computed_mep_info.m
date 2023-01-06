@@ -67,17 +67,23 @@ mep_ampl_col = find(contains(app.h_uitable.ColumnName, 'MEPAmpl'));
 
 use_msk = [app.h_uitable.Data{:,use_col}]; %#ok<*FNDSB>
 so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
+% if so_msk is empty, then this button was pressed when sici data was being
+% analyzed. Don't use this button for sici analyisi
+if isempty(so_msk)
+	disp('There is no effective stimulator output column in the table.')
+	disp('You might have pressed the Save MEP latency/MEP-max button while doing SICI/ICF analysis.')
+	return
+end
 
 % mep_max amplitudes
-% FIXME - error when called when saving sici and so_msk is empty
 app.mep_info.mep_max_data = [app.h_uitable.Data{use_msk & so_msk, mep_ampl_col}];
 app.mep_info.epochs_used_for_mep_max = [app.h_uitable.Data{use_msk & so_msk, epoch_col}];
 app.mep_info.mep_max_mean_uV = mean(app.mep_info.mep_max_data);
 app.mep_info.mep_max_n = length(app.mep_info.mep_max_data);
 
-% c-map from electrical stim for normalization
+% m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
-	msg = 'Electrical stimulation c-map value = 1. Sure you want to save MEP info?';
+	msg = 'Electrical stimulation M-max value for normalization is 1. Are you want to save MEP info?';
 	sel = questdlg(msg, 'Confirm Save', 'Yes', 'No', 'No');
 	if isempty(sel) || strcmp(sel, 'No')
 		disp('Not saving MEP info.')

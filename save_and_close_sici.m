@@ -151,9 +151,9 @@ try
 			end
 			% print the figure
 			try
-				print_rc([], [], app)
+				print_sici([], [], app)
 			catch ME
-				disp('did not print the figure')
+				disp('did not print the sici figure')
 				disp(ME)
 			end
 		end
