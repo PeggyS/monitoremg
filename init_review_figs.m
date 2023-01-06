@@ -128,11 +128,14 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		'Units', 'normalized', 'Position', [0.6 0.35 0.25 0.04], ...
 		'Tag', 'autocompute_mep_pushbutton', ...
 		'String', 'Compute MEP begin, end and Save', 'fontsize', mep_info_fontsize, ...
-		'Callback', {@pushbutton_compute_mep_times, app});
+		'Callback', {@pushbutton_compute_mep_times, app}, ...
+		'Visible', 'off');
 	app.h_rc_plateau_checkbox = uicontrol('Style', 'checkbox', ...
-		'Units', 'normalized', 'Position', [0.86,0.352,0.111,0.04], ...
+		'Units', 'normalized', 'Position', [0.86,0.353,0.1289,0.04], ...
 		'Tag', 'autocompute_mep_pushbutton', ...
-		'String', '<html>Recruitment curve<br />plateaued?</html>', 'FontSize', large_button_fontsize);
+		'String', '<html>Recruitment curve<br />plateaued?</html>', ...
+		'FontSize', analysis_label_fontsize, ...
+		'ForegroundColor', [0.9 0.1 0]);
    
 	app.h_select_meps = uicontrol('Style', 'pushbutton', ...
 		'Units', 'normalized', 'Position', [0.6 0.31 0.25 0.04], ...
@@ -255,7 +258,7 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_emg_auc_patch.FaceAlpha = 0.5;
 	app.h_emg_auc_patch.Visible = 'off';
 
-else
+else % figure already exist, reset to defaults
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
@@ -285,6 +288,8 @@ if app.CheckBoxRc.Value == 1
 	if isgraphics(app.h_label_isi)
 		app.h_cs_line.Visible = 'off';
 	end
+	% rc plateau checkbox visible
+	app.h_rc_plateau_checkbox.Visible = 'on';
 	% create the recruitment curve figure
 	init_rc_fig(app)
 	if isgraphics(app.sici_fig)
@@ -293,6 +298,8 @@ if app.CheckBoxRc.Value == 1
 elseif app.CheckBoxSici.Value == 1
 	% ISI conditioning stim line
 	app.h_cs_line.Visible = 'on';
+	% rc plateau checkbox not needed
+	app.h_rc_plateau_checkbox.Visible = 'off';
 	% create the sici, icf figure
 	init_sici_fig(app)
 	if isgraphics(app.rc_fig)

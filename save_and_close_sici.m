@@ -149,6 +149,13 @@ try
 				disp('did not save sici_info')
 				disp(ME)
 			end
+			% print the figure
+			try
+				print_rc([], [], app)
+			catch ME
+				disp('did not print the figure')
+				disp(ME)
+			end
 		end
 	end
 	

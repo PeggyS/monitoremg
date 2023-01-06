@@ -97,6 +97,13 @@ if isfield(app.rc_fit_info, 'mepMethod')
 			disp('did not save fit_info')
 			disp(ME)
 		end
+		% print the figure
+		try
+			print_rc([], [], app)
+		catch ME
+			disp('did not print the figure')
+			disp(ME)
+		end
 	end
 end	
 

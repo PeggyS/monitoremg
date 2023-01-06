@@ -26,7 +26,7 @@ if isprop(app, 'mep_info')
 				rows_used = app.mep_info.epochs_used_for_latency;
 			end
 		end
-		% get tablw rows used if sici analysis
+		% get table rows used if sici analysis
 		if app.CheckBoxSici.Value == 1 && isgraphics(app.sici_fig)
 			% selected table rows
 			% find currently selected cells
@@ -37,6 +37,10 @@ if isprop(app, 'mep_info')
 			% stim type col from the table
 			st_col = find(contains(app.h_uitable.ColumnName, 'Type'));
 			st_list = app.h_uitable.Data(j_now_selected_rows+1, st_col);
+			if isempty(st_list)
+				disp('No table row is selected. You must select a row to indicate which stim type to display')
+				return
+			end
 			if length(st_list) > 1
 				st = unique(st_list);
 				if length(st) > 1
@@ -60,6 +64,7 @@ if isprop(app, 'mep_info')
 		end
 
 		if isempty(rows_used)
+			disp('No rows found. Are you sure analysis has been done?')
 			return
 		end
 		
