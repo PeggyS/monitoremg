@@ -65,7 +65,7 @@ mep_end_ind = find(h_mean_mep_line.XData < mep_end_time & abs(h_mean_mep_line.YD
 mep_end = h_mean_mep_line.XData(mep_end_ind);
 
 if mep_end_time ~= mep_end
-	fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
+	% fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
 	% change the mep end line
 	app.h_t_max_line.XData = [mep_end mep_end];
 	mep_line_drag_endfcn(app.h_t_min_line)
