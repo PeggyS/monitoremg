@@ -28,7 +28,8 @@ if app.StartButton.Value
    
    % configure object -- InputBufferSize
    get(app.tcp_port, 'InputBufferSize');
-   set(app.tcp_port, 'InputBufferSize', 27000); % increase buffer size for eeg system
+      set(app.tcp_port, 'InputBufferSize', 2000); %  buffer size for Brainsight
+%   set(app.tcp_port, 'InputBufferSize', 27000); % increase buffer size for eeg system
    
    % configure object -- byteOrder
    set(app.tcp_port, 'ByteOrder', 'littleEndian');

@@ -185,14 +185,14 @@ while app.StartButton.Value
    end
 %    drawnow;
 	pause(0)
-%    num_loops = num_loops + 1;
-%    t_while_loop = toc(t_start);
-%    fprintf('Completed a while loop in %g sec\n', t_while_loop)
+    num_loops = num_loops + 1;
+    %t_while_loop = toc(t_start);
+    %fprintf('Completed a while loop in %g sec\n', t_while_loop)
 end
 % fclose(fid);
 set(app.hLine, 'YData', [0 1]);
-% fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)\
-% fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
+%fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)
+%fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
 return
 
 % ===============================================================================
