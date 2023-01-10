@@ -40,9 +40,9 @@ if app.CheckBoxSici.Value == true % doing sici
 	isi_val = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
 
 	% find all rows in the table with these stimulator settings
-	m_rows = find(cell2array(app.h_uitable.Data(:, magstim_col)) == magstim_val);
-	b_rows = find(cell2array(app.h_uitable.Data(:, bistim_col)) == bistim_val);
-	i_rows = find(cell2array(app.h_uitable.Data(:, isi_col)) == isi_val);
+	m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
+	b_rows = find(cell2mat(app.h_uitable.Data(:, bistim_col)) == bistim_val);
+	i_rows = find(cell2mat(app.h_uitable.Data(:, isi_col)) == isi_val);
 
 	tmp_rows = intersect(m_rows, b_rows);
 	row_indices = intersect(tmp_rows, i_rows)';
