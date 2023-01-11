@@ -48,6 +48,14 @@ j_now_selected_rows = jUITable.getSelectedRows; % selected rows - zero indexed (
 assert(~isempty(j_now_selected_rows), 'save_computed_mep_info: no rows found selected in uitable')
 selected_epochs = j_now_selected_rows + 1;
 app.mep_info.epochs_used_for_latency = selected_epochs;
+% if only 1 row is selected, confirm if the selected rows are correct
+if length(selected_epochs) < 2
+	confirmed = confirm_single_row_save(selected_epochs);
+	if ~confirmed
+		disp('MEP Info not saved')
+		return
+	end
+end
 
 % num std dev
 app.mep_info.num_std_dev = str2double(app.h_num_std.String);
@@ -68,11 +76,21 @@ mep_ampl_col = find(contains(app.h_uitable.ColumnName, 'MEPAmpl'));
 use_msk = [app.h_uitable.Data{:,use_col}]; %#ok<*FNDSB>
 so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
 % if so_msk is empty, then this button was pressed when sici data was being
-% analyzed. Don't use this button for sici analyisi
+% analyzed. Don't use this button for sici analyis
 if isempty(so_msk)
 	disp('There is no effective stimulator output column in the table.')
 	disp('You might have pressed the Save MEP latency/MEP-max button while doing SICI/ICF analysis.')
 	return
+end
+
+% confirm that the epochs used have the highest stimulator output (SO)
+max_effective_so = max([app.h_uitable.Data{use_msk,effective_so_col}]);
+if max_effective_so ~= app.mep_info.mep_max_so
+	confirmed = confirm_not_max_eff_so(max_effective_so, app.mep_info.mep_max_so);
+	if ~confirmed
+		disp('MEP Info not saved')
+		return
+	end
 end
 
 % mep_max amplitudes
@@ -83,8 +101,12 @@ app.mep_info.mep_max_n = length(app.mep_info.mep_max_data);
 
 % m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
-	msg = 'Electrical stimulation M-max value for normalization is 1. Are you want to save MEP info?';
-	sel = questdlg(msg, 'Confirm Save', 'Yes', 'No', 'No');
+	msg = '\fontsize{14}Electrical stimulation M-max value for normalization is 1. Are you want to save MEP info?';
+	btn1 = 'Yes';
+	btn2 = 'No';
+	opts.Interpreter = 'tex';
+	opts.Default = btn2;
+	sel = questdlg(msg, 'Confirm Save', btn1, btn2, opts);
 	if isempty(sel) || strcmp(sel, 'No')
 		disp('Not saving MEP info.')
 		return
@@ -112,7 +134,6 @@ if confirm_saving
 % 	fprintf('save_computed_mep_info: file\n %s\n with mep times = [%f %f]\n', save_file, ...
 % 		app.mep_info.mep_beg_t, app.mep_info.mep_end_t)
 end
-
 
 return
 end
