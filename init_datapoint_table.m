@@ -89,7 +89,7 @@ if ~contains(tbl.Properties.VariableNames, 'BiStim_Setting')
 					keyboard
 				end
 				% change the variable name
-				tbl.Properties.VariableNames{st_ind} = 'Stim_Type';
+				tbl.Properties.VariableNames{st_ind} = 'Stim_Type';			
 			end
 			if ~isempty(st_ind)
 				test_stim_msk = contains(lower(tbl.Stim_Type), 'test stim');
@@ -112,7 +112,15 @@ if ~contains(tbl.Properties.VariableNames, 'BiStim_Setting')
 
 				% fill the test stim in the bistim col
 				tbl.BiStim_Setting(~test_stim_msk) = test_stim_val * ones(size(tbl.BiStim_Setting(~test_stim_msk)));
-
+			end
+			% check the order of the columns Stim_Type and MEPAmpl_uVPp: 
+			% make sure Stim_Type is before MEPAmpl_uVPp	
+			amp_ind = find(contains(tbl.Properties.VariableNames, 'MEPAmpl_uVPp', 'IgnoreCase', true), 1);
+			if isempty(amp_ind)
+				keyboard
+			end
+			if amp_ind < st_ind
+				tbl = movevars(tbl, 'Stim_Type', 'Before', 'MEPAmpl_uVPp');
 			end
 	end % switch stim_mode
 end % if there is no Bistim col
