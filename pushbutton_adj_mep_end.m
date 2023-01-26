@@ -12,9 +12,8 @@ mep_end_time = app.h_t_max_line.XData(1);
 % mean_emg_data line
 h_mean_mep_line = findobj(app.h_disp_emg_axes, 'Tag', 'mean_mep_line');
 if isempty(h_mean_mep_line)
-	disp('There must be more than 1 epoch chosen to adjust the MEP end line.')
-	keyboard
-	return
+	disp('No mean MEP line. Using single sample emg data.')
+	h_mean_mep_line = app.h_emg_line;
 end
 
 % =====================================================

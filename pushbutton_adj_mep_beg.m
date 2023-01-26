@@ -12,8 +12,10 @@ mep_beg_time = app.h_t_min_line.XData(1);
 % mean_emg_data line
 h_mean_mep_line = findobj(app.h_disp_emg_axes, 'Tag', 'mean_mep_line');
 if isempty(h_mean_mep_line)
-	disp('There must be more than 1 epoch chosen to adjust the MEP begin line.')
-	return
+	disp('No mean MEP line. Using single sample EMG data.')
+
+	h_mean_mep_line = app.h_emg_line;
+
 end
 
 % =====================================================
