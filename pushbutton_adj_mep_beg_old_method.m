@@ -25,7 +25,7 @@ end
 y_diff = diff(h_mean_mep_line.YData);
 
 % look backwards in time from the current mep_beg_time
-mep_beg_ind = find(h_mean_mep_line.XData <= mep_beg_time, 1, 'first');
+mep_beg_ind = find(h_mean_mep_line.XData >= mep_beg_time, 1, 'first');
 
 % is the derivative at current mep_beg_time > or < 0
 while y_diff(mep_beg_ind) == 0 % ensure the deriv is not exactly 0
