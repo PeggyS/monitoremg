@@ -326,6 +326,10 @@ if app.CheckBoxSici.Value == 1
 	cs_stim_val = mode(tbl.MagStim_Setting(contains(tbl.Stim_Type, 'sici', 'IgnoreCase', true)));
 	app.sici_ui.ts.String = num2str(test_stim_val);
 	app.sici_ui.cs.String = num2str(cs_stim_val);
+
+	% make sure the cols of tbl are in the same order as these headings
+	tbl = movevars(tbl, 'Stim_Type', 'After', 'ISI_ms');
+
 else % rc or data only / average
 	headers = {'Epoch', 'Use', ...
 		'<html><center>MagStim<br />Setting</center></html>', ...
