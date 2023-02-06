@@ -1,6 +1,7 @@
 function pushbutton_adj_mep_beg_old_method(src, evt, app) %#ok<INUSL>
 % mep begin line should be after when the mep begins
-% There must be more than 1 epoch chosen so there is a mean_mep_line.
+% If more than 1 table row/epoch/sample is chosen, then the mean EMG
+% data line is used.
 % This function will move the line left to the best approximation of the
 % mep begin time.
 % FIXME - more description of the algorithm:
@@ -29,19 +30,27 @@ mep_beg_ind = find(h_mean_mep_line.XData >= mep_beg_time, 1, 'first');
 
 % is the derivative at current mep_beg_time > or < 0
 while y_diff(mep_beg_ind) == 0 % ensure the deriv is not exactly 0
-	mep_beg_ind = mep_beg_ind + 1;
+	mep_beg_ind = mep_beg_ind - 1;
 end
 if y_diff(mep_beg_ind) < 0
-	y_diff_less_than_zero = true;
+	localmin_maxfcn = 'islocalmax';
 else
-	y_diff_less_than_zero = false;
+	localmin_maxfcn = 'islocalmin';
 end
 
-if y_diff_less_than_zero
-	search_ind = find(y_diff(1:mep_beg_ind) >= 0, 1, 'last');	
-else
-	search_ind = find(y_diff(1:mep_beg_ind) < 0, 1, 'last');
-end
+% find the local min or max before mep_beg_ind
+% vec = islocalmin(h_mean_mep_line.YData);
+min_max_vec = feval(localmin_maxfcn, h_mean_mep_line.YData); %#ok<FVAL> 
+peak_ind = find(min_max_vec(1:mep_beg_ind) == true, 1, 'last');
+mep_begin = h_mean_mep_line.XData(peak_ind);
+
+
+
+% if y_diff_less_than_zero % negative sloping line, find the local min just before
+% 	search_ind = find(y_diff(1:mep_beg_ind) >= 0, 1, 'last');	
+% else % pos sloping line, find the index of a neg sloping line
+% 	search_ind = find(y_diff(1:mep_beg_ind) < 0, 1, 'last');
+% end
 
 % if y_diff(search_ind) == 0
 % 	mep_begin = h_mean_mep_line.XData(search_ind);
@@ -54,26 +63,26 @@ end
 % 	mep_begin = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
 % end	
 
-% from this mep_begin time, look further to the left for the next peak on the line
-if y_diff_less_than_zero
-	second_search_ind = find(y_diff(1:search_ind) <= 0, 1, 'last');
-else
-	second_search_ind = find(y_diff(1:search_ind) >= 0, 1, 'last');
-end
+% % from this mep_begin time, look further to the left for the next peak on the line
+% if y_diff_less_than_zero
+% 	second_search_ind = find(y_diff(1:search_ind) <= 0, 1, 'last');
+% else
+% 	second_search_ind = find(y_diff(1:search_ind) >= 0, 1, 'last');
+% end
+% 
+% val_at_peak_before_mep = h_mean_mep_line.YData(second_search_ind);
+% % use this as a threshold - looking to the right of the new mep begin, 
+% % find when the abs mean mep exceeds this value
+% if y_diff_less_than_zero
+% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) >= val_at_peak_before_mep, 1, 'last');
+% else
+% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) <= val_at_peak_before_mep, 1, 'last');
+% end
 
-val_at_peak_before_mep = h_mean_mep_line.YData(second_search_ind);
-% use this as a threshold - looking to the right of the new mep begin, 
-% find when the abs mean mep exceeds this value
-if y_diff_less_than_zero
-	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) >= val_at_peak_before_mep, 1, 'last');
-else
-	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) <= val_at_peak_before_mep, 1, 'last');
-end
-
-% new mep begin index is the next point
-mep_begin = h_mean_mep_line.XData(third_search_ind+1);
-assert(~isnan(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as nan')
-assert(~isempty(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as empty')
+% % new mep begin index is the next point
+% mep_begin = h_mean_mep_line.XData(third_search_ind+1);
+% assert(~isnan(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as nan')
+% assert(~isempty(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as empty')
 % =====================================================
 
 % % 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
@@ -94,7 +103,7 @@ end
 if abs(app.mep_info.mep_beg_t - mep_begin) > 0.05 
 	% update info and flag it to be saved
 	% update the analysis date
-	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
 	% update done by
 	app.h_edit_mep_done_by.String = app.user_initials;
 	app.mep_times_changed_flag = true;
