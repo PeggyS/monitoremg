@@ -1,10 +1,9 @@
 function pushbutton_adj_mep_beg(src, evt, app) %#ok<INUSL>
-% mep begin line should be after when the mep begins
-% There must be more than 1 epoch chosen so there is a mean_mep_line.
-% This function will move the line left to the best approximation of the
-% mep begin time.
-% FIXME - more description of the algorithm:
-%	move the 
+% mep begin line should be before when the mep begins
+% If more than 1 epoch is chosen then the mean_mep_line is used
+% This function will move the line right to the where the emg data first
+% crosses the std dev interval.
+
 
 % disp('pushbutton_adj_mep_beg')
 mep_beg_time = app.h_t_min_line.XData(1);
@@ -18,71 +17,19 @@ if isempty(h_mean_mep_line)
 
 end
 
-% =====================================================
-% old method of looking at the derivative of the mean line
-% % look at derivative (diff) of YData 
-% % find when derivative is 0
-% y_diff = diff(h_mean_mep_line.YData);
-% 
-% % look backwards in time from the current mep_beg_time
-% mep_beg_ind = find(h_mean_mep_line.XData >= mep_beg_time, 1, 'first');
-% 
-% % is the derivative at current mep_beg_time > or < 0
-% while y_diff(mep_beg_ind) == 0 % ensure the deriv is not exactly 0
-% 	mep_beg_ind = mep_beg_ind + 1;
-% end
-% if y_diff(mep_beg_ind) < 0
-% 	y_diff_less_than_zero = true;
-% else
-% 	y_diff_less_than_zero = false;
-% end
-% 
-% if y_diff_less_than_zero
-% 	search_ind = find(y_diff(1:mep_beg_ind) >= 0, 1, 'last');	
-% else
-% 	search_ind = find(y_diff(1:mep_beg_ind) < 0, 1, 'last');
-% end
-% 
-% % if y_diff(search_ind) == 0
-% % 	mep_begin = h_mean_mep_line.XData(search_ind);
-% % else
-% % 	t_before_zero = h_mean_mep_line.XData(search_ind);
-% % 	t_after_zero =  h_mean_mep_line.XData(search_ind+1);
-% % 	val_before_zero = y_diff(search_ind);
-% % 	val_after_zero = y_diff(search_ind+1);
-% % 	% linear interpolate to find the time that crosses zero
-% % 	mep_begin = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
-% % end	
-% 
-% % from this mep_begin time, look further to the left for the next peak on the line
-% if y_diff_less_than_zero
-% 	second_search_ind = find(y_diff(1:search_ind) <= 0, 1, 'last');
-% else
-% 	second_search_ind = find(y_diff(1:search_ind) >= 0, 1, 'last');
-% end
-% 
-% val_at_peak_before_mep = h_mean_mep_line.YData(second_search_ind);
-% % use this as a threshold - looking to the right of the new mep begin, 
-% % find when the abs mean mep exceeds this value
-% if y_diff_less_than_zero
-% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) >= val_at_peak_before_mep, 1, 'last');
-% else
-% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) <= val_at_peak_before_mep, 1, 'last');
-% end
-% 
-% % new mep begin index is the next point
-% mep_begin = h_mean_mep_line.XData(third_search_ind+1);
-% assert(~isnan(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as nan')
-% assert(~isempty(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as empty')
-% =====================================================
+% use a spline approximation of the emg_line for finer resolution
+finer_interval = (h_mean_mep_line.XData(2) - h_mean_mep_line.XData(1)) / 100;
+x_spline = h_mean_mep_line.XData(1) : finer_interval : h_mean_mep_line.XData(end);
+y_spline = spline(h_mean_mep_line.XData, h_mean_mep_line.YData, x_spline);
 
 % 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
 
 % examine mean mep line, find first time after the current mep begin line when mean mep exceeds
 % the std dev window
 std_dev_value = app.h_pre_stim_emg_pos_std_line.YData(1);
-mep_beg_ind = find(h_mean_mep_line.XData > mep_beg_time & abs(h_mean_mep_line.YData) >= std_dev_value, 1, 'first');
-mep_begin = h_mean_mep_line.XData(mep_beg_ind);
+% mep_beg_ind = find(h_mean_mep_line.XData > mep_beg_time & abs(h_mean_mep_line.YData) >= std_dev_value, 1, 'first');
+mep_beg_ind = find(x_spline > mep_beg_time & abs(y_spline) >= std_dev_value, 1, 'first');
+mep_begin = x_spline(mep_beg_ind);
 
 % change the mep start line
 if mep_begin ~= mep_beg_time
@@ -95,7 +42,7 @@ end
 if abs(app.mep_info.mep_beg_t - mep_begin) > 0.05 
 	% update info and flag it to be saved
 	% update the analysis date
-	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
 	% update done by
 	app.h_edit_mep_done_by.String = app.user_initials;
 	app.mep_times_changed_flag = true;

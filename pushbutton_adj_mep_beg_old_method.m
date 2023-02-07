@@ -15,17 +15,21 @@ if isempty(h_mean_mep_line)
 	disp('No mean MEP line. Using single sample EMG data.')
 
 	h_mean_mep_line = app.h_emg_line;
-
 end
+
+% use a spline approximation of the emg_line for finer resolution
+finer_interval = (h_mean_mep_line.XData(2) - h_mean_mep_line.XData(1)) / 100;
+x_spline = h_mean_mep_line.XData(1) : finer_interval : h_mean_mep_line.XData(end);
+y_spline = spline(h_mean_mep_line.XData, h_mean_mep_line.YData, x_spline);
 
 % =====================================================
 % old method of looking at the derivative of the mean line
 % look at derivative (diff) of YData 
 % find when derivative is 0
-y_diff = diff(h_mean_mep_line.YData);
+y_diff = diff(y_spline);
 
 % index of the current mep_beg_time
-mep_beg_ind = find(h_mean_mep_line.XData >= mep_beg_time, 1, 'first');
+mep_beg_ind = find(x_spline >= mep_beg_time, 1, 'first');
 
 % is the derivative at current mep_beg_time > or < 0
 while y_diff(mep_beg_ind) == 0 % ensure the deriv is not exactly 0
@@ -39,9 +43,9 @@ end
 
 % find the local min or max before mep_beg_ind
 % vec = islocalmin(h_mean_mep_line.YData);
-min_max_vec = feval(localmin_maxfcn, h_mean_mep_line.YData); %#ok<FVAL> 
+min_max_vec = feval(localmin_maxfcn, y_spline); %#ok<FVAL> 
 peak_ind = find(min_max_vec(1:mep_beg_ind) == true, 1, 'last');
-mep_begin = h_mean_mep_line.XData(peak_ind);
+mep_begin = x_spline(peak_ind);
 
 
 
