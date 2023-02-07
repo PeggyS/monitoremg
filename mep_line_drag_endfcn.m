@@ -7,10 +7,10 @@ mep_start_time = app.h_t_min_line.XData(1);
 mep_end_time = app.h_t_max_line.XData(1);
 
 % update values in the EMG Data figure
-app.h_edit_mep_begin.String = num2str(mep_start_time, 3);
-app.h_edit_mep_end.String = num2str(mep_end_time, 3);
+app.h_edit_mep_begin.String = num2str(mep_start_time, '%.2f');
+app.h_edit_mep_end.String = num2str(mep_end_time, '%.2f');
 t_dur = mep_end_time - mep_start_time;
-app.h_edit_mep_dur.String = num2str(t_dur, 3);
+app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
 % get the selected rows, so if values change and cells become unselected,
 % they can be reselected
