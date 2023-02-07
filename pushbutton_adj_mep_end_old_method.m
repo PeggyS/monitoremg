@@ -1,10 +1,8 @@
 function pushbutton_adj_mep_end_old_method(src, evt, app) %#ok<INUSL>
 % mep end line should be before the last peak then ends the MEP
-% There must be more than 1 epoch chosen so there is a mean_mep_line.
-% This function will move the line righ to the best approximation of the
-% mep end time.
-% FIXME - more description of the algorithm:
-%	move the 
+% If more than 1 epoch is chosen then the mean_mep_line is used.
+% This function will move the line right to the next local min or max,
+% approximating when the derivative is zero.
 
 % disp('pushbutton_adj_mep_end')
 mep_end_time = app.h_t_max_line.XData(1);
@@ -22,37 +20,43 @@ end
 % find when derivative is 0
 y_diff = diff(h_mean_mep_line.YData);
 
-% look forwards in time from the current mep_end_time
+%index of the current mep_end_time
 mep_end_ind = find(h_mean_mep_line.XData >= mep_end_time, 1, 'first');
 
 % is the derivative at current mep_end_time > or < 0
-while abs(y_diff(mep_end_ind)) < 0.2 % ensure the deriv is not close to 0
+while abs(y_diff(mep_end_ind)) == 0 % ensure the deriv is not exactly 0
 	mep_end_ind = mep_end_ind - 1;
 end
 if y_diff(mep_end_ind) < 0
-	y_diff_less_than_zero = true;
+	localmin_maxfcn = 'islocalmin';
 else
-	y_diff_less_than_zero = false;
+	localmin_maxfcn = 'islocalmax';
 end
 
-if y_diff_less_than_zero
-	search_ind = find(y_diff(mep_end_ind:end) >= 0, 1, 'first') + mep_end_ind-1;	
-else
-	search_ind = find(y_diff(mep_end_ind:end) <= 0, 1, 'first') + mep_end_ind-1;
-end
+% find the local min or max after mep_end_ind
+min_max_vec = feval(localmin_maxfcn, h_mean_mep_line.YData); %#ok<FVAL> 
+peak_ind = find(min_max_vec(mep_end_ind:end) == true, 1, 'first') + mep_end_ind-1;
+mep_end = h_mean_mep_line.XData(peak_ind);
 
-if y_diff(search_ind) == 0
-	mep_end = h_mean_mep_line.XData(search_ind);
-else
-	t_before_zero = h_mean_mep_line.XData(search_ind-1);
-	t_after_zero =  h_mean_mep_line.XData(search_ind);
-	val_before_zero = y_diff(search_ind-1);
-	val_after_zero = y_diff(search_ind);
-	% linear interpolate to find the time that crosses zero
-	mep_end = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
-end	
-assert(~isnan(mep_end), 'pushbutton_adj_mep_end: mep_end computed as nan')
-assert(~isempty(mep_end), 'pushbutton_adj_mep_end: mep_end computed as empty')
+
+% if y_diff_less_than_zero
+% 	search_ind = find(y_diff(mep_end_ind:end) >= 0, 1, 'first') + mep_end_ind-1;	
+% else
+% 	search_ind = find(y_diff(mep_end_ind:end) <= 0, 1, 'first') + mep_end_ind-1;
+% end
+% 
+% if y_diff(search_ind) == 0
+% 	mep_end = h_mean_mep_line.XData(search_ind);
+% else
+% 	t_before_zero = h_mean_mep_line.XData(search_ind-1);
+% 	t_after_zero =  h_mean_mep_line.XData(search_ind);
+% 	val_before_zero = y_diff(search_ind-1);
+% 	val_after_zero = y_diff(search_ind);
+% 	% linear interpolate to find the time that crosses zero
+% 	mep_end = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
+% end	
+% assert(~isnan(mep_end), 'pushbutton_adj_mep_end: mep_end computed as nan')
+% assert(~isempty(mep_end), 'pushbutton_adj_mep_end: mep_end computed as empty')
 % =====================================================
 
 % % 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
@@ -73,7 +77,7 @@ end
 if abs(app.mep_info.mep_end_t - mep_end) > 0.05 
 	% update info and flag it to be saved
 	% update the analysis date
-	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
 	% update done by
 	app.h_edit_mep_done_by.String = upper(app.user_initials);
 	app.mep_times_changed_flag = true;

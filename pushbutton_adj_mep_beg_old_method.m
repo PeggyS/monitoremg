@@ -2,10 +2,9 @@ function pushbutton_adj_mep_beg_old_method(src, evt, app) %#ok<INUSL>
 % mep begin line should be after when the mep begins
 % If more than 1 table row/epoch/sample is chosen, then the mean EMG
 % data line is used.
-% This function will move the line left to the best approximation of the
-% mep begin time.
-% FIXME - more description of the algorithm:
-%	move the 
+% This function will move the line left the local min or max, approximating
+% the derivate = 0.
+
 
 % disp('pushbutton_adj_mep_beg')
 mep_beg_time = app.h_t_min_line.XData(1);
@@ -25,7 +24,7 @@ end
 % find when derivative is 0
 y_diff = diff(h_mean_mep_line.YData);
 
-% look backwards in time from the current mep_beg_time
+% index of the current mep_beg_time
 mep_beg_ind = find(h_mean_mep_line.XData >= mep_beg_time, 1, 'first');
 
 % is the derivative at current mep_beg_time > or < 0
