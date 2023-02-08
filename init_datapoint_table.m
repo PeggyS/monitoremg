@@ -304,10 +304,12 @@ end
 
 % ======== add 3 new columns: is_mep, mep_latency, mep_end
 % if columns are not already there
-tbl.is_mep = false(height(tbl),1);
-tbl.mep_latency = nan(height(tbl), 1);
-tbl.mep_end = nan(height(tbl), 1);
-tbl = movevars(tbl, {'is_mep','mep_latency','mep_end'}, 'After', 'MEPAmpl_uVPp');
+if ~contains(tbl.Properties.VariableNames, 'mep_latency')
+	tbl.is_mep = false(height(tbl),1);
+	tbl.mep_latency = nan(height(tbl), 1);
+	tbl.mep_end = nan(height(tbl), 1);
+	tbl = movevars(tbl, {'is_mep','mep_latency','mep_end'}, 'After', 'MEPAmpl_uVPp');
+end
 
 % ======= rc or sici fig ===========
 if app.CheckBoxSici.Value == 1
@@ -326,8 +328,8 @@ if app.CheckBoxSici.Value == 1
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
 		'<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 30, 55, 50, 30, 48, 40, 50, 'auto', 'auto', 60, 50, 50};
-	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false];
+	colwidths = {40,  30,   50,   50,   30,   55,    50,    30,   48,    40,    50,   'auto', 'auto', 60,   50,    50};
+	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false, false, false, false];
 
 	% send the test stim to the sici icf window
 	if ~exist('test_stim_val', 'var')
@@ -356,8 +358,8 @@ else % rc or data only / average
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
 		'<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 30, 50, 60, 30, 48, 40, 50, 'auto', 'auto', 60, 50, 50};
-	coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false];
+	colwidths = {40,  30,   50,   50,   30,   50,    60,    30,    48,    40,    50,   'auto', 'auto', 60,    50,    50};
+	coledit = [false, true, true, true, true, false, false, true, false, false, false, false,   false, false, false, false ];
 end
 
 
