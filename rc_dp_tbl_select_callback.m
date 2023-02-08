@@ -12,7 +12,6 @@ persistent most_recent_selected all_selected
 % 	return
 % end
 
-% fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
 % fprintf('rc_dp_tbl_select_callback: start: cell_select: %s\n', mat2str(cell_select_data.Indices))
 % fprintf('start: h_lines:  %s\n', mat2str(h_lines))
 
@@ -30,9 +29,11 @@ h_lines = [];
 
 
 new_row_to_show = most_recent_selected;
+% fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
 
 if ~isempty(cell_select_data.Indices)
 	selected_rows = cell_select_data.Indices(:,1);
+% 	fprintf('rc_dp_tbl_select_callback: Indices = %s\n', mat2str(selected_rows))
 else
 	return
 end
@@ -58,6 +59,44 @@ end
 
 % update epoch number under the axes
 app.h_edit_epoch.String = num2str(new_row_to_show);
+
+% update the mep begin & end editboxes and lines from the uitable values
+latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
+% if latency or end are nan, then use default values 10 and 90
+if isnan(app.h_uitable.Data{new_row_to_show,latency_col})
+	latency = 10;
+	% get currently selected rows
+	j_now_selected_rows = get_table_selected_rows(app.h_uitable);  % zero indexed
+	% put default value in the table
+	app.h_uitable.Data(new_row_to_show,latency_col) = {latency};
+	% changing something in the table unselects the row, so reselect them
+% 	disp('change latency to default. reselect table row')
+	select_table_rows(app.h_uitable, j_now_selected_rows)
+	
+else
+	latency = app.h_uitable.Data{new_row_to_show,latency_col};
+end
+if isnan(app.h_uitable.Data{new_row_to_show,mep_end_col})
+	mep_end = 90;
+	% get currently selected rows
+	j_now_selected_rows = get_table_selected_rows(app.h_uitable);  % zero indexed
+	% put default value in the table
+	app.h_uitable.Data(new_row_to_show, mep_end_col) = {mep_end};
+	% changing something in the table unselects the row, so reselect them
+% 	disp('change mep_end to default. reselect table row')
+	select_table_rows(app.h_uitable, j_now_selected_rows)
+else
+	mep_end = app.h_uitable.Data{new_row_to_show, mep_end_col};
+end
+% move the mep lines
+app.h_t_min_line.XData = [latency latency];
+app.h_t_max_line.XData = [mep_end mep_end];
+% update edit boxes
+app.h_edit_mep_begin.String = num2str(latency, '%.2f');
+app.h_edit_mep_end.String = num2str(mep_end, '%.2f');
+t_dur = mep_end - latency;
+app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
 % update emg data
 update_review_emg_data_line(app, h_tbl, new_row_to_show)

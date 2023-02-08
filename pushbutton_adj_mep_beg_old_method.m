@@ -1,26 +1,23 @@
 function pushbutton_adj_mep_beg_old_method(src, evt, app) %#ok<INUSL>
 % mep begin line should be after when the mep begins
-% If more than 1 table row/epoch/sample is chosen, then the mean EMG
-% data line is used.
 % This function will move the line left the local min or max, approximating
-% the derivate = 0.
-
+% the derivative = 0.
+% 2023-02-08: change function so it will only work when a single epoch is
+% chosen. Will not work on the mean_emg_line
 
 % disp('pushbutton_adj_mep_beg')
 mep_beg_time = app.h_t_min_line.XData(1);
 
 % mean_emg_data line
 h_mean_mep_line = findobj(app.h_disp_emg_axes, 'Tag', 'mean_mep_line');
-if isempty(h_mean_mep_line)
-	disp('No mean MEP line. Using single sample EMG data.')
-
-	h_mean_mep_line = app.h_emg_line;
+if ~isempty(h_mean_mep_line)
+	disp('button only works with a single emg trace chosen')
 end
 
 % use a spline approximation of the emg_line for finer resolution
-finer_interval = (h_mean_mep_line.XData(2) - h_mean_mep_line.XData(1)) / 100;
-x_spline = h_mean_mep_line.XData(1) : finer_interval : h_mean_mep_line.XData(end);
-y_spline = spline(h_mean_mep_line.XData, h_mean_mep_line.YData, x_spline);
+finer_interval = (app.h_emg_line.XData(2) - app.h_emg_line.XData(1)) / 100;
+x_spline = app.h_emg_line.XData(1) : finer_interval : app.h_emg_line.XData(end);
+y_spline = spline(app.h_emg_line.XData, app.h_emg_line.YData, x_spline);
 
 % =====================================================
 % old method of looking at the derivative of the mean line
@@ -48,58 +45,19 @@ peak_ind = find(min_max_vec(1:mep_beg_ind) == true, 1, 'last');
 mep_begin = x_spline(peak_ind);
 
 
-
-% if y_diff_less_than_zero % negative sloping line, find the local min just before
-% 	search_ind = find(y_diff(1:mep_beg_ind) >= 0, 1, 'last');	
-% else % pos sloping line, find the index of a neg sloping line
-% 	search_ind = find(y_diff(1:mep_beg_ind) < 0, 1, 'last');
-% end
-
-% if y_diff(search_ind) == 0
-% 	mep_begin = h_mean_mep_line.XData(search_ind);
-% else
-% 	t_before_zero = h_mean_mep_line.XData(search_ind);
-% 	t_after_zero =  h_mean_mep_line.XData(search_ind+1);
-% 	val_before_zero = y_diff(search_ind);
-% 	val_after_zero = y_diff(search_ind+1);
-% 	% linear interpolate to find the time that crosses zero
-% 	mep_begin = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
-% end	
-
-% % from this mep_begin time, look further to the left for the next peak on the line
-% if y_diff_less_than_zero
-% 	second_search_ind = find(y_diff(1:search_ind) <= 0, 1, 'last');
-% else
-% 	second_search_ind = find(y_diff(1:search_ind) >= 0, 1, 'last');
-% end
-% 
-% val_at_peak_before_mep = h_mean_mep_line.YData(second_search_ind);
-% % use this as a threshold - looking to the right of the new mep begin, 
-% % find when the abs mean mep exceeds this value
-% if y_diff_less_than_zero
-% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) >= val_at_peak_before_mep, 1, 'last');
-% else
-% 	third_search_ind = find(h_mean_mep_line.YData(1:mep_beg_ind) <= val_at_peak_before_mep, 1, 'last');
-% end
-
-% % new mep begin index is the next point
-% mep_begin = h_mean_mep_line.XData(third_search_ind+1);
-% assert(~isnan(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as nan')
-% assert(~isempty(mep_begin), 'pushbutton_adj_mep_beg: mep_begin computed as empty')
-% =====================================================
-
-% % 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
-% % examine mean mep line, find first time after the current mep begin line when mean mep exceeds
-% % the std dev window
-% std_dev_value = app.h_pre_stim_emg_pos_std_line.YData(1);
-% mep_beg_ind = find(h_mean_mep_line.XData > mep_beg_time & abs(h_mean_mep_line.YData) >= std_dev_value, 1, 'first');
-% mep_begin = h_mean_mep_line.XData(mep_beg_ind);
-
 % change the mep start line
 if mep_begin ~= mep_beg_time
 % 	fprintf('  MEP beg changed from %f to %f\n', mep_beg_time, mep_begin)
 	app.h_t_min_line.XData = [mep_begin mep_begin];
-	mep_line_drag_endfcn(app.h_t_min_line)
+	latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+	%  get selected row in the table
+	selected_row = str2double(app.h_edit_epoch.String);
+	% update latency
+	app.h_uitable.Data(selected_row, latency_col) = {mep_begin};
+	% update mep amplitude
+	update_table_mep_amplitude(app, selected_row)
+	% reselect table row
+	select_table_rows(app.h_uitable, selected_row-1)
 end
 % if the value has changed from the one stored in the app (most likely from
 % being read in from the info file)

@@ -1,23 +1,23 @@
 function pushbutton_adj_mep_end_old_method(src, evt, app) %#ok<INUSL>
 % mep end line should be before the last peak then ends the MEP
-% If more than 1 epoch is chosen then the mean_mep_line is used.
 % This function will move the line right to the next local min or max,
 % approximating when the derivative is zero.
+% 2023-02-08: change function so it will only work when a single epoch is
+% chosen. Will not work on the mean_emg_line
 
 % disp('pushbutton_adj_mep_end')
 mep_end_time = app.h_t_max_line.XData(1);
 
 % mean_emg_data line
 h_mean_mep_line = findobj(app.h_disp_emg_axes, 'Tag', 'mean_mep_line');
-if isempty(h_mean_mep_line)
-	disp('No mean MEP line. Using single sample emg data.')
-	h_mean_mep_line = app.h_emg_line;
+if ~isempty(h_mean_mep_line)
+	disp('button only works with a single emg trace chosen')
 end
 
 % use a spline approximation of the emg_line for finer resolution
-finer_interval = (h_mean_mep_line.XData(2) - h_mean_mep_line.XData(1)) / 100;
-x_spline = h_mean_mep_line.XData(1) : finer_interval : h_mean_mep_line.XData(end);
-y_spline = spline(h_mean_mep_line.XData, h_mean_mep_line.YData, x_spline);
+finer_interval = (app.h_emg_line.XData(2) - app.h_emg_line.XData(1)) / 100;
+x_spline = app.h_emg_line.XData(1) : finer_interval : app.h_emg_line.XData(end);
+y_spline = spline(app.h_emg_line.XData, app.h_emg_line.YData, x_spline);
 
 % =====================================================
 % old way using derivative of mean emg line
@@ -44,42 +44,23 @@ peak_ind = find(min_max_vec(mep_end_ind:end) == true, 1, 'first') + mep_end_ind-
 mep_end = x_spline(peak_ind);
 
 
-% if y_diff_less_than_zero
-% 	search_ind = find(y_diff(mep_end_ind:end) >= 0, 1, 'first') + mep_end_ind-1;	
-% else
-% 	search_ind = find(y_diff(mep_end_ind:end) <= 0, 1, 'first') + mep_end_ind-1;
-% end
-% 
-% if y_diff(search_ind) == 0
-% 	mep_end = h_mean_mep_line.XData(search_ind);
-% else
-% 	t_before_zero = h_mean_mep_line.XData(search_ind-1);
-% 	t_after_zero =  h_mean_mep_line.XData(search_ind);
-% 	val_before_zero = y_diff(search_ind-1);
-% 	val_after_zero = y_diff(search_ind);
-% 	% linear interpolate to find the time that crosses zero
-% 	mep_end = interp1([val_before_zero val_after_zero], [t_before_zero t_after_zero], 0);
-% end	
-% assert(~isnan(mep_end), 'pushbutton_adj_mep_end: mep_end computed as nan')
-% assert(~isempty(mep_end), 'pushbutton_adj_mep_end: mep_end computed as empty')
-% =====================================================
-
-% % 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
-% % examine mean mep line, find first time after the current mep begin line when mean mep exceeds
-% % the std dev window
-% std_dev_value = app.h_pre_stim_emg_pos_std_line.YData(1);
-% mep_end_ind = find(h_mean_mep_line.XData < mep_end_time & abs(h_mean_mep_line.YData) >= std_dev_value, 1, 'last');
-% mep_end = h_mean_mep_line.XData(mep_end_ind);
-
 if mep_end_time ~= mep_end
 	% fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
 	% change the mep end line
 	app.h_t_max_line.XData = [mep_end mep_end];
-	mep_line_drag_endfcn(app.h_t_min_line)
+	mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
+	%  get selected row in the table
+	selected_row = str2double(app.h_edit_epoch.String);
+	% update latency
+	app.h_uitable.Data(selected_row, mep_end_col) = {mep_end};
+	% update mep amplitude
+	update_table_mep_amplitude(app, selected_row)
+	% reselect table row
+	select_table_rows(app.h_uitable, selected_row-1)
 end
 % if the value has changed from the one stored in the app (most likely from
 % being read in from the info file)
-if abs(app.mep_info.mep_end_t - mep_end) > 0.05 
+if abs(app.mep_info.mep_end_t - mep_end) > 0.01 
 	% update info and flag it to be saved
 	% update the analysis date
 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 

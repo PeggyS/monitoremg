@@ -1,4 +1,5 @@
 function update_review_emg_data_line(app, h_tbl, new_row)
+% disp('update_review_emg_data_line');
 if new_row == 0 || new_row > size(h_tbl.Data,1)
 	disp('invalid row in emg data table')
 	return
@@ -36,6 +37,8 @@ app.row_displayed = new_row;
 pre_stim_col = find_uitable_column(h_tbl, 'PreStim');
 pre_stim_val = app.h_uitable.Data{new_row,pre_stim_col};
 pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
+% app.h_uitable.Data(new_row,pre_stim_col) = {pre_stim_val}; % if the table
+% value is updated then the row becomes unselected
 app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
 % update std line

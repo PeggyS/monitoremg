@@ -45,7 +45,9 @@ if app.CheckBoxSici.Value == true % doing sici
 	i_rows = find(cell2mat(app.h_uitable.Data(:, isi_col)) == isi_val);
 
 	tmp_rows = intersect(m_rows, b_rows);
-	row_indices = intersect(tmp_rows, i_rows)';
+% 	row_indices = intersect(tmp_rows, i_rows)';
+	% change 2023-02-08: update the current epoch only
+	row_indices = str2double(app.h_edit_epoch.String);
 	
 	% if ISI > 0, shift the data by ISI ms
 	isi_ms = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
@@ -54,7 +56,9 @@ if app.CheckBoxSici.Value == true % doing sici
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 	end
 elseif app.CheckBoxRc.Value == true % doing rc
-	row_indices = 1:length(app.h_uitable.Data);
+% 	row_indices = 1:length(app.h_uitable.Data);
+	% change 2023-02-08: update the current epoch only
+	row_indices = str2double(app.h_edit_epoch.String);
 	isi_shift_pts = 0;
 end
 
@@ -97,7 +101,16 @@ for row_cnt = row_indices
 		% update info in rc_fig
 		update_rc_sici_datapoint(app, row_cnt, mep_val, auc, false);
 	end
+	latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+	mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
+	if app.h_uitable.Data{row_cnt, latency_col} ~= mep_start_time
+		app.h_uitable.Data{row_cnt, latency_col} = mep_start_time;
+	end
+	if app.h_uitable.Data{row_cnt, mep_end_col} ~= mep_end_time
+		app.h_uitable.Data{row_cnt, mep_end_col} = mep_end_time;
+	end
 end
+
 
 % reselect the cells (if needed)
 jUIScrollPane = findjobj(app.h_uitable);
