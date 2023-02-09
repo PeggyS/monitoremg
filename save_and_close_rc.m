@@ -33,6 +33,8 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 		end
 	end
 	fname_prefix = '';
+	tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+			col_name_html_to_var_name(app.h_uitable.ColumnName));
 else
 	if isempty(app.SaveLocationEditField.Value)
 		app.SaveLocationEditField.Value = pwd;
@@ -41,6 +43,7 @@ else
 		save_loc = app.SaveLocationEditField.Value;
 	end
 	fname_prefix = app.EditFieldFilenameprefix.Value;
+	tbl_to_save = app.rc_axes.UserData;
 end
 
 % determine base filename for saving datapoints.csv & fitinfo.txt
@@ -72,7 +75,7 @@ end
 if confirm_saving
 	% save the data
 	try
-		save_rc_table(app.rc_axes.UserData, datapoint_fname)
+		save_rc_table(tbl_to_save, datapoint_fname)
 	catch ME
 		disp('did not save rc_datapoints')
 		disp(ME)
