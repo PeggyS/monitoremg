@@ -22,6 +22,8 @@ try
 			end
 		end
 		fname_prefix = '';
+		tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+			col_name_html_to_var_name(app.h_uitable.ColumnName));
 	else
 		if isempty(app.SaveLocationEditField.Value)
 			app.SaveLocationEditField.Value = pwd;
@@ -30,6 +32,7 @@ try
 			save_loc = app.SaveLocationEditField.Value;
 		end
 		fname_prefix = app.EditFieldFilenameprefix.Value;
+		tbl_to_save = app.sici_axes.UserData;
 	end
 	
 	% determine mep method
@@ -58,7 +61,7 @@ try
 	if confirm_saving
 		% save the data
 		try
-			save_rc_table(app.sici_axes.UserData, datapoint_fname)
+			save_rc_table(tbl_to_save, datapoint_fname)
 		catch ME
 			disp('did not save sici_datapoints')
 			disp(ME)
@@ -129,7 +132,7 @@ try
 			if isprop(app, 'AnalyzedbyEditField')
 				app.sici_info.analyzed_by = upper(app.user_initials);
 				app.AnalyzedbyEditField.Value = upper(app.user_initials);
-				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
 				app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
 			end
 			if isprop(app, 'h_mep_analysis_comments')

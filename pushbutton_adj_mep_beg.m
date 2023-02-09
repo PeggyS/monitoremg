@@ -17,7 +17,9 @@ end
 % use a spline approximation of the emg_line for finer resolution
 finer_interval = (app.h_emg_line.XData(2) - app.h_emg_line.XData(1)) / 100;
 x_spline = app.h_emg_line.XData(1) : finer_interval : app.h_emg_line.XData(end);
+warning('off', 'MATLAB:chckxy:IgnoreNaN')
 y_spline = spline(app.h_emg_line.XData, app.h_emg_line.YData, x_spline);
+warning('on', 'MATLAB:chckxy:IgnoreNaN')
 
 % 2022-12-14: new method looking at when the MEP exceeds the std dev interval lines
 

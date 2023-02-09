@@ -90,7 +90,7 @@ if isfield(app.rc_fit_info, 'mepMethod')
 		if isprop(app, 'ReviewEMGRCUIFigure') % if in review_emg_rc app
 			app.rc_fit_info.analyzed_by = upper(app.user_initials);
 			app.AnalyzedbyEditField.Value = upper(app.user_initials);
-			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
 			app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
 			app.rc_fit_info.comments = app.h_mep_analysis_comments.String;
 		end

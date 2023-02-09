@@ -304,18 +304,23 @@ end
 
 % ======== add 3 new columns: is_mep, mep_latency, mep_end
 % if columns are not already there
-if ~any(contains(tbl.Properties.VariableNames, 'is_mep'))
-	tbl.is_mep = false(height(tbl),1);
+if ~any(contains(tbl.Properties.VariableNames, 'Is_MEP'))
+	tbl.Is_MEP = false(height(tbl),1);
 else
-	tbl.is_mep = logical(tbl.is_mep);
+	tbl.Is_MEP = logical(tbl.Is_MEP);
 end
-if ~any(contains(tbl.Properties.VariableNames, 'mep_latency'))
-	tbl.mep_latency = 10*ones(height(tbl), 1);
+if ~any(contains(tbl.Properties.VariableNames, 'MEP_latency'))
+	tbl.MEP_latency = 10*ones(height(tbl), 1);
 end
-if ~any(contains(tbl.Properties.VariableNames, 'mep_end'))
-	tbl.mep_end = 90*ones(height(tbl), 1);
+if ~any(contains(tbl.Properties.VariableNames, 'MEP_end'))
+	tbl.MEP_end = 90*ones(height(tbl), 1);
 end
-tbl = movevars(tbl, {'is_mep','mep_latency','mep_end'}, 'After', 'MEPAmpl_uVPp');
+tbl = movevars(tbl, {'Is_MEP','MEP_latency','MEP_end'}, 'After', 'MEPAmpl_uVPp');
+
+% ======== add comment column
+if ~any(contains(tbl.Properties.VariableNames, 'comments'))
+	tbl.comments = repmat({''}, height(tbl), 1);
+end
 
 % ======= rc or sici fig ===========
 if app.CheckBoxSici.Value == 1
@@ -333,9 +338,10 @@ if app.CheckBoxSici.Value == 1
 		'<html><center>MonitorEMG<br />val</center></html>', ...
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
-		'<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 30, 55, 50, 30, 48, 40, 50, 'auto', 'auto', 60, 50, 50};
-	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false];
+		'<html><center>Goal<br />Max</center></html>', ...
+		'<html><center>Comments</center></html>'};
+	colwidths = {40,   30,   50,  50,   30,   55,    50,    30,   48,    40,    50,   'auto', 'auto', 60,    50,    50,  'auto'};
+	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false,  false, false, false, true];
 
 	% send the test stim to the sici icf window
 	if ~exist('test_stim_val', 'var')
@@ -363,9 +369,10 @@ else % rc or data only / average
 		'<html><center>MonitorEMG<br />val</center></html>', ...
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
-		'<html><center>Goal<br />Max</center></html>'};
-	colwidths = {40, 30, 50, 50, 30, 50, 60, 30, 48, 40, 50, 'auto', 'auto', 60, 50, 50};
-	coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false];
+		'<html><center>Goal<br />Max</center></html>', ...
+		'<html><center>Comments</center></html>'};
+	colwidths = {40,  30,   50,   50,   30,   50,    60,    30,    48,    40,    50,   'auto', 'auto', 60,    50,    50, 'auto'};
+	coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false,  false, false, false, true];
 end
 
 

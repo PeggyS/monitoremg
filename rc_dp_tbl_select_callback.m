@@ -61,34 +61,12 @@ end
 app.h_edit_epoch.String = num2str(new_row_to_show);
 
 % update the mep begin & end editboxes and lines from the uitable values
-latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
-mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
-% if latency or end are nan, then use default values 10 and 90
-if isnan(app.h_uitable.Data{new_row_to_show,latency_col})
-	latency = 10;
-	% get currently selected rows
-	j_now_selected_rows = get_table_selected_rows(app.h_uitable);  % zero indexed
-	% put default value in the table
-	app.h_uitable.Data(new_row_to_show,latency_col) = {latency};
-	% changing something in the table unselects the row, so reselect them
-% 	disp('change latency to default. reselect table row')
-	select_table_rows(app.h_uitable, j_now_selected_rows)
-	
-else
-	latency = app.h_uitable.Data{new_row_to_show,latency_col};
-end
-if isnan(app.h_uitable.Data{new_row_to_show,mep_end_col})
-	mep_end = 90;
-	% get currently selected rows
-	j_now_selected_rows = get_table_selected_rows(app.h_uitable);  % zero indexed
-	% put default value in the table
-	app.h_uitable.Data(new_row_to_show, mep_end_col) = {mep_end};
-	% changing something in the table unselects the row, so reselect them
-% 	disp('change mep_end to default. reselect table row')
-	select_table_rows(app.h_uitable, j_now_selected_rows)
-else
-	mep_end = app.h_uitable.Data{new_row_to_show, mep_end_col};
-end
+latency_col = contains(app.h_uitable.ColumnName, '>latency<');
+mep_end_col = contains(app.h_uitable.ColumnName, '>end<');
+
+latency = app.h_uitable.Data{new_row_to_show, latency_col};
+mep_end = app.h_uitable.Data{new_row_to_show, mep_end_col};
+
 % move the mep lines
 app.h_t_min_line.XData = [latency latency];
 app.h_t_max_line.XData = [mep_end mep_end];
@@ -174,49 +152,49 @@ if ~isempty(effective_so_col)
 	end
 end
 
-% if sici/icf, update the mep begin and end times
-if isgraphics(app.sici_fig)
-	% stim type col from the table
-	st_col = find(contains(app.h_uitable.ColumnName, 'Type'));
-	st_list = h_tbl.Data(all_selected, st_col);
-	if length(st_list) > 1
-		st = unique(st_list);
-		if length(st) > 1
-			disp('more than 1 stim type chosen')
-			beep
-			return
-		end
-		st_var = lower(st{:});
-	else
-		st_var = lower(st_list{:});
-	end	
-	if strcmp(st_var, 'test stim')
-		st_var = 'ts';
-	end
-	
-	st_var_latency = [st_var '_latency'];
-	% put mep latency times from sici figure latency userdata 
-	if isfield(app.sici_ui, st_var_latency) && isfield(app.sici_ui.(st_var_latency).UserData, 'mep_beg_t')
-		val = app.sici_ui.(st_var_latency).UserData.mep_beg_t;
-		if abs(str2double(app.h_edit_mep_begin.String) - val) > 0.05
-			app.h_edit_mep_begin.String = num2str(val);
-			app.h_t_min_line.XData = [val val];
-			dur = str2double(app.h_edit_mep_end.String) - val;
-			app.h_edit_mep_dur.String = num2str(dur);
-		end
-		val = app.sici_ui.(st_var_latency).UserData.mep_end_t;
-		if abs(str2double(app.h_edit_mep_end.String) - val) > 0.05
-			app.h_edit_mep_end.String = num2str(val);
-			app.h_t_max_line.XData = [val val];
-			dur = val - str2double(app.h_edit_mep_begin.String);
-			app.h_edit_mep_dur.String = num2str(dur);
-		end
-		if abs(str2double(app.h_num_std.String) - app.sici_ui.(st_var_latency).UserData.num_sd) > 0.5
-			app.h_num_std.String = num2str(app.sici_ui.(st_var_latency).UserData.num_sd);
-		end
-		
-		app.h_using_data_txt.String = ['Using ' upper(st_var) ' sici data'];
-	end
-end
+% % if sici/icf, update the mep begin and end times
+% if isgraphics(app.sici_fig)
+% 	% stim type col from the table
+% 	st_col = find(contains(app.h_uitable.ColumnName, 'Type'));
+% 	st_list = h_tbl.Data(all_selected, st_col);
+% 	if length(st_list) > 1
+% 		st = unique(st_list);
+% 		if length(st) > 1
+% 			disp('more than 1 stim type chosen')
+% 			beep
+% 			return
+% 		end
+% 		st_var = lower(st{:});
+% 	else
+% 		st_var = lower(st_list{:});
+% 	end	
+% 	if strcmp(st_var, 'test stim')
+% 		st_var = 'ts';
+% 	end
+% 	
+% 	st_var_latency = [st_var '_latency'];
+% 	% put mep latency times from sici figure latency userdata 
+% 	if isfield(app.sici_ui, st_var_latency) && isfield(app.sici_ui.(st_var_latency).UserData, 'mep_beg_t')
+% 		val = app.sici_ui.(st_var_latency).UserData.mep_beg_t;
+% 		if abs(str2double(app.h_edit_mep_begin.String) - val) > 0.05
+% 			app.h_edit_mep_begin.String = num2str(val);
+% 			app.h_t_min_line.XData = [val val];
+% 			dur = str2double(app.h_edit_mep_end.String) - val;
+% 			app.h_edit_mep_dur.String = num2str(dur);
+% 		end
+% 		val = app.sici_ui.(st_var_latency).UserData.mep_end_t;
+% 		if abs(str2double(app.h_edit_mep_end.String) - val) > 0.05
+% 			app.h_edit_mep_end.String = num2str(val);
+% 			app.h_t_max_line.XData = [val val];
+% 			dur = val - str2double(app.h_edit_mep_begin.String);
+% 			app.h_edit_mep_dur.String = num2str(dur);
+% 		end
+% 		if abs(str2double(app.h_num_std.String) - app.sici_ui.(st_var_latency).UserData.num_sd) > 0.5
+% 			app.h_num_std.String = num2str(app.sici_ui.(st_var_latency).UserData.num_sd);
+% 		end
+% 		
+% 		app.h_using_data_txt.String = ['Using ' upper(st_var) ' sici data'];
+% 	end
+% end
 
 end % function
