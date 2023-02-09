@@ -1,6 +1,7 @@
 function info = get_computed_info_mep_times(datapoint_csv_filename)
-% from the datapoint csv file, get the mep_computed_info.txt file
-% then read in the computed mep info
+% from knowing the datapoint csv file name, get the dp_analysis_info.txt
+% file if there is one.
+% then read in the info
 
 info = struct();
 

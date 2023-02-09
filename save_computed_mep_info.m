@@ -1,11 +1,10 @@
 function save_computed_mep_info(~, ~, app)
 
-% save info used to compute mep_begin
-% save in the analysis folder with datapoints.csv file
-save_file = strrep(app.DatapointsCSVEditField.Value, 'datapoints.csv', 'mep_computed_info.txt');
+% save data point table
+dp_save_file = app.DatapointsCSVEditField.Value;
 % if the current directory has '/data/' in it then change it
 % '/analysis/' to save the output there
-[save_loc, save_f, save_ext] = fileparts(save_file);
+[save_loc, save_f, save_ext] = fileparts(dp_save_file);
 if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
 	save_loc = strrep(lower(save_loc), [filesep 'data' filesep], [filesep 'analysis' filesep]);
 	% ask to create the folder if it doesn't exist
@@ -25,79 +24,35 @@ if contains(save_loc, [filesep 'data' filesep], 'IgnoreCase', true)
 		end
 	end
 end
+datapoint_fname = fullfile(save_loc, [save_f save_ext]);
+tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+			col_name_html_to_var_name(app.h_uitable.ColumnName));
 
-% remove rc or sici from the name
-rc_or_sici = '';
-if contains(save_f, 'rc_')
-	rc_or_sici = 'rc';
-% 	save_f = strrep(save_f, 'rc_', '');
-elseif contains(save_f, 'sici_' )
-	rc_or_sici = 'sici';
-% 	save_f = strrep(save_f, 'sici_', '');
-end
-
-save_file = fullfile(save_loc, [save_f save_ext]);
-app.mep_info.file_name = save_file;
-app.mep_info.mep_beg_t = round(app.h_t_min_line.XData(1), 1);
-app.mep_info.mep_end_t = round(app.h_t_max_line.XData(1), 1);
-
-% get what epochs are selected from the h_uitable
-jUIScrollPane = findjobj(app.h_uitable);
-jUITable = jUIScrollPane.getViewport.getView;
-j_now_selected_rows = jUITable.getSelectedRows; % selected rows - zero indexed (java)
-assert(~isempty(j_now_selected_rows), 'save_computed_mep_info: no rows found selected in uitable')
-selected_epochs = j_now_selected_rows + 1;
-app.mep_info.epochs_used_for_latency = selected_epochs;
-% if only 1 row is selected, confirm if the selected rows are correct
-if length(selected_epochs) < 2
-	confirmed = confirm_single_row_save(selected_epochs);
-	if ~confirmed
-		disp('MEP Info not saved')
-		return
+% save the datapoint table
+[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
+if confirm_saving
+	% save the data
+	try
+		save_rc_table(tbl_to_save, datapoint_fname)
+	catch ME
+		disp('did not save rc_datapoints')
+		disp(ME)
 	end
-end
+end % confirmed saving
+
+
+% save info about the analysis of the datapoint table
+% save in the analysis folder with datapoints.csv file
+save_file = strrep(datapoint_fname, 'datapoints.csv', 'datapoints_analysis_info.txt');
+
+% filename (redundant, I guess)
+app.dp_analysis_info.file_name = save_file;
 
 % num std dev
-app.mep_info.num_std_dev = str2double(app.h_num_std.String);
+app.dp_analysis_info.num_std_dev = str2double(app.h_num_std.String);
 
-% MEP-max SO
-app.mep_info.mep_max_so = str2double(app.h_edit_mep_max_so.String);
-
-% rc plateau
-app.mep_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
-
-% mep values at the stimulator level
-% column indices from the table
-epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
-use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
-effective_so_col = find(contains(app.h_uitable.ColumnName, 'Effective'));
-mep_ampl_col = find(contains(app.h_uitable.ColumnName, 'MEPAmpl'));
-
-use_msk = [app.h_uitable.Data{:,use_col}]; %#ok<*FNDSB>
-so_msk = [app.h_uitable.Data{:,effective_so_col}] == app.mep_info.mep_max_so;
-% if so_msk is empty, then this button was pressed when sici data was being
-% analyzed. Don't use this button for sici analyis
-if isempty(so_msk)
-	disp('There is no effective stimulator output column in the table.')
-	disp('You might have pressed the Save MEP latency/MEP-max button while doing SICI/ICF analysis.')
-	return
-end
-
-% confirm that the epochs used have the highest stimulator output (SO)
-max_effective_so = max([app.h_uitable.Data{use_msk,effective_so_col}]);
-if max_effective_so ~= app.mep_info.mep_max_so
-	confirmed = confirm_not_max_eff_so(max_effective_so, app.mep_info.mep_max_so);
-	if ~confirmed
-		disp('MEP Info not saved')
-		return
-	end
-end
-
-% mep_max amplitudes
-app.mep_info.mep_max_data = [app.h_uitable.Data{use_msk & so_msk, mep_ampl_col}];
-app.mep_info.epochs_used_for_mep_max = [app.h_uitable.Data{use_msk & so_msk, epoch_col}];
-app.mep_info.mep_max_mean_uV = mean(app.mep_info.mep_max_data);
-app.mep_info.mep_max_n = length(app.mep_info.mep_max_data);
+% rc plateau yes/no
+app.dp_analysis_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
 
 % m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
@@ -112,25 +67,24 @@ if app.MmaxEditField.Value == 1
 		return
 	end
 end
-app.mep_info.e_stim_m_max_uV = app.MmaxEditField.Value;
+app.dp_analysis_info.e_stim_m_max_uV = app.MmaxEditField.Value;
 
-% change initials to the current user
+% If analyzer initials are empty, change initials to the current user
 if isempty(app.h_edit_mep_done_by.String)
 	app.h_edit_mep_done_by.String = upper(app.user_initials);
+	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
 end
-app.mep_info.analyzed_by = app.h_edit_mep_done_by.String;
-app.mep_info.analyzed_when = app.h_edit_mep_done_when.String;
-app.mep_info.using_rc_or_sici_data = rc_or_sici;
-app.mep_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ');
+app.dp_analysis_info.analyzed_by = app.h_edit_mep_done_by.String;
+app.dp_analysis_info.analyzed_when = app.h_edit_mep_done_when.String;
 
-% update string with 'using data'
-app.h_using_data_txt.String = ['Using ' app.mep_info.using_rc_or_sici_data ' data'];
+app.dp_analysis_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ');
+
 
 % confirm saving
 [confirm_saving, save_file] = confirm_savename(save_file);
 if confirm_saving
 	% write info to file
-	write_fit_info(save_file, app.mep_info)
+	write_fit_info(save_file, app.dp_analysis_info)
 % 	fprintf('save_computed_mep_info: file\n %s\n with mep times = [%f %f]\n', save_file, ...
 % 		app.mep_info.mep_beg_t, app.mep_info.mep_end_t)
 end

@@ -62,13 +62,13 @@ if mep_end_time ~= mep_end
 end
 % if the value has changed from the one stored in the app (most likely from
 % being read in from the info file)
-if abs(app.mep_info.mep_end_t - mep_end) > 0.01 
-	% update info and flag it to be saved
-	% update the analysis date
-	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
-	% update done by
-	app.h_edit_mep_done_by.String = upper(app.user_initials);
-	app.mep_times_changed_flag = true;
-end
+% if abs(app.mep_info.mep_end_t - mep_end) > 0.01 
+% 	% update info and flag it to be saved
+% 	% update the analysis date
+% 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
+% 	% update done by
+% 	app.h_edit_mep_done_by.String = upper(app.user_initials);
+% 	app.mep_times_changed_flag = true;
+% end
 return
 end % pushbutton_adj_mep_beg

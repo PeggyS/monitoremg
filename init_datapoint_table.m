@@ -320,6 +320,16 @@ tbl = movevars(tbl, {'Is_MEP','MEP_latency','MEP_end'}, 'After', 'MEPAmpl_uVPp')
 % ======== add comment column
 if ~any(contains(tbl.Properties.VariableNames, 'comments'))
 	tbl.comments = repmat({''}, height(tbl), 1);
+else
+% 	keyboard
+	if isnumeric(tbl.comments)
+		% make it a string variable
+		num_array = tbl.comments;
+		cell_array = num2cell(tbl.comments);
+		index = isnan(num_array);
+		cell_array(index) = {''};
+		tbl.comments = cell_array;
+	end
 end
 
 % ======= rc or sici fig ===========
@@ -372,7 +382,7 @@ else % rc or data only / average
 		'<html><center>Goal<br />Max</center></html>', ...
 		'<html><center>Comments</center></html>'};
 	colwidths = {40,  30,   50,   50,   30,   50,    60,    30,    48,    40,    50,   'auto', 'auto', 60,    50,    50, 'auto'};
-	coledit = [false, true, true, true, true, false, false, false, false, false, false, false, false,  false, false, false, true];
+	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false,  false, false, false, true];
 end
 
 

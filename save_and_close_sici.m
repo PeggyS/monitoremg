@@ -22,8 +22,9 @@ try
 			end
 		end
 		fname_prefix = '';
-		tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
-			col_name_html_to_var_name(app.h_uitable.ColumnName));
+% 		tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+% 			col_name_html_to_var_name(app.h_uitable.ColumnName));
+		tbl_to_save = [];
 	else
 		if isempty(app.SaveLocationEditField.Value)
 			app.SaveLocationEditField.Value = pwd;
@@ -55,10 +56,11 @@ try
 		sici_info_fname = strrep(sici_info_fname, 'info.txt', 'info_not_norm.txt');
 	end
 	
+	if ~isempty(tbl_to_save)
 	[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
-	
-	
-	if confirm_saving
+
+	% save data point table
+	if confirm_saving 
 		% save the data
 		try
 			save_rc_table(tbl_to_save, datapoint_fname)
@@ -67,6 +69,7 @@ try
 			disp(ME)
 		end
 	end % confirmed saving
+	end
 	
 	if isfield(app.sici_info, 'ts_n')
 		

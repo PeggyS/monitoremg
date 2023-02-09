@@ -33,8 +33,9 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 		end
 	end
 	fname_prefix = '';
-	tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
-			col_name_html_to_var_name(app.h_uitable.ColumnName));
+	tbl_to_save = [];
+% 	tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+% 			col_name_html_to_var_name(app.h_uitable.ColumnName));
 else
 	if isempty(app.SaveLocationEditField.Value)
 		app.SaveLocationEditField.Value = pwd;
@@ -71,17 +72,19 @@ else
 	fitinfo_fname = strrep(fitinfo_fname, 'info.txt', 'info_not_norm.txt');
 end
 
-[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
-if confirm_saving
-	% save the data
-	try
-		save_rc_table(tbl_to_save, datapoint_fname)
-	catch ME
-		disp('did not save rc_datapoints')
-		disp(ME)
-	end
-end % confirmed saving
-
+% save the datapoint table
+if ~isempty(tbl_to_save)
+	[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
+	if confirm_saving
+		% save the data
+		try
+			save_rc_table(tbl_to_save, datapoint_fname)
+		catch ME
+			disp('did not save rc_datapoints')
+			disp(ME)
+		end
+	end % confirmed saving
+end
 
 if isfield(app.rc_fit_info, 'mepMethod')
 	[confirm_saving, fitinfo_fname] = confirm_savename(fitinfo_fname);
