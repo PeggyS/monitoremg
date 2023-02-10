@@ -1,9 +1,6 @@
-function compute_non_mep_ampl(src, evt, app)
-
-
+function compute_non_mep_ampl(~, ~, app)
 
 % find col num of some variables in the table
-use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
 bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
@@ -17,8 +14,7 @@ mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
 % find unique combinations of is_mep, magstim, bistim, and isi
 tbl_stim = cell2table(app.h_uitable.Data(:,[is_mep_col, magstim_col, bistim_col, isi_col]), ...
 	'VariableNames', {'is_mep', 'magstim', 'bistim', 'isi'});
-[t2, unq_rows, c2] = unique(tbl_stim, 'rows');
-
+[~, unq_rows, ~] = unique(tbl_stim, 'rows');
 
 tbl_data = cell2table(app.h_uitable.Data(:,[is_mep_col, magstim_col, bistim_col, isi_col, ...
 	latency_col, mep_end_col]), ...
@@ -47,6 +43,10 @@ for u_cnt = 1:length(unq_rows)
 		app.h_uitable.Data(no_mep_rows, mep_end_col) = {mean_end};
 
 		% compute amplitude
+		for r_cnt = 1:length(no_mep_rows)
+			selected_row = no_mep_rows(r_cnt);
+			update_table_mep_amplitude(app, selected_row)
+		end
 	end
 end
 

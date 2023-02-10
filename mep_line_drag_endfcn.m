@@ -127,18 +127,18 @@ else
 % 	fprintf('mep_line_drag_endfcn: table cells stayed selected\n')
 end
 
-if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency') && isgraphics(app.sici_axes)
-	stim_type = app.sici_axes.UserData.Stim_Type{j_original_selected_rows(r_cnt)};
-	switch stim_type
-		case 'Test Stim'
-			info_var = 'ts';
-		case 'SICI'
-			info_var = 'sici';
-		case 'ICF'
-			info_var = 'icf';
-	end
-	update_sici_mep_latency(app, info_var, j_original_selected_rows'+1)
-end
+% if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency') && isgraphics(app.sici_axes)
+% 	stim_type = app.sici_axes.UserData.Stim_Type{j_original_selected_rows(r_cnt)};
+% 	switch stim_type
+% 		case 'Test Stim'
+% 			info_var = 'ts';
+% 		case 'SICI'
+% 			info_var = 'sici';
+% 		case 'ICF'
+% 			info_var = 'icf';
+% 	end
+% 	update_sici_mep_latency(app, info_var, j_original_selected_rows'+1)
+% end
 
 end %function
 
