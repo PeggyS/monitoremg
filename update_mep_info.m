@@ -48,6 +48,12 @@ for r_cnt = 1:height(unq_tbl)
 	unq_tbl.num_comments(r_cnt) = num_com;
 end
 
+app.UITable_Unique_Stims.Data = unq_tbl;
+
+% find the max amplitude and select that row in the table
+
+% make a way to examine the comments if there are any
+
 % read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
 
