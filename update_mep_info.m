@@ -30,7 +30,7 @@ tbl = readtable(datapoint_csv_filename, 'NumHeaderLines',num_header_lines);
 tbl = tbl(tbl.Use == true, :);
 
 % find unique combinations of magstim, bistim, and isi
-[unq_tbl, unq_rows, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms'}));
+[unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms'}));
 
 % each unique combo, compute the mean mep ampl and other stuff
 for r_cnt = 1:height(unq_tbl)
