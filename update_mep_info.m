@@ -30,7 +30,7 @@ tbl = readtable(datapoint_csv_filename, 'NumHeaderLines',num_header_lines);
 tbl = tbl(tbl.Use == true, :);
 
 % find unique combinations of magstim, bistim, and isi
-[unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms'}));
+[unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', 'Effective_SO'}));
 
 % each unique combo, compute the mean mep ampl and other stuff
 for r_cnt = 1:height(unq_tbl)
@@ -54,6 +54,10 @@ app.UITable_Unique_Stims.Data = unq_tbl;
 
 % find the max amplitude and select that row in the table
 [max_val, max_row] = max(unq_tbl.mean_mep_ampl);
+% save the max mep amplitude in the uitable user data
+app.UITable_Unique_Stims.UserData.mep_max = max_val;
+
+% make sure the max row is visible
 scroll(app.UITable_Unique_Stims, 'row', max_row)
 styl = uistyle;
 % highlight the row. color it depending upon if the latency values
@@ -65,6 +69,13 @@ else
 end
 removeStyle(app.UITable_Unique_Stims)
 addStyle(app.UITable_Unique_Stims, styl, 'row', max_row)
+
+% is the mep max at the highest stimulator output?
+if max_row < height(unq_tbl)
+	app.MEPmaxatMaxSOCheckBox.Value = 0;
+else
+	app.MEPmaxatMaxSOCheckBox.Value = 1;
+end
 
 % add the rc curve image
 get(app.Image_rc)
@@ -79,10 +90,27 @@ else
 		app.Image_rc.ImageSource = '';
 	end
 end
-% make a way to examine the comments if there are any
+
+% make a way to examine the comments if there are any - FIXE
 
 % read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
+
+% put info into the mepmax info panel
+app.NumSDEditField.Value = info.num_std_dev;
+app.EStimMmaxEditField.Value = info.e_stim_m_max_uV;
+app.AnalysisdateEditField.Value = info.analyzed_when;
+app.AnalyzedbyEditField.Value = info.analyzed_by;
+app.VerifydateEditField.Value = info.verified_when;
+app.VerifiedbyEditField.Value = info.verified_by;
+app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
+app.CommentsEditField.Value = info.comments;
+
+% is the data in the database?
+% db_info = get_mep_max_latency_data_from_db
+
+% does the database info match what's shown here?
+
 
 return
 end
