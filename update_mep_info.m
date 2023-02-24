@@ -5,6 +5,7 @@ datapoint_csv_filename = strrep(selectedNode.NodeData, '_analysis_info.txt', '.c
 if ~exist(datapoint_csv_filename, 'file')
 	beep
 	disp(['There is no csv file: ' datapoint_csv_filename])
+	reset_mep_info(app)
 	return
 end
 
@@ -21,6 +22,7 @@ else
 	beep
 	disp(['The file ' datapoint_csv_filename ' does not contain the stimulator setup as the first line.'])
 	disp('File is probably too old and needs to be reanalyzed in review_emg_rc.mlapp.')
+	reset_mep_info(app)
 	return
 end
 % table read in
@@ -51,7 +53,32 @@ end
 app.UITable_Unique_Stims.Data = unq_tbl;
 
 % find the max amplitude and select that row in the table
+[max_val, max_row] = max(unq_tbl.mean_mep_ampl);
+scroll(app.UITable_Unique_Stims, 'row', max_row)
+styl = uistyle;
+% highlight the row. color it depending upon if the latency values
+% were computed
+if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
+	styl.BackgroundColor = '#c94309';
+else
+	styl.BackgroundColor = '#dddd00';
+end
+removeStyle(app.UITable_Unique_Stims)
+addStyle(app.UITable_Unique_Stims, styl, 'row', max_row)
 
+% add the rc curve image
+get(app.Image_rc)
+img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+if exist(img_file, 'file')
+	app.Image_rc.ImageSource = img_file;
+else
+	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_not_norm.png');
+	if exist(img_file, 'file')
+		app.Image_rc.ImageSource = img_file;
+	else
+		app.Image_rc.ImageSource = '';
+	end
+end
 % make a way to examine the comments if there are any
 
 % read in the info file

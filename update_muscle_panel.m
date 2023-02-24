@@ -31,7 +31,7 @@ if is_rc == true
 end
 
 if is_sici == true
-	update_sici_info(selectedNode, app)
+% 	update_sici_info(selectedNode, app)
 end
 
 return
