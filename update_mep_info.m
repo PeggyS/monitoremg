@@ -54,8 +54,14 @@ app.UITable_Unique_Stims.Data = unq_tbl;
 
 % find the max amplitude and select that row in the table
 [max_val, max_row] = max(unq_tbl.mean_mep_ampl);
-% save the max mep amplitude in the uitable user data
+% save the max mep info in the uitable user data
+app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
+app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
+app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
+app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
+app.UITable_Unique_Stims.UserData.mean_end = unq_tbl.mean_end(max_row);
 app.UITable_Unique_Stims.UserData.mep_max = max_val;
+app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
 
 % make sure the max row is visible
 scroll(app.UITable_Unique_Stims, 'row', max_row)
@@ -91,7 +97,7 @@ else
 	end
 end
 
-% make a way to examine the comments if there are any - FIXE
+% make a way to examine the comments if there are any - FIXME
 
 % read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
@@ -107,10 +113,47 @@ app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
 app.CommentsEditField.Value = info.comments;
 
 % is the data in the database?
-% db_info = get_mep_max_latency_data_from_db
+subject = app.SubjectEditField_muscP.Value;
+session = app.SessionEditField_muscP.Value;
+side_muscle = app.MuscleEditField_muscP.Value;
+split_cell = strsplit(side_muscle, '_');
+side = split_cell{1};
+muscle = split_cell{2};
 
-% does the database info match what's shown here?
-
+db_info = get_mep_max_latency_data_from_db(app, subject, session, side, muscle);
+if ~isempty(db_info)
+	app.InDatabaseCheckBox.Value = true;
+	app.dbLastupdatedEditField.Value = db_info.last_update;
+	% does the database info match what's shown here?
+	match = true;
+	if db_info.effective_stimulator_output ~= app.UITable_Unique_Stims.UserData.effective_stimulator_output || ...
+		db_info.is_eff_so_max_stim ~= app.MEPmaxatMaxSOCheckBox.Value || ...
+		db_info.num_samples ~= app.UITable_Unique_Stims.UserData.num_samples || ...
+		db_info.num_meps ~= app.UITable_Unique_Stims.UserData.num_meps || ...
+		db_info.mep_mean_latency ~= app.UITable_Unique_Stims.UserData.mean_latency || ...
+		db_info.mep_mean_end_time ~= app.UITable_Unique_Stims.UserData.mean_end || ...
+		db_info.mep_mean_amplitude ~= app.UITable_Unique_Stims.UserData.mep_max || ...
+		db_info.num_samples_with_comments ~= app.UITable_Unique_Stims.UserData.num_comments || ...
+		db_info.num_sd ~= app.NumSDEditField.Value || ...
+		db_info.e_stim_m_max ~= app.EStimMmaxEditField.Value || ...
+		db_info.did_rc_plateau ~= app.RecruitmentCurvePlateauedCheckBox.Value || ...
+		contains(db_info.analyzed_by, app.AnalyzedbyEditField.Value) || ...
+		contains(db_info.analyzed_when, app.AnalysisdateEditField.Value) || ...
+		contains(db_info.verified_by, app.VerifiedbyEditField.Value) || ...
+		contains(db_info.verfied_when, app.VerifydateEditField.Value) || ...
+		contains(db_info.comments, app.CommentsEditField.Value) 
+		match = false;
+	end
+	if match == true
+		app.DatabaseinfomatchesCheckBox.Value = true;
+	else
+		app.DatabaseinfomatchesCheckBox.Value = false;
+	end
+else
+	app.InDatabaseCheckBox.Value = false;
+	app.dbLastupdatedEditField.Value = '';
+	app.DatabaseinfomatchesCheckBox.Value = false;
+end % info in the database
 
 return
 end

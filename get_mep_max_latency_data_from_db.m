@@ -49,6 +49,7 @@ conn.dbClose()
 % last_update
 if ~isempty(qry_data_cell_array)
 	% parse the data into db_info struct
+	db_info.id = qry_data_cell_array{1};
 	db_info.subject = qry_data_cell_array{2};
 	db_info.session = qry_data_cell_array{3};
 	db_info.side = qry_data_cell_array{4};
@@ -67,7 +68,7 @@ if ~isempty(qry_data_cell_array)
 	db_info.analyzed_by = qry_data_cell_array{17};
 	db_info.analyzed_when = qry_data_cell_array{18};
 	db_info.verified_by = qry_data_cell_array{19};
-	db_info.verfied_when = qry_data_cell_array{20};
+	db_info.verified_when = qry_data_cell_array{20};
 	db_info.comments = qry_data_cell_array{21};
 	db_info.last_update = qry_data_cell_array{22};
 else
