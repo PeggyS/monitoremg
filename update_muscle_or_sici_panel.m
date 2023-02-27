@@ -1,4 +1,4 @@
-function update_muscle_panel(subj_str, app)
+function update_muscle_or_sici_panel(subj_str, app)
 
 selectedNode = app.SubjectTree.SelectedNodes;
 
@@ -31,7 +31,7 @@ if is_rc == true
 end
 
 if is_sici == true
-% 	update_sici_info(selectedNode, app)
+ 	update_sici_info(selectedNode, app)
 end
 
 return
