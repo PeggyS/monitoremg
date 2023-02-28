@@ -51,8 +51,10 @@ app.dp_analysis_info.file_name = save_file;
 % num std dev
 app.dp_analysis_info.num_std_dev = str2double(app.h_num_std.String);
 
-% rc plateau yes/no
-app.dp_analysis_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
+if app.CheckBoxRc == true
+	% rc plateau yes/no
+	app.dp_analysis_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
+end
 
 % m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
