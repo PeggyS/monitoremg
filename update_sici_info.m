@@ -1,5 +1,5 @@
 function update_sici_info(selectedNode, app)
-keyboard
+
 % datapoint file
 datapoint_csv_filename = strrep(selectedNode.NodeData, '_analysis_info.txt', '.csv');
 if ~exist(datapoint_csv_filename, 'file')
@@ -27,6 +27,9 @@ else
 end
 % table read in
 tbl = readtable(datapoint_csv_filename, 'NumHeaderLines',num_header_lines);
+% save it for the app (to look up comments)
+app.datapoint_tbl = tbl;
+% remove the unused rows from the tbl
 tbl = tbl(tbl.Use == true, :);
 
 % find unique combinations of magstim, bistim, and isi
@@ -113,47 +116,8 @@ app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
 app.CommentsEditField.Value = info.comments;
 
 % is the data in the database?
-subject = app.SubjectEditField_muscP.Value;
-session = app.SessionEditField_muscP.Value;
-side_muscle = app.MuscleEditField_muscP.Value;
-split_cell = strsplit(side_muscle, '_');
-side = split_cell{1};
-muscle = split_cell{2};
+is_mep_info_in_db(app)
 
-db_info = get_mep_max_latency_data_from_db(app, subject, session, side, muscle);
-if ~isempty(db_info)
-	app.InDatabaseCheckBox.Value = true;
-	app.dbLastupdatedEditField.Value = db_info.last_update;
-	% does the database info match what's shown here?
-	match = false;
-	if db_info.effective_stimulator_output == app.UITable_Unique_Stims.UserData.effective_stimulator_output && ...
-		db_info.is_eff_so_max_stim == app.MEPmaxatMaxSOCheckBox.Value && ...
-		db_info.num_samples == app.UITable_Unique_Stims.UserData.num_samples && ...
-		db_info.num_meps == app.UITable_Unique_Stims.UserData.num_meps && ...
-		abs(db_info.mep_mean_latency - app.UITable_Unique_Stims.UserData.mean_latency) < 1e-6  && ...
-		abs(db_info.mep_mean_end_time - app.UITable_Unique_Stims.UserData.mean_end) < 1e-6 && ...
-		abs(db_info.mep_mean_amplitude - app.UITable_Unique_Stims.UserData.mep_max) < 1e-6 && ...
-		db_info.num_samples_with_comments == app.UITable_Unique_Stims.UserData.num_comments && ...
-		db_info.num_sd == app.NumSDEditField.Value && ...
-		abs(db_info.e_stim_m_max - app.EStimMmaxEditField.Value) < 1e-6 && ...
-		db_info.did_rc_plateau == app.RecruitmentCurvePlateauedCheckBox.Value && ...
-		contains(db_info.analyzed_by, app.AnalyzedbyEditField.Value) && ...
-		contains(db_info.analyzed_when, app.AnalysisdateEditField.Value) && ...
-		contains(db_info.verified_by, app.VerifiedbyEditField.Value) && ...
-		contains(db_info.verified_when, app.VerifydateEditField.Value) && ...
-		contains(db_info.comments, app.CommentsEditField.Value)  
-		match = true;
-	end
-	if match == true
-		app.DatabaseinfomatchesCheckBox.Value = true;
-	else
-		app.DatabaseinfomatchesCheckBox.Value = false;
-	end
-else
-	app.InDatabaseCheckBox.Value = false;
-	app.dbLastupdatedEditField.Value = '';
-	app.DatabaseinfomatchesCheckBox.Value = false;
-end % info in the database
 
 return
 end
