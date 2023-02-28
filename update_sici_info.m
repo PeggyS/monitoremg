@@ -33,7 +33,7 @@ app.datapoint_tbl = tbl;
 tbl = tbl(tbl.Use == true, :);
 
 % find unique combinations of magstim, bistim, and isi
-[unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', 'Effective_SO'}));
+[unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', 'Stim_Type'}));
 
 % each unique combo, compute the mean mep ampl and other stuff
 for r_cnt = 1:height(unq_tbl)
@@ -53,70 +53,66 @@ for r_cnt = 1:height(unq_tbl)
 	unq_tbl.num_comments(r_cnt) = num_com;
 end
 
-app.UITable_Unique_Stims.Data = unq_tbl;
+app.UITable_Unique_Stims_sici.Data = unq_tbl;
 
-% find the max amplitude and select that row in the table
-[max_val, max_row] = max(unq_tbl.mean_mep_ampl);
-% save the max mep info in the uitable user data
-app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
-app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
-app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
-app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
-app.UITable_Unique_Stims.UserData.mean_end = unq_tbl.mean_end(max_row);
-app.UITable_Unique_Stims.UserData.mep_max = max_val;
-app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
 
-% make sure the max row is visible
-scroll(app.UITable_Unique_Stims, 'row', max_row)
-styl = uistyle;
-% highlight the row. color it depending upon if the latency values
-% were computed
-if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
-	styl.BackgroundColor = '#c94309';
-else
-	styl.BackgroundColor = '#dddd00';
-end
-removeStyle(app.UITable_Unique_Stims)
-addStyle(app.UITable_Unique_Stims, styl, 'row', max_row)
+% % save the max mep info in the uitable user data
+% app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
+% app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
+% app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
+% app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
+% app.UITable_Unique_Stims.UserData.mean_end = unq_tbl.mean_end(max_row);
+% app.UITable_Unique_Stims.UserData.mep_max = max_val;
+% app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
+% 
+% % make sure the max row is visible
+% scroll(app.UITable_Unique_Stims, 'row', max_row)
+% styl = uistyle;
+% % highlight the row. color it depending upon if the latency values
+% % were computed
+% if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
+% 	styl.BackgroundColor = '#c94309';
+% else
+% 	styl.BackgroundColor = '#dddd00';
+% end
+% removeStyle(app.UITable_Unique_Stims)
+% addStyle(app.UITable_Unique_Stims, styl, 'row', max_row)
+% 
+% % is the mep max at the highest stimulator output?
+% if max_row < height(unq_tbl)
+% 	app.MEPmaxatMaxSOCheckBox.Value = 0;
+% else
+% 	app.MEPmaxatMaxSOCheckBox.Value = 1;
+% end
 
-% is the mep max at the highest stimulator output?
-if max_row < height(unq_tbl)
-	app.MEPmaxatMaxSOCheckBox.Value = 0;
-else
-	app.MEPmaxatMaxSOCheckBox.Value = 1;
-end
-
-% add the rc curve image
+% add the sici curve image
 % get(app.Image_rc)
-img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+img_file = strrep(datapoint_csv_filename, '_sici_datapoints.csv', '_p2p_sici_info_not_norm.png');
 if exist(img_file, 'file')
-	app.Image_rc.ImageSource = img_file;
+	app.Image_sici.ImageSource = img_file;
 else
-	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_not_norm.png');
+	img_file = strrep(datapoint_csv_filename, '_sici_datapoints.csv', '_p2p_sici_info_norm.png');
 	if exist(img_file, 'file')
-		app.Image_rc.ImageSource = img_file;
+		app.Image_sici.ImageSource = img_file;
 	else
-		app.Image_rc.ImageSource = '';
+		app.Image_sici.ImageSource = '';
 	end
 end
 
-% make a way to examine the comments if there are any - FIXME
 
 % read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
 
 % put info into the mepmax info panel
-app.NumSDEditField.Value = info.num_std_dev;
-app.EStimMmaxEditField.Value = info.e_stim_m_max_uV;
-app.AnalysisdateEditField.Value = info.analyzed_when;
-app.AnalyzedbyEditField.Value = info.analyzed_by;
-app.VerifydateEditField.Value = info.verified_when;
-app.VerifiedbyEditField.Value = info.verified_by;
-app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
-app.CommentsEditField.Value = info.comments;
+app.NumSDEditField_sici.Value = info.num_std_dev;
+app.AnalysisdateEditField_sici.Value = info.analyzed_when;
+app.AnalyzedbyEditField_sici.Value = info.analyzed_by;
+app.VerifydateEditField_sici.Value = info.verified_when;
+app.VerifiedbyEditField_sici.Value = info.verified_by;
+app.CommentsEditField_sici.Value = info.comments;
 
 % is the data in the database?
-is_mep_info_in_db(app)
+% is_sici_info_in_db(app)
 
 
 return
