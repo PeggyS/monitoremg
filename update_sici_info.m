@@ -35,6 +35,9 @@ tbl = tbl(tbl.Use == true, :);
 % find unique combinations of magstim, bistim, and isi
 [unq_tbl, ~, tbl_ind] = unique(tbl(:, {'MagStim_Setting', 'BiStim_Setting', 'ISI_ms', 'Stim_Type'}));
 
+more_info_tbl = table();
+more_info_tbl.stim_type = unq_tbl.Stim_Type;
+
 % each unique combo, compute the mean mep ampl and other stuff
 for r_cnt = 1:height(unq_tbl)
 	stim_tbl = tbl(tbl_ind==r_cnt, :);
@@ -51,39 +54,22 @@ for r_cnt = 1:height(unq_tbl)
 		num_com = sum(~cellfun(@isempty, stim_tbl.comments));
 	end
 	unq_tbl.num_comments(r_cnt) = num_com;
+
+	more_info_tbl.sd_latency(r_cnt) = std(stim_tbl.MEP_latency);
+	more_info_tbl.sd_end(r_cnt) = std(stim_tbl.MEP_end);
+	more_info_tbl.sd_mep_ampl(r_cnt) = std(stim_tbl.MEPAmpl_uVPp);
+	ci = confidence_intervals(stim_tbl.MEPAmpl_uVPp, 98);
+	more_info_tbl.ci1_mep_ampl(r_cnt) = ci(1);
+	more_info_tbl.ci2_mep_ampl(r_cnt) = ci(2);
+
 end
 
 app.UITable_Unique_Stims_sici.Data = unq_tbl;
 
 
-% % save the max mep info in the uitable user data
-% app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
-% app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
-% app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
-% app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
-% app.UITable_Unique_Stims.UserData.mean_end = unq_tbl.mean_end(max_row);
-% app.UITable_Unique_Stims.UserData.mep_max = max_val;
-% app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
-% 
-% % make sure the max row is visible
-% scroll(app.UITable_Unique_Stims, 'row', max_row)
-% styl = uistyle;
-% % highlight the row. color it depending upon if the latency values
-% % were computed
-% if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
-% 	styl.BackgroundColor = '#c94309';
-% else
-% 	styl.BackgroundColor = '#dddd00';
-% end
-% removeStyle(app.UITable_Unique_Stims)
-% addStyle(app.UITable_Unique_Stims, styl, 'row', max_row)
-% 
-% % is the mep max at the highest stimulator output?
-% if max_row < height(unq_tbl)
-% 	app.MEPmaxatMaxSOCheckBox.Value = 0;
-% else
-% 	app.MEPmaxatMaxSOCheckBox.Value = 1;
-% end
+% save the more sici info in the uitable user data
+app.UITable_Unique_Stims_sici.UserData.more_info_tbl = more_info_tbl;
+
 
 % add the sici curve image
 % get(app.Image_rc)
@@ -103,7 +89,7 @@ end
 % read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
 
-% put info into the mepmax info panel
+% put info into the sici info panel
 app.NumSDEditField_sici.Value = info.num_std_dev;
 app.AnalysisdateEditField_sici.Value = info.analyzed_when;
 app.AnalyzedbyEditField_sici.Value = info.analyzed_by;
@@ -112,7 +98,7 @@ app.VerifiedbyEditField_sici.Value = info.verified_by;
 app.CommentsEditField_sici.Value = info.comments;
 
 % is the data in the database?
-% is_sici_info_in_db(app)
+is_sici_info_in_db(app)
 
 
 return
