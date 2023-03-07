@@ -8,7 +8,9 @@ split_cell = strsplit(side_muscle, '_');
 side = split_cell{1};
 muscle = split_cell{2};
 
-db_info = get_sici_icf_data_from_db(app, subject, session, side, muscle);
+db_tbl = get_sici_icf_data_from_db(app, subject, session, side, muscle);
+
+% FIXME
 if ~isempty(db_info)
 	app.InDatabaseCheckBox.Value = true;
 	app.dbLastupdatedEditField.Value = db_info.last_update;

@@ -1,5 +1,8 @@
-function db_info = get_sici_icf_data_from_db(app, subject, session, side, muscle)
-db_info = [];
+function db_tbl = get_sici_icf_data_from_db(app, subject, session, side, muscle, stim_type)
+
+if ~exist('stim_type', 'var') || isempty(stim_type)
+	stim_type = '%';
+end
 
 % database query string
 qry_str = sprintf(['select * ' ...
@@ -7,7 +10,8 @@ qry_str = sprintf(['select * ' ...
 		'where subject = ''%s'' and ' ...
 		'session = ''%s'' and ' ...
 		'side = ''%s'' and ' ...
-		'muscle = ''%s'' '], subject, session, side, muscle);
+		'muscle = ''%s'' and ' ...
+		'stim_type like ''%s'' '], subject, session, side, muscle, stim_type);
 
 % database parameters
 dbparams = get_db_login_params(app.db_str);
@@ -30,17 +34,19 @@ conn.dbClose()
 % session
 % side
 % muscle
-% effective_stimulator_output
-% is_eff_so_max_stim
+% stim_type
 % num_samples
 % num_meps
-% mep_mean_latency
-% mep_mean_end_time
-% mep_mean_amplitude
+% mep_latency_mean
+% mep_latency_sd
+% mep_end_time_mean
+% mep_end_time_sd
+% mep_amplitude_mean
+% mep_amplitude_sd
+% mep_ampl_98pct_ci_1
+% mep_ampl_98pct_ci_2
 % num_samples_with_comments
 % num_sd
-% e_stim_m_max
-% did_rc_plateau
 % analyzed_by
 % analyzed_when
 % verified_by
@@ -48,31 +54,33 @@ conn.dbClose()
 % comments
 % last_update
 if ~isempty(qry_data_cell_array)
-	% parse the data into db_info struct
-	db_info.id = qry_data_cell_array{1};
-	db_info.subject = qry_data_cell_array{2};
-	db_info.session = qry_data_cell_array{3};
-	db_info.side = qry_data_cell_array{4};
-	db_info.muscle = qry_data_cell_array{5};
-	db_info.effective_stimulator_output = qry_data_cell_array{6};
-	db_info.is_eff_so_max_stim = qry_data_cell_array{7};
-	db_info.num_samples = qry_data_cell_array{8};
-	db_info.num_meps = qry_data_cell_array{9};
-	db_info.mep_mean_latency = qry_data_cell_array{10};
-	db_info.mep_mean_end_time = qry_data_cell_array{11};
-	db_info.mep_mean_amplitude = qry_data_cell_array{12};
-	db_info.num_samples_with_comments = qry_data_cell_array{13};
-	db_info.num_sd = qry_data_cell_array{14};
-	db_info.e_stim_m_max = qry_data_cell_array{15};
-	db_info.did_rc_plateau = qry_data_cell_array{16};
-	db_info.analyzed_by = qry_data_cell_array{17};
-	db_info.analyzed_when = qry_data_cell_array{18};
-	db_info.verified_by = qry_data_cell_array{19};
-	db_info.verified_when = qry_data_cell_array{20};
-	db_info.comments = qry_data_cell_array{21};
-	db_info.last_update = qry_data_cell_array{22};
+	db_tbl = cell2table(qry_data_cell_array, 'VariableNames', ...
+		{'id', ...
+		'subject', ...
+		'session', ...
+		'side', ...
+		'muscle', ...
+		'stim_type', ...
+		'num_samples', ...
+		'num_meps', ...
+		'mep_latency_mean', ...
+		'mep_latency_sd', ...
+		'mep_end_time_mean', ...
+		'mep_end_time_sd', ...
+		'mep_amplitude_mean', ...
+		'mep_amplitude_sd', ...
+		'mep_ampl_98pct_ci_1', ...
+		'mep_ampl_98pct_ci_2', ...
+		'num_samples_with_comments', ...
+		'num_sd', ...
+		'analyzed_by', ...
+		'analyzed_when', ...
+		'verified_by', ...
+		'verified_when', ...
+		'comments', ...
+		'last_update'}	);
 else
-	db_info = [];
+	db_tbl = [];
 end
 
 return

@@ -102,8 +102,8 @@ for r_cnt = 1:height(app.UITable_Unique_Stims_sici.Data)
 					{subject, session, side, muscle,  ...
 					stim_type, num_samples, num_meps, ...
 					mep_mean_latency, mep_sd_latency, mep_mean_end_time, mep_sd_end, ...
-					mep_mean_amplitude, mep_ampl_sd, ...
-					num_samples_with_comments, num_sd, mep_ampl_ci1, mep_ampl_ci2, ...
+					mep_mean_amplitude, mep_ampl_sd, mep_ampl_ci1, mep_ampl_ci2,...
+					num_samples_with_comments, num_sd,  ...
 					analyzed_by, analyzed_when, verified_by, ...
 					verified_when, comments});
 			catch ME
@@ -113,6 +113,7 @@ for r_cnt = 1:height(app.UITable_Unique_Stims_sici.Data)
 			end
 		case 'update'
 			% update with new info
+			% FIXME
 			try
 				conn.dbUpdate('tms_mep_max_latency',{'effective_stimulator_output', 'is_eff_so_max_stim', 'num_samples', 'num_meps', ...
 					'mep_mean_latency', 'mep_mean_end_time',  ...
@@ -134,9 +135,9 @@ for r_cnt = 1:height(app.UITable_Unique_Stims_sici.Data)
 	
 	% get the db_info from the database, if verified_when is the dummy date '2000-01-01 00:00:00'
 	% change it to NULL
-	db_info = get_mep_max_latency_data_from_db(app, subject, session, side, muscle);
-	if contains(db_info.verified_when, '2000-01-01 00:00:00')
-		qry_str = sprintf('update tms_mep_max_latency SET verified_when = NULL WHERE id = %d;', db_info.id);
+	db_tbl = get_sici_icf_data_from_db(app, subject, session, side, muscle, stim_type);
+	if contains(db_tbl.verified_when(1), '2000-01-01 00:00:00')
+		qry_str = sprintf('update tms_sici_icf SET verified_when = NULL WHERE id = %d;', db_tbl.id);
 		try
 			conn.dbQuery(qry_str);
 		catch ME
@@ -151,7 +152,7 @@ conn.dbClose()
 
 % update the in database checkbox, last update time, and database matches checkbox
 app.InDatabaseCheckBox.Value = true;
-app.dbLastupdatedEditField.Value = db_info.last_update;
+app.dbLastupdatedEditField.Value = db_tbl.last_update(1);
 app.DatabaseinfomatchesCheckBox.Value = true;
 return
 end
