@@ -110,6 +110,11 @@ app.AnalysisdateEditField.Value = info.analyzed_when;
 app.AnalyzedbyEditField.Value = info.analyzed_by;
 app.VerifydateEditField.Value = info.verified_when;
 app.VerifiedbyEditField.Value = info.verified_by;
+if isempty(info.rc_plateau)
+	msg = sprintf('RC plateau value missing from %s.\n\nSetting to FALSE.', info.file_name);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+	info.rc_plateau = 0;
+end
 app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
 app.CommentsEditField.Value = info.comments;
 
