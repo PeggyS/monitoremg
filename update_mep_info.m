@@ -53,6 +53,8 @@ for r_cnt = 1:height(unq_tbl)
 	unq_tbl.num_comments(r_cnt) = num_com;
 end
 
+unq_tbl = sortrows(unq_tbl, 'Effective_SO');
+
 app.UITable_Unique_Stims.Data = unq_tbl;
 
 % find the max amplitude and select that row in the table
