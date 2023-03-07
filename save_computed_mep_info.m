@@ -51,10 +51,10 @@ app.dp_analysis_info.file_name = save_file;
 % num std dev
 app.dp_analysis_info.num_std_dev = str2double(app.h_num_std.String);
 
-if app.CheckBoxRc == true
+% if app.CheckBoxRc == true
 	% rc plateau yes/no
 	app.dp_analysis_info.rc_plateau = app.h_rc_plateau_checkbox.Value;
-end
+% end
 
 % m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
@@ -81,6 +81,10 @@ app.dp_analysis_info.analyzed_when = app.h_edit_mep_done_when.String;
 
 app.dp_analysis_info.comments = strrep(app.h_mep_analysis_comments.String, ' : ', ' - ');
 
+if app.h_chkbx_mep_verified_by.Value == true
+	app.dp_analysis_info.verified_by = app.h_edit_mep_verified_by.String;
+	app.dp_analysis_info.verified_when = app.h_edit_mep_verified_when.String;
+end
 
 % confirm saving
 [confirm_saving, save_file] = confirm_savename(save_file);
