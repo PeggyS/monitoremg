@@ -39,7 +39,7 @@ if ~isempty(db_tbl)
 		% check float/double vars that may not exactly match
 		var_list = {'mep_latency_mean' 'mep_end_time_mean' 'mep_amplitude_mean'};
 		for v_cnt = 1:length(var_list)
-			if max(abs(app_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-3
+			if max(abs(app_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-2
 				match = true;
 			else
 				match = false;
@@ -58,7 +58,7 @@ if ~isempty(db_tbl)
 		more_tbl.Properties.VariableNames = strrep(more_tbl.Properties.VariableNames, 'ci2_mep_ampl', 'mep_ampl_98pct_ci_2');
 		var_list = {'mep_latency_sd' 'mep_end_time_sd' 'mep_amplitude_sd' 'mep_ampl_98pct_ci_1' 'mep_ampl_98pct_ci_2'};
 		for v_cnt = 1:length(var_list)
-			if max(abs(more_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-3
+			if max(abs(more_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-2
 				match = true;
 			else
 				match = false;
