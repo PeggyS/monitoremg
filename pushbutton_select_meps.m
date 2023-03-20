@@ -28,6 +28,7 @@ use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
 magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
 bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
 is_mep_col = find(contains(app.h_uitable.ColumnName, '>Is<'));
 latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
 mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
@@ -36,6 +37,7 @@ mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
 magstim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, magstim_col};
 bistim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col};
 isi_val = app.h_uitable.Data{j_now_selected_rows(1)+1, isi_col};
+stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col}; %#ok<FNDSB> 
 
 % find all rows in the table with these stimulator settings
 m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
@@ -51,7 +53,7 @@ all_rows = intersect(tmp2_rows, u_rows);
 % mep_begin and mep_end
 mep_rows = [];
 isi_shift_pts = 0;
-if app.CheckBoxSici.Value == 1 && isi_val > 0
+if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
 end
 % update conditioning stim line h_cs_line

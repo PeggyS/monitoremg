@@ -10,9 +10,11 @@ end
 % find the ISI (from the table)
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 isi_ms = h_tbl.Data{new_row, isi_col}; %#ok<FNDSB>
+st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
+stim_type = h_tbl.Data{new_row, st_col}; %#ok<FNDSB>
 
 % if sici/icf and ISI > 0, shift the data by ISI ms
-if app.CheckBoxSici.Value == 1 && isi_ms > 0
+if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 else
 	isi_shift_pts = 0;

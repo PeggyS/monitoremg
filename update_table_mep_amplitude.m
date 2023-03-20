@@ -5,8 +5,11 @@ if app.CheckBoxSici.Value == true % doing sici
 	isi_col = contains(app.h_uitable.ColumnName, '>ISI<');
 	% if ISI > 0, shift the data by ISI ms
 	isi_ms = app.h_uitable.Data{row, isi_col};
+	st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
+	stim_type = h_tbl.Data{row, st_col}; %#ok<FNDSB>
+
 	isi_shift_pts = 0;
-	if isi_ms > 0
+	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 	end
 elseif app.CheckBoxRc.Value == true % doing rc

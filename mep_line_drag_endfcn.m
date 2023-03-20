@@ -33,11 +33,13 @@ if app.CheckBoxSici.Value == true % doing sici
 	magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
 	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 	isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+	st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
 
 	% get stimulator settings
 	magstim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, magstim_col};
 	bistim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, bistim_col};
 	isi_val = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
+	stim_type = app.h_uitable.Data{j_original_selected_rows(1)+1, st_col}; %#ok<FNDSB>
 
 	% find all rows in the table with these stimulator settings
 	m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
@@ -52,7 +54,7 @@ if app.CheckBoxSici.Value == true % doing sici
 	% if ISI > 0, shift the data by ISI ms
 	isi_ms = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
 	isi_shift_pts = 0;
-	if isi_ms > 0
+	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 	end
 elseif app.CheckBoxRc.Value == true % doing rc
