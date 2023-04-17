@@ -37,7 +37,11 @@ mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
 magstim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, magstim_col};
 bistim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col};
 isi_val = app.h_uitable.Data{j_now_selected_rows(1)+1, isi_col};
-stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col}; %#ok<FNDSB> 
+if ~isempty(st_col)
+	stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col}; %#ok<FNDSB> 
+else
+	stim_type = '';
+end
 
 % find all rows in the table with these stimulator settings
 m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
@@ -53,7 +57,7 @@ all_rows = intersect(tmp2_rows, u_rows);
 % mep_begin and mep_end
 mep_rows = [];
 isi_shift_pts = 0;
-if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~strcmp(stim_type, 'Test Stim')
+if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
 end
 % update conditioning stim line h_cs_line
