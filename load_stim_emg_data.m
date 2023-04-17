@@ -2,7 +2,16 @@ function load_stim_emg_data(source,event, app) %#ok<INUSL>
 
 if any(strcmp(properties(app), 'h_uitable')) % when used in review_emg_rc.app, data is already in this field
  	if any(strcmp(properties(app), 'MuscleEditField')) 
- 		filename = app.MuscleEditField.Value; % used for title of axes	
+ 		filename = app.MuscleEditField.Value; % used for title of axes
+		if isempty(filename)
+			% 
+			prompt = {'Enter side (inv | uninv):', 'Enter muscle (ta | biceps | ...)'};
+			dlg_title = 'Muscle';
+			dims = [1 35];
+			default_input = {'uninv', 'biceps'};
+			answer_filename = inputdlg(prompt, dlg_title, dims, default_input);
+			filename = [answer_filename{1} '_' answer_filename{2}];
+		end
  	end
 
 	data = cell2table(app.h_uitable.Data);
@@ -75,10 +84,6 @@ for cnt = 1:height(data)
  	end
 end
 
-if ~exist('filename', 'var')
-	answer_filename = inputdlg('Enter muscle (e.g. uninv_ta)');
-	filename = answer_filename{:};
-end
 title(strrep(filename, '_', ' '))
 	
 return
