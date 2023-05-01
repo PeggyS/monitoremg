@@ -11,14 +11,16 @@ while app.StartButton.Value
    t_start = tic;
    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
    % emg display channel number for the figure drop down menu
-   figMenuDispChan = find(strcmp(app.EMGDropDown.Items, app.EMGDropDown.Value));
+   figMenuDispChan_1 = find(strcmp(app.EMGDropDown_1.Items, app.EMGDropDown_1.Value));
+   figMenuDispChan_2 = find(strcmp(app.EMGDropDown_2.Items, app.EMGDropDown_2.Value));
 
    % for eeg system (with over 63 channels) only look at the channels
    % higher thann 63. These are the auxiliary emg channels
    % Once the start msg is received, the variable emg_first_chan_num is created.
    % It's the total number of channels in the emg or eeg system
    if exist('emg_first_chan_num', 'var')==1   %% && num_channels > 63
-       dataDispChan = emg_first_chan_num + figMenuDispChan - 1; % channel number relative to eeg/emg data sent
+       dataDispChan_1 = emg_first_chan_num + figMenuDispChan_1 - 1; % channel number relative to eeg/emg data sent
+	   dataDispChan_2 = emg_first_chan_num + figMenuDispChan_2 - 1;
    end
 
    % 	set(app.hLine, 'YData', [0 10]);
@@ -57,7 +59,7 @@ while app.StartButton.Value
 			 app.data_channels_mmap.Data(ch_cnt).live_display = uint8(0);
 		 end
 		 % set dispChan in data_channels mmap
-		 app.data_channels_mmap.Data(figMenuDispChan).live_display = uint8(1);
+		 app.data_channels_mmap.Data(figMenuDispChan_1).live_display = uint8(1);
 		 % init matrix to store emg data relative to the trigger
 		 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 		 app.emgTriggerDataMat = zeros(num_channels, round(app.params.sampFreq*seg_time));	
@@ -78,7 +80,7 @@ while app.StartButton.Value
           return
          end
          
-         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan,:));
+         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan_1,:));
 		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
          app.emgBarDataVec(1:numPoints) = newHpFiltData;
          
