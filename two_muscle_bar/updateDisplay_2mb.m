@@ -12,11 +12,11 @@ function updateDisplay_2mb(app, dataVec, markInfo)
 	% data is a vector of all the data in the block just received for the channel being displayed
 	% markInfo - vector of structs (field label has the comment text)
 	%handles = guidata(hFig);
-	app.monitorEMGval = mean(abs(dataVec - mean(dataVec)));
+	app.monitorEMGval = mean(abs(dataVec - mean(dataVec, 2)), 2);
 %     disp(val)
 
-	set(app.hLine_1, 'YData', [0 app.monitorEMGval(1)]);
-	set(app.hLine_2, 'YData', [0 app.monitorEMGval(2)]);
+	app.hLine_1.YData(2) = app.monitorEMGval(1);
+	app.hLine_2.YData(2) = app.monitorEMGval(2);
 	if ~isempty(markInfo)
 		% fid = fopen('magstim_val.txt', 'r');
 		% magstim_val = fscanf(fid, '%d');
@@ -64,6 +64,7 @@ function updateDisplay_2mb(app, dataVec, markInfo)
 
 	end
 	
+	% change this to turn green when below threshold
 	if app.monitorFlg
 		if app.monitorEMGval >= app.goalMin && app.monitorEMGval <= app.goalMax		%% in the green
 			set(app.hLine, 'Color', [40 224 47]/255);
