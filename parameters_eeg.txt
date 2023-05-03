@@ -1,5 +1,5 @@
 ip address : 127.0.0.1
-sampling frequency (Hz) : 10000
+sampling frequency (Hz) : 5000
 average time period (sec) : 0.5
 emg channel : 1
 activation goal : 0.2
