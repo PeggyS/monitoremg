@@ -65,32 +65,32 @@ function updateDisplay_2mb(app, dataVec, markInfo)
 	end
 	
 	% change this to turn green when below threshold
-	if app.monitorFlg
-		if app.monitorEMGval >= app.goalMin && app.monitorEMGval <= app.goalMax		%% in the green
-			set(app.hLine, 'Color', [40 224 47]/255);
-            if app.inGreenFlag == true
-                green_time_duration = toc(app.inGreenTstart);
-                app.msgText.Text = ['t = ' num2str(green_time_duration,2)];
-            else
-                app.inGreenFlag = true;
-                app.inGreenTstart = tic;
-            end
-
-		elseif app.monitorEMGval > app.goalMax && ...
-				app.monitorEMGval <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
-			set(app.hLine, 'Color', [170 100 245]/255);
-            app.inGreenFlag = false;
-		elseif app.monitorEMGval > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
-			set(app.hLine, 'Color', [209 36 36]/255);
-            app.inGreenFlag = false;
-		elseif app.monitorEMGval > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
-			app.monitorEMGval <= (app.goalVal - 0.05*app.peakVal)
-			set(app.hLine, 'Color', [255 193 59]/255)
-            app.inGreenFlag = false;
+% 	if app.monitorFlg
+		if app.monitorEMGval(1) <= app.EMG_1_rest_thresholdEditField.Value 	%% in the green
+			set(app.hLine_1, 'Color', [40 224 47]/255);
+          
+% 		elseif app.monitorEMGval > app.goalMax && ...
+% 				app.monitorEMGval <= (app.goalVal + 0.1*app.peakVal)		%% slightly above (purple)
+% 			set(app.hLine, 'Color', [170 100 245]/255);
+%             app.inGreenFlag = false;
+% 		elseif app.monitorEMGval > (app.goalVal + 0.1*app.peakVal)		%% far above goal (red)
+% 			set(app.hLine, 'Color', [209 36 36]/255);
+%             app.inGreenFlag = false;
+% 		elseif app.monitorEMGval > (app.goalVal - 0.1*app.peakVal) && ...	%% slightly below (orange)
+% 			app.monitorEMGval <= (app.goalVal - 0.05*app.peakVal)
+% 			set(app.hLine, 'Color', [255 193 59]/255)
+%             app.inGreenFlag = false;
 		else
-			set(app.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)
-            app.inGreenFlag = false;
+% 			set(app.hLine, 'Color', [239 245 71]/255)			%% far below goal (yellow)
+			app.hLine_1.Color = [0 0.4470 0.7410];	%% default blue
+%             app.inGreenFlag = false;
 		end
-	end
+
+		if app.monitorEMGval(2) <= app.EMG_2_rest_thresholdEditField.Value 	%% in the green
+			app.hLine_2.Color = [40 224 47]/255;
+		else
+			app.hLine_2.Color = [0 0.4470 0.7410];
+		end
+% 	end
 
 return
