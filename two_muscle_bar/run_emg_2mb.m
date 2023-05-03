@@ -5,14 +5,25 @@ triggerInd = app.params.preTriggerTime / 1000 * app.params.sampFreq;
 
 tic;
 num_loops = 0;
+prev_axes_update_time = 0; % track when the axes are updated, and only update every so many ms
+prev_dropdown_update_time = 0;
+
 % fid = fopen('emg_data.txt', 'w');
+% emg display channel number for the figure drop down menu
+figMenuDispChan_1 = find(strcmp(app.EMGDropDown_1.Items, app.EMGDropDown_1.Value));
+figMenuDispChan_2 = find(strcmp(app.EMGDropDown_2.Items, app.EMGDropDown_2.Value));
+
 while app.StartButton.Value
    % get message from server
-   t_start = tic;
-   [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port);
-   % emg display channel number for the figure drop down menu
-   figMenuDispChan_1 = find(strcmp(app.EMGDropDown_1.Items, app.EMGDropDown_1.Value));
-   figMenuDispChan_2 = find(strcmp(app.EMGDropDown_2.Items, app.EMGDropDown_2.Value));
+%    t_start = tic;
+    [blockSize, msgType, msgBlock] = getMsgBlock(app.tcp_port); %#ok<ASGLU>
+    % emg display channel number for the figure drop down menu
+    drop_cur_time = double(tic);
+    if (drop_cur_time - prev_dropdown_update_time)/1e4 > 500 % elapsed time in ms
+        figMenuDispChan_1 = find(strcmp(app.EMGDropDown_1.Items, app.EMGDropDown_1.Value));
+        figMenuDispChan_2 = find(strcmp(app.EMGDropDown_2.Items, app.EMGDropDown_2.Value));
+        prev_dropdown_update_time = drop_cur_time;
+    end
 
    % for eeg system (with over 63 channels) only look at the channels
    % higher thann 63. These are the auxiliary emg channels
@@ -55,12 +66,12 @@ while app.StartButton.Value
 			 app.EMGDropDown_1.Items{ch_cnt} = app.chanInfo.names{ch_num};
 			 app.EMGDropDown_2.Items{ch_cnt} = app.chanInfo.names{ch_num};
 			 % save muscle names in data_channels_mmap
-			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels-emg_first_chan_num + 1);
-			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_num}, 30));
-			 app.data_channels_mmap.Data(ch_cnt).live_display = uint8(0);
+% 			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels-emg_first_chan_num + 1);
+% 			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_num}, 30));
+% 			 app.data_channels_mmap.Data(ch_cnt).live_display = uint8(0);
 		 end
 		 % set dispChan in data_channels mmap
-		 app.data_channels_mmap.Data(figMenuDispChan_1).live_display = uint8(1);
+% 		 app.data_channels_mmap.Data(figMenuDispChan_1).live_display = uint8(1);
 		 % init matrix to store emg data relative to the trigger
 		 seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 		 app.emgTriggerDataMat = zeros(num_channels, round(app.params.sampFreq*seg_time));	
@@ -71,14 +82,14 @@ while app.StartButton.Value
 %          fprintf('Read in a block of data in %g sec\n', t_block_read)
          [data, numPoints, markInfo] = doDataMsg(msgBlock, app.chanInfo);
          % put new data into the data vectors
-		 try
-% 			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
-			 newData = double(data).*app.chanInfo.resolution;
-		 catch
-         beep
-			 warning('Problem reading in data. Try to run again.')
-			 app.StartButton.Value = 0;
-          return
+         try
+             % 			 newData = double(data(dispChan,:)')*app.chanInfo.resolution(dispChan);
+             newData = double(data).*app.chanInfo.resolution;
+         catch
+             beep
+             warning('Problem reading in data. Try to run again.')
+             app.StartButton.Value = 0;
+             return
          end
          
          newHpFiltData_1 = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan_1,:));
@@ -87,8 +98,15 @@ while app.StartButton.Value
          app.emgBarDataVec(1, 1:numPoints) = newHpFiltData_1;
 		 app.emgBarDataVec(2, 1:numPoints) = newHpFiltData_2;
          
-         % update the activity bar
-         updateDisplay_2mb(app, app.emgBarDataVec, markInfo);
+         % update the activity bar no more often than every 10 msec
+         draw_cur_time = double(tic);
+         if (draw_cur_time - prev_axes_update_time)/1e4 > 100 % elapsed time in ms 
+            updateDisplay_2mb(app, app.emgBarDataVec);
+            prev_axes_update_time = draw_cur_time;
+         end
+
+         % update message
+         update_msg_2mb(app, markInfo)
 
          % filling in the trigger data vector
          if ~isnan(triggerPos)
@@ -130,7 +148,7 @@ while app.StartButton.Value
 			if ~isempty(markInfo)
 				% disp(markInfo.desc')
 				% disp(markInfo.label)
-				val = 1;
+% 				val = 1;
 				if strncmp(markInfo(1).label', 'R128', 4)
 					% markInfo.pos is zero-based relative position in the block 
 					if isnan(triggerPos)
@@ -150,10 +168,10 @@ while app.StartButton.Value
 % 					msfid = fopen('magstim_val.txt', 'r');
 % 					magstim_val = fscanf(msfid, '%d');
 % 					fclose(msfid);
-					% magstim info from magspy
-					magstim_val = app.magstim_mmap.Data(1);
-					bistim_val = app.magstim_mmap.Data(2);
-					isi_ms = app.magstim_mmap.Data(3);
+% 					% magstim info from magspy
+% 					magstim_val = app.magstim_mmap.Data(1);
+% 					bistim_val = app.magstim_mmap.Data(2);
+% 					isi_ms = app.magstim_mmap.Data(3);
 					% if in Bistim mode (both stimulators at the same
 					% time), change the bistim_val to be the same as the
 					% magstim_val
@@ -164,22 +182,22 @@ while app.StartButton.Value
 				
 					% for the live_display channel and all save channels,
 					% put info in the emg_data_memmap
-					for c_cnt = 1:app.data_channels_mmap.Data(1).num_channels
-						if app.data_channels_mmap.Data(c_cnt).live_display
-							app.emg_data_mmap.Data(c_cnt).magstim_val = magstim_val;
-							app.emg_data_mmap.Data(c_cnt).bistim_val = bistim_val;
-							app.emg_data_mmap.Data(c_cnt).isi_ms = isi_ms;
-% 							muscle_name = app.chanInfo.names{dispChan};
-% 							if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
-							app.emg_data_mmap.Data(c_cnt).muscle_name = uint8(pad(app.chanInfo.names{c_cnt}, 30));
-							if ~isempty(app.goalVal)
-							   app.emg_data_mmap.Data(c_cnt).goal_val = uint8(round(app.goalVal));
-								app.emg_data_mmap.Data(c_cnt).goal_min = uint8(round(app.goalMin));
-								app.emg_data_mmap.Data(c_cnt).goal_max = uint8(round(app.goalMax));
-							end
-							app.emg_data_mmap.Data(c_cnt).monitor_emg_val = uint8(round(app.monitorEMGval));
-						end
-					end
+% 					for c_cnt = 1:app.data_channels_mmap.Data(1).num_channels
+% 						if app.data_channels_mmap.Data(c_cnt).live_display
+% 							app.emg_data_mmap.Data(c_cnt).magstim_val = magstim_val;
+% 							app.emg_data_mmap.Data(c_cnt).bistim_val = bistim_val;
+% 							app.emg_data_mmap.Data(c_cnt).isi_ms = isi_ms;
+% % 							muscle_name = app.chanInfo.names{dispChan};
+% % 							if length(muscle_name) > 30, muscle_name = muscle_name(1:30); end
+% 							app.emg_data_mmap.Data(c_cnt).muscle_name = uint8(pad(app.chanInfo.names{c_cnt}, 30));
+% 							if ~isempty(app.goalVal)
+% 							   app.emg_data_mmap.Data(c_cnt).goal_val = uint8(round(app.goalVal));
+% 								app.emg_data_mmap.Data(c_cnt).goal_min = uint8(round(app.goalMin));
+% 								app.emg_data_mmap.Data(c_cnt).goal_max = uint8(round(app.goalMax));
+% 							end
+% 							app.emg_data_mmap.Data(c_cnt).monitor_emg_val = uint8(round(app.monitorEMGval));
+% 						end
+% 					end
 				end
 			end
          
@@ -195,8 +213,8 @@ while app.StartButton.Value
     %fprintf('Completed a while loop in %g sec\n', t_while_loop)
 end
 % fclose(fid);
-set(app.hLine_1, 'YData', [0 1]);
-set(app.hLine_2, 'YData', [0 1]);
+app.hLine_1.YData(2) = 0;
+app.hLine_2.YData(2) =  0;
 %fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)
 %fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
 return
@@ -214,7 +232,7 @@ if ~strcmp(get(t, 'Status'), 'open')
 end
 
 % fread reads data using the 'uchar' unsigned character precision, 8 bits.
-guid = fread(t, 16, 'uchar');	%% 16 bytes
+guid = fread(t, 16, 'uchar');	 %#ok<NASGU> %% 16 bytes
 % verify
 % use dec2hex
 
@@ -226,11 +244,11 @@ msgBlock = int8([]);
 blockSize = blockSize - 24;		%% rest of block (header = 24 bytes)
 if blockSize < 0, error('header was < 24 bytes???'); end
 if blockSize > 0
-%     disp(['blockSize = ' num2str(blockSize)]);
-%     disp(['blockSize * size = ' num2str(blockSize*8)]);
+%      disp(['blockSize = ' num2str(blockSize)]);
+%      disp(['blockSize * size = ' num2str(blockSize*8)]);
    msgBlock = int8(fread(t, blockSize, 'int8'));
 %    disp(msgBlock(1:4))
-   %    size(msgBlock)
+%     size(msgBlock)
 end
 
 % get(t, 'ValuesReceived');
@@ -275,7 +293,7 @@ chanInfo.names = tmp{1};
 return
 
 % ===============================================================================
-function [data, nPoints, markInfo] = doDataMsg(msg, chanInfo, dataOffset)
+function [data, nPoints, markInfo] = doDataMsg(msg, chanInfo, dataOffset) %#ok<INUSD> 
 %	msg - uchar vector of:
 %
 % 	ULONG				nBlock;				// Block number, i.e. acquired blocks since acquisition started.
@@ -284,7 +302,7 @@ function [data, nPoints, markInfo] = doDataMsg(msg, chanInfo, dataOffset)
 % 	short				nData[1];			// Data array -> short nData[nChannels * nPoints], multiplexed
 % 	RDA_Marker			Markers[1];			// Array of markers -> RDA_Marker Markers[nMarkers]
 
-blockNum = typecast(msg(1:4), 'uint32');	%% 4 bytes
+% blockNum = typecast(msg(1:4), 'uint32');	%% 4 bytes
 nPoints = typecast(msg(5:8), 'uint32');
 nMarkers = typecast(msg(9:12), 'uint32');
 % disp(blockNum)
