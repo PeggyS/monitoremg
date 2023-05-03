@@ -1,4 +1,5 @@
 function update_review_emg_data_line(app, h_tbl, new_row)
+% disp('update_review_emg_data_line');
 if new_row == 0 || new_row > size(h_tbl.Data,1)
 	disp('invalid row in emg data table')
 	return
@@ -9,9 +10,15 @@ end
 % find the ISI (from the table)
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 isi_ms = h_tbl.Data{new_row, isi_col}; %#ok<FNDSB>
+st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
+if ~isempty(st_col)
+	stim_type = h_tbl.Data{new_row, st_col}; %#ok<FNDSB>
+else
+	stim_type = '';
+end
 
 % if sici/icf and ISI > 0, shift the data by ISI ms
-if app.CheckBoxSici.Value == 1 && isi_ms > 0
+if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 else
 	isi_shift_pts = 0;
@@ -36,6 +43,8 @@ app.row_displayed = new_row;
 pre_stim_col = find_uitable_column(h_tbl, 'PreStim');
 pre_stim_val = app.h_uitable.Data{new_row,pre_stim_col};
 pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
+% app.h_uitable.Data(new_row,pre_stim_col) = {pre_stim_val}; % if the table
+% value is updated then the row becomes unselected
 app.h_pre_stim_emg_line.YData = [pre_stim_val pre_stim_val];
 
 % update std line

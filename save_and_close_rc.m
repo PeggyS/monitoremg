@@ -33,6 +33,9 @@ if ~any(strcmp(properties(app), 'SaveLocationEditField'))
 		end
 	end
 	fname_prefix = '';
+	tbl_to_save = [];
+% 	tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+% 			col_name_html_to_var_name(app.h_uitable.ColumnName));
 else
 	if isempty(app.SaveLocationEditField.Value)
 		app.SaveLocationEditField.Value = pwd;
@@ -41,6 +44,7 @@ else
 		save_loc = app.SaveLocationEditField.Value;
 	end
 	fname_prefix = app.EditFieldFilenameprefix.Value;
+	tbl_to_save = app.rc_axes.UserData;
 end
 
 % determine base filename for saving datapoints.csv & fitinfo.txt
@@ -68,17 +72,19 @@ else
 	fitinfo_fname = strrep(fitinfo_fname, 'info.txt', 'info_not_norm.txt');
 end
 
-[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
-if confirm_saving
-	% save the data
-	try
-		save_rc_table(app.rc_axes.UserData, datapoint_fname)
-	catch ME
-		disp('did not save rc_datapoints')
-		disp(ME)
-	end
-end % confirmed saving
-
+% save the datapoint table
+if ~isempty(tbl_to_save)
+	[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
+	if confirm_saving
+		% save the data
+		try
+			save_rc_table(tbl_to_save, datapoint_fname)
+		catch ME
+			disp('did not save rc_datapoints')
+			disp(ME)
+		end
+	end % confirmed saving
+end
 
 if isfield(app.rc_fit_info, 'mepMethod')
 	[confirm_saving, fitinfo_fname] = confirm_savename(fitinfo_fname);
@@ -87,13 +93,21 @@ if isfield(app.rc_fit_info, 'mepMethod')
 		if isprop(app, 'ReviewEMGRCUIFigure') % if in review_emg_rc app
 			app.rc_fit_info.analyzed_by = upper(app.user_initials);
 			app.AnalyzedbyEditField.Value = upper(app.user_initials);
-			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+			app.rc_fit_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
 			app.AnalyzedWhenEditField.Value = app.rc_fit_info.analyzed_when;
+			app.rc_fit_info.comments = app.h_mep_analysis_comments.String;
 		end
 		try
 			write_fit_info(fitinfo_fname, app.rc_fit_info)
 		catch ME
 			disp('did not save fit_info')
+			disp(ME)
+		end
+		% print the figure
+		try
+			print_rc([], [], app)
+		catch ME
+			disp('did not print the figure')
 			disp(ME)
 		end
 	end

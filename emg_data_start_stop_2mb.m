@@ -1,4 +1,4 @@
-function emg_data_start_stop(app)
+function emg_data_start_stop_2mb(app)
 
 if app.StartButton.Value 
 %    parameter_file = app.param_fname;
@@ -46,7 +46,7 @@ if app.StartButton.Value
    % tcpipinfo=instrhwinfo('tcpip')
    
    % initialize data vector for the emg bar display
-   app.emgBarDataVec = zeros(round(app.params.sampFreq*app.params.avgPeriod),1);
+   app.emgBarDataVec = zeros(2, round(app.params.sampFreq*app.params.avgPeriod));
 
    % data vector for finding MEP peak-to-peak value relative to the trigger
 %    seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
@@ -78,7 +78,7 @@ if app.StartButton.Value
    
    %app.quitFlg = false;
    app.StartButton.Text = 'Stop';
-   run_emg(app)
+   run_emg_2mb(app)
 else
    %app.quitFlg = true;
    app.StartButton.Text = 'Run';

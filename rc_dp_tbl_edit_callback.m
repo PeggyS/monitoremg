@@ -48,8 +48,8 @@ switch table_col
 	case {magstim_col, bistim_col}
 		fprintf('rc_dp_tbl_edit_callback: table row %d, col %d edited\n', table_row, table_col)
 		update_rc_sici_datapoint(app, table_row, [], [], true)
-	otherwise
-		beep
-		fprintf('rc_dp_tbl_edit_callback: unkown row %d, col %d edited\n', table_row, table_col)
+% 	otherwise
+% 		beep
+% 		fprintf('rc_dp_tbl_edit_callback: unkown row %d, col %d edited\n', table_row, table_col)
 end
 return

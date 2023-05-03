@@ -22,6 +22,9 @@ try
 			end
 		end
 		fname_prefix = '';
+% 		tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
+% 			col_name_html_to_var_name(app.h_uitable.ColumnName));
+		tbl_to_save = [];
 	else
 		if isempty(app.SaveLocationEditField.Value)
 			app.SaveLocationEditField.Value = pwd;
@@ -30,6 +33,7 @@ try
 			save_loc = app.SaveLocationEditField.Value;
 		end
 		fname_prefix = app.EditFieldFilenameprefix.Value;
+		tbl_to_save = app.sici_axes.UserData;
 	end
 	
 	% determine mep method
@@ -52,18 +56,20 @@ try
 		sici_info_fname = strrep(sici_info_fname, 'info.txt', 'info_not_norm.txt');
 	end
 	
+	if ~isempty(tbl_to_save)
 	[confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
-	
-	
-	if confirm_saving
+
+	% save data point table
+	if confirm_saving 
 		% save the data
 		try
-			save_rc_table(app.sici_axes.UserData, datapoint_fname)
+			save_rc_table(tbl_to_save, datapoint_fname)
 		catch ME
 			disp('did not save sici_datapoints')
 			disp(ME)
 		end
 	end % confirmed saving
+	end
 	
 	if isfield(app.sici_info, 'ts_n')
 		
@@ -102,27 +108,44 @@ try
 			end
 			[~, app.sici_info.mepMethod] = get_data_var_mep_method(app);
 			if isprop(app, 'rc_fit_ui')
-				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); % FIXME is this correct?
 				app.sici_info.mep_norm_factor = str2double(app.rc_fit_ui.edNormFactor.String); 
 			end
 			% for review_emg:
-			if isprop(app, 'h_edit_mep_begin')
-				app.sici_info.mep_beg_t = str2double(app.h_edit_mep_begin.String);
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency') && ...
+					isfield(app.sici_ui.ts_latency.UserData, 'mep_beg_t')
+				app.sici_info.ts_mep_beg_t = app.sici_ui.ts_latency.UserData.mep_beg_t;
+				app.sici_info.ts_mep_end_t = app.sici_ui.ts_latency.UserData.mep_end_t;
+				app.sici_info.ts_epochs_used = app.sici_ui.ts_latency.UserData.epochs_used;
+				app.sici_info.ts_num_sd = app.sici_ui.ts_latency.UserData.num_sd;
 			end
-			if isprop(app, 'h_edit_mep_end')
-				app.sici_info.mep_end_t = str2double(app.h_edit_mep_end.String);
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'sici_latency') && ...
+					isfield(app.sici_ui.sici_latency.UserData, 'mep_beg_t')
+				app.sici_info.sici_mep_beg_t = app.sici_ui.sici_latency.UserData.mep_beg_t;
+				app.sici_info.sici_mep_end_t = app.sici_ui.sici_latency.UserData.mep_end_t;
+				app.sici_info.sici_epochs_used = app.sici_ui.sici_latency.UserData.epochs_used;
+				app.sici_info.sici_num_sd = app.sici_ui.sici_latency.UserData.num_sd;
+			end
+			if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'icf_latency') && ...
+					isfield(app.sici_ui.icf_latency.UserData, 'mep_beg_t')
+				app.sici_info.icf_mep_beg_t = app.sici_ui.icf_latency.UserData.mep_beg_t;
+				app.sici_info.icf_mep_end_t = app.sici_ui.icf_latency.UserData.mep_end_t;
+				app.sici_info.icf_epochs_used = app.sici_ui.icf_latency.UserData.epochs_used;
+				app.sici_info.icf_num_sd = app.sici_ui.icf_latency.UserData.num_sd;
 			end
 			if isprop(app, 'AnalyzedbyEditField')
 				app.sici_info.analyzed_by = upper(app.user_initials);
 				app.AnalyzedbyEditField.Value = upper(app.user_initials);
-				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS');
+				app.sici_info.analyzed_when = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
 				app.AnalyzedWhenEditField.Value = app.sici_info.analyzed_when;
 			end
+			if isprop(app, 'h_mep_analysis_comments')
+				app.sici_info.comments = app.h_mep_analysis_comments.String;
+			end
 			% for emg_rc:
-			if isprop(app, 'h_t_min_line') && isgraphics(app.h_t_min_line)
+			if isprop(app, 'EMGDisplayRCUIFigure') && isgraphics(app.h_t_min_line)
 				app.sici_info.mep_beg_t = app.h_t_min_line.XData(1);
 			end
-			if isprop(app, 'h_t_max_line') && isgraphics(app.h_t_max_line)
+			if isprop(app, 'isgraphics(app.h_t_min_line)') && isgraphics(app.h_t_max_line)
 				app.sici_info.mep_end_t = app.h_t_max_line.XData(1);
 			end
 
@@ -130,6 +153,13 @@ try
 				write_fit_info(sici_info_fname, app.sici_info)
 			catch ME
 				disp('did not save sici_info')
+				disp(ME)
+			end
+			% print the figure
+			try
+				print_sici([], [], app)
+			catch ME
+				disp('did not print the sici figure')
 				disp(ME)
 			end
 		end

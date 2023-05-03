@@ -1,6 +1,7 @@
 function info = get_computed_info_mep_times(datapoint_csv_filename)
-% from the datapoint csv file, get the mep_computed_info.txt file
-% then read in the computed mep info
+% from knowing the datapoint csv file name, get the dp_analysis_info.txt
+% file if there is one.
+% then read in the info
 
 info = struct();
 
@@ -37,10 +38,11 @@ end
 % read in file, parse for the info
 keywords = {'mep_beg_t' 'mep_end_t' 'epochs_used_for_latency' 'analyzed_by' 'analyzed_when' ...
     'using_rc_or_sici_data' 'comments', 'num_std_dev', 'mep_max_so', 'rc_plateau', ...
-	'mep_max_data', 'epochs_used_for_mep_max', 'mep_max_mean', 'mep_max_n'};
+	'mep_max_data', 'epochs_used_for_mep_max', 'mep_max_mean_uV', 'mep_max_n', 'e_stim_m_max_uV', ...
+	'verified_by', 'verified_when'};
 defaults = {0, 0, [], '', '', ...
 	'', '', [], [], [], ...
-	[], [], [], []};
+	[], [], [], [], [], '', ''};
 
 try
 	paramscell = readparamfile(file_name, keywords, defaults);
@@ -61,8 +63,11 @@ info.mep_max_so = paramscell{9};
 info.rc_plateau = paramscell{10};
 info.mep_max_data = paramscell{11};
 info.epochs_used_for_mep_max = paramscell{12};
-info.mep_max_mean = paramscell{13};
+info.mep_max_mean_uV = paramscell{13};
 info.mep_max_n = paramscell{14};
+info.e_stim_m_max_uV = paramscell{15};
+info.verified_by = paramscell{16};
+info.verified_when = paramscell{17};
 
 return
 end

@@ -23,22 +23,31 @@ for r_cnt = 1:length(j_now_selected_rows)
 end
 
 % find the column indices in the table
-epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
+% epoch_col = find(contains(app.h_uitable.ColumnName, 'Epoch'));
 use_col = find(contains(app.h_uitable.ColumnName, 'Use'));
 magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
 bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
+st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
+is_mep_col = find(contains(app.h_uitable.ColumnName, '>Is<'));
+latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
 
 % get stimulator settings
 magstim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, magstim_col};
 bistim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col};
 isi_val = app.h_uitable.Data{j_now_selected_rows(1)+1, isi_col};
+if ~isempty(st_col)
+	stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col}; %#ok<FNDSB> 
+else
+	stim_type = '';
+end
 
 % find all rows in the table with these stimulator settings
-m_rows = find(cell2array(app.h_uitable.Data(:, magstim_col)) == magstim_val);
-b_rows = find(cell2array(app.h_uitable.Data(:, bistim_col)) == bistim_val);
-i_rows = find(cell2array(app.h_uitable.Data(:, isi_col)) == isi_val);
-u_rows = find(cell2array(app.h_uitable.Data(:, use_col)) == 1);
+m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
+b_rows = find(cell2mat(app.h_uitable.Data(:, bistim_col)) == bistim_val);
+i_rows = find(cell2mat(app.h_uitable.Data(:, isi_col)) == isi_val);
+u_rows = find(cell2mat(app.h_uitable.Data(:, use_col)) == 1);
 
 tmp_rows = intersect(m_rows, b_rows);
 tmp2_rows = intersect(tmp_rows, i_rows);
@@ -48,7 +57,7 @@ all_rows = intersect(tmp2_rows, u_rows);
 % mep_begin and mep_end
 mep_rows = [];
 isi_shift_pts = 0;
-if app.CheckBoxSici.Value == 1 && isi_val > 0
+if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
 end
 % update conditioning stim line h_cs_line
@@ -68,10 +77,19 @@ for r_cnt = 1:length(all_rows)
 		app.h_emg_line.XData <= mep_end_time)) > std_val)
 		% data exceeds std val betw mep_beg_time & mep_end_time
 		mep_rows = [mep_rows this_row]; %#ok<AGROW>
+		% set its is_mep column to true
+		app.h_uitable.Data(this_row, is_mep_col) = {true};
+	else
+		% set its is_mep col to false
+		app.h_uitable.Data(this_row, is_mep_col) = {false};
 	end
 end
 
+
 % select those rows in the table
+jUIScrollPane = findjobj(app.h_uitable);
+jUITable = jUIScrollPane.getViewport.getView;
+% j_now_selected_rows = jUITable.getSelectedRows; 
 for r_cnt = 1:length(mep_rows)
 	row = mep_rows(r_cnt);
 	col = 1;

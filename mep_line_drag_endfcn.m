@@ -7,10 +7,10 @@ mep_start_time = app.h_t_min_line.XData(1);
 mep_end_time = app.h_t_max_line.XData(1);
 
 % update values in the EMG Data figure
-app.h_edit_mep_begin.String = num2str(mep_start_time, 3);
-app.h_edit_mep_end.String = num2str(mep_end_time, 3);
+app.h_edit_mep_begin.String = num2str(mep_start_time, '%.2f');
+app.h_edit_mep_end.String = num2str(mep_end_time, '%.2f');
 t_dur = mep_end_time - mep_start_time;
-app.h_edit_mep_dur.String = num2str(t_dur, 3);
+app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
 % get the selected rows, so if values change and cells become unselected,
 % they can be reselected
@@ -18,26 +18,57 @@ app.h_edit_mep_dur.String = num2str(t_dur, 3);
 jUIScrollPane = findjobj(app.h_uitable);
 jUITable = jUIScrollPane.getViewport.getView;
 j_original_selected_rows = jUITable.getSelectedRows;
+if isempty(j_original_selected_rows)
+	return
+end
 % if ~isempty(j_original_selected_rows)
 % 	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
 % end
 
-% recompute the MEP peak to peak value and MEPAUC for all rows in the data point table
-emg.XData = app.h_emg_line.XData;
-for row_cnt = 1:length(app.h_uitable.Data)
-	
-	% get mep p-p  value 
-	
-	% find the ISI (from the table)
+% recompute the MEP peak to peak value and MEPAUC for 
+% all rows in the data point table if rc display
+% rows with matching stimulator values (stim type) if sici display
+if app.CheckBoxSici.Value == true % doing sici
+	% find the column indices in the table
+	magstim_col = find(contains(app.h_uitable.ColumnName, '>MagStim<'));
+	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 	isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
-	isi_ms = app.h_uitable.Data{row_cnt, isi_col}; %#ok<FNDSB>
+	st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
+
+	% get stimulator settings
+	magstim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, magstim_col};
+	bistim_val = app.h_uitable.Data{j_original_selected_rows(1)+1, bistim_col};
+	isi_val = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
+	stim_type = app.h_uitable.Data{j_original_selected_rows(1)+1, st_col}; %#ok<FNDSB>
+
+	% find all rows in the table with these stimulator settings
+	m_rows = find(cell2mat(app.h_uitable.Data(:, magstim_col)) == magstim_val);
+	b_rows = find(cell2mat(app.h_uitable.Data(:, bistim_col)) == bistim_val);
+	i_rows = find(cell2mat(app.h_uitable.Data(:, isi_col)) == isi_val);
+
+	tmp_rows = intersect(m_rows, b_rows);
+% 	row_indices = intersect(tmp_rows, i_rows)';
+	% change 2023-02-08: update the current epoch only
+	row_indices = str2double(app.h_edit_epoch.String);
 	
 	% if ISI > 0, shift the data by ISI ms
-	if app.CheckBoxSici.Value == 1 && isi_ms > 0
+	isi_ms = app.h_uitable.Data{j_original_selected_rows(1)+1, isi_col};
+	isi_shift_pts = 0;
+	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
-	else
-		isi_shift_pts = 0;
 	end
+elseif app.CheckBoxRc.Value == true % doing rc
+% 	row_indices = 1:length(app.h_uitable.Data);
+	% change 2023-02-08: update the current epoch only
+	row_indices = str2double(app.h_edit_epoch.String);
+	isi_shift_pts = 0;
+end
+
+
+emg.XData = app.h_emg_line.XData;
+for row_cnt = row_indices
+	
+	% get mep p-p  value 	
 	tmp_data = app.emg_data(row_cnt, app.emg_data_num_vals_ignore+1:end);
 	emg.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 	
@@ -72,7 +103,16 @@ for row_cnt = 1:length(app.h_uitable.Data)
 		% update info in rc_fig
 		update_rc_sici_datapoint(app, row_cnt, mep_val, auc, false);
 	end
+	latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+	mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
+	if app.h_uitable.Data{row_cnt, latency_col} ~= mep_start_time
+		app.h_uitable.Data{row_cnt, latency_col} = mep_start_time;
+	end
+	if app.h_uitable.Data{row_cnt, mep_end_col} ~= mep_end_time
+		app.h_uitable.Data{row_cnt, mep_end_col} = mep_end_time;
+	end
 end
+
 
 % reselect the cells (if needed)
 jUIScrollPane = findjobj(app.h_uitable);
@@ -88,5 +128,20 @@ if isempty(j_now_selected_rows)
 else
 % 	fprintf('mep_line_drag_endfcn: table cells stayed selected\n')
 end
-% pause(0.1)
+
+% if isprop(app, 'sici_ui') && isfield(app.sici_ui, 'ts_latency') && isgraphics(app.sici_axes)
+% 	stim_type = app.sici_axes.UserData.Stim_Type{j_original_selected_rows(r_cnt)};
+% 	switch stim_type
+% 		case 'Test Stim'
+% 			info_var = 'ts';
+% 		case 'SICI'
+% 			info_var = 'sici';
+% 		case 'ICF'
+% 			info_var = 'icf';
+% 	end
+% 	update_sici_mep_latency(app, info_var, j_original_selected_rows'+1)
+% end
+
+end %function
+
 

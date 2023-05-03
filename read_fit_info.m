@@ -9,9 +9,10 @@ end
 % read in file, parse for the info
 keywords = {'mepMethod' 'norm_factor' 'mep_beg_t' 'mep_end_t' 'slope' 's50' ...
 	'mepMin' 'mepMax' 'slopeCi' 's50Ci' 'mepMinCi' 'mepMaxCi' 'Rsq' ...
-	'auc' 'aucMeanVals' 'stimLevels' 'stimulator_mode' 'analyzed_by' 'analyzed_when'};
+	'auc' 'aucMeanVals' 'stimLevels' 'stimulator_mode' 'analyzed_by' 'analyzed_when' ...
+	'verified_by' 'verified_when'};
 	
-defaults = {'', 0, 0, 0, 0, 0, 0, 0, [], [], [], [], 0, 0, [], [], '', '', ''};
+defaults = {'', 0, 0, 0, 0, 0, 0, 0, [], [], [], [], 0, 0, [], [], '', '', '', '', ''};
 
 try
 	paramscell = readparamfile(file_name, keywords, defaults);
@@ -39,6 +40,8 @@ info.stimLevels      = paramscell{16};
 info.stimulator_mode = paramscell{17};
 info.analyzed_by     = paramscell{18};
 info.analyzed_when   = paramscell{19};
+info.verified_by     = paramscell{20};
+info.verified_when   = paramscell{21};
 
 return
 end % read_fit_info

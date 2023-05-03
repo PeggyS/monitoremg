@@ -1,10 +1,9 @@
-function pushbutton_adj_mep_end(src, evt, app) %#ok<INUSL>
+function pushbutton_adj_mep_end_old_method(src, evt, app) %#ok<INUSL>
 % mep end line should be before the last peak then ends the MEP
-% This function will move the line left to when the emg data exceeds the
-% std dev interval.
+% This function will move the line right to the next local min or max,
+% approximating when the derivative is zero.
 % 2023-02-08: change function so it will only work when a single epoch is
 % chosen. Will not work on the mean_emg_line
-
 
 % disp('pushbutton_adj_mep_end')
 mep_end_time = app.h_t_max_line.XData(1);
@@ -22,13 +21,30 @@ warning('off', 'MATLAB:chckxy:IgnoreNaN')
 y_spline = spline(app.h_emg_line.XData, app.h_emg_line.YData, x_spline);
 warning('on', 'MATLAB:chckxy:IgnoreNaN')
 
-% 2022-12-14: new method looking at when the MEP exceeds the std dev interaval lines
+% =====================================================
+% old way using derivative of mean emg line
+% look at derivative (diff) of YData 
+% find when derivative is 0
+y_diff = diff(y_spline);
 
-% examine mean mep line, find first time after the current mep begin line when mean mep exceeds
-% the std dev window
-std_dev_value = app.h_pre_stim_emg_pos_std_line.YData(1);
-mep_end_ind = find(x_spline < mep_end_time & abs(y_spline) >= std_dev_value, 1, 'last');
-mep_end = x_spline(mep_end_ind);
+%index of the current mep_end_time
+mep_end_ind = find(x_spline >= mep_end_time, 1, 'first');
+
+% is the derivative at current mep_end_time > or < 0
+while abs(y_diff(mep_end_ind)) == 0 % ensure the deriv is not exactly 0
+	mep_end_ind = mep_end_ind - 1;
+end
+if y_diff(mep_end_ind) < 0
+	localmin_maxfcn = 'islocalmin';
+else
+	localmin_maxfcn = 'islocalmax';
+end
+
+% find the local min or max after mep_end_ind
+min_max_vec = feval(localmin_maxfcn, y_spline); %#ok<FVAL> 
+peak_ind = find(min_max_vec(mep_end_ind:end) == true, 1, 'first') + mep_end_ind-1;
+mep_end = x_spline(peak_ind);
+
 
 if mep_end_time ~= mep_end
 	% fprintf('  MEP end changed from %f to %f\n', mep_end_time, mep_end)
@@ -46,10 +62,10 @@ if mep_end_time ~= mep_end
 end
 % if the value has changed from the one stored in the app (most likely from
 % being read in from the info file)
-% if abs(app.mep_info.mep_end_t - mep_end) > 0.05 
+% if abs(app.mep_info.mep_end_t - mep_end) > 0.01 
 % 	% update info and flag it to be saved
 % 	% update the analysis date
-% 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
+% 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<TNOW1,DATST> 
 % 	% update done by
 % 	app.h_edit_mep_done_by.String = upper(app.user_initials);
 % 	app.mep_times_changed_flag = true;

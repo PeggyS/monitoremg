@@ -67,9 +67,13 @@ MEP latency and MEP-max amplitude
 	- Using 3 std dev (of the prestim emg). The # of std dev can be changed. Cerins used 5. Hamada 2013 used 2 std dev.
 	- click buttons to move the mep begin and end lines. Begin line will move to the right to the first point where the mean mep line exceeds the std dev line.
 
+2023-02-03: Further discussion (Pundik, Skelly, Anderson, Iyengar): decided to keep with Cerins 2022 ref to determine MEP latency, but will analyze each sample separately. 
+	- The maximum MEP may not be at the highest stimulator output. When this happens, we should note it to track how often it happens.
+	- A trace is determined to be an MEP if EMG exceeds +/- 3 Std dev of prestim emg. 
+	- Generally 2 clicks in the Matlab app. First click moves line to EMG crossing the intersection with the prestim 3 std dev. Second click moves the line back the other direction to the previous peak in the opposite direction.
 
 ++++++++++
 TODO
 ++++++++++
-2022-12-20: on Brainsight, activity monitor, the yticks were missing. I manually defined them in the startupfcn as 0:50:500.
-2022-12-20: on Brainsight, SICI figure, mean and CI lines are missing. 2022-12-20 should be fixed by adding sici_axes when creating the lines. Need to verify operation on Brainsight.
+2023-02-22: set up tables in the database 
+2023-02-22: send data from datapoint tables to the database. Include error checking.

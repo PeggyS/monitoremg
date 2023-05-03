@@ -1,4 +1,4 @@
-function run_emg(app)
+function run_emg_2mb(app)
 triggerPos = NaN; % position/index in the datavec when the trigger msg was rec'd
 % index when triggerPos is at correct position to record the proper pre & post amt of data
 triggerInd = app.params.preTriggerTime / 1000 * app.params.sampFreq;
@@ -52,7 +52,8 @@ while app.StartButton.Value
 		 for ch_num = emg_first_chan_num:num_channels
              ch_cnt = ch_num - emg_first_chan_num + 1;
 			 % rename the emg channels from number to the muscle name
-			 app.EMGDropDown.Items{ch_cnt} = app.chanInfo.names{ch_num};
+			 app.EMGDropDown_1.Items{ch_cnt} = app.chanInfo.names{ch_num};
+			 app.EMGDropDown_2.Items{ch_cnt} = app.chanInfo.names{ch_num};
 			 % save muscle names in data_channels_mmap
 			 app.data_channels_mmap.Data(ch_cnt).num_channels = uint8(num_channels-emg_first_chan_num + 1);
 			 app.data_channels_mmap.Data(ch_cnt).muscle_name = uint8(pad(app.chanInfo.names{ch_num}, 30));
@@ -80,12 +81,14 @@ while app.StartButton.Value
           return
          end
          
-         newHpFiltData = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan_1,:));
-		 app.emgBarDataVec = circshift(app.emgBarDataVec, double(numPoints));
-         app.emgBarDataVec(1:numPoints) = newHpFiltData;
+         newHpFiltData_1 = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan_1,:));
+		 newHpFiltData_2 = filtfilt(app.hpFilt.b, app.hpFilt.a, newData(dataDispChan_2,:));
+		 app.emgBarDataVec = circshift(app.emgBarDataVec, [0 double(numPoints)]);
+         app.emgBarDataVec(1, 1:numPoints) = newHpFiltData_1;
+		 app.emgBarDataVec(2, 1:numPoints) = newHpFiltData_2;
          
          % update the activity bar
-         updateDisplay(app, app.emgBarDataVec, markInfo);
+         updateDisplay_2mb(app, app.emgBarDataVec, markInfo);
 
          % filling in the trigger data vector
          if ~isnan(triggerPos)
@@ -192,7 +195,8 @@ while app.StartButton.Value
     %fprintf('Completed a while loop in %g sec\n', t_while_loop)
 end
 % fclose(fid);
-set(app.hLine, 'YData', [0 1]);
+set(app.hLine_1, 'YData', [0 1]);
+set(app.hLine_2, 'YData', [0 1]);
 %fprintf('read %d blocks, avg time = %g\n', num_loops, toc/num_loops)
 %fprintf('did %d while loops, avg time = %g\n', num_loops, toc/num_loops)
 return

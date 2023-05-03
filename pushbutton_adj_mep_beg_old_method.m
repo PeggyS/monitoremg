@@ -1,7 +1,7 @@
-function pushbutton_adj_mep_beg(src, evt, app) %#ok<INUSL>
-% mep begin line should be before when the mep begins
-% This function will move the line right to the where the emg data first
-% crosses the std dev interval.
+function pushbutton_adj_mep_beg_old_method(src, evt, app) %#ok<INUSL>
+% mep begin line should be after when the mep begins
+% This function will move the line left the local min or max, approximating
+% the derivative = 0.
 % 2023-02-08: change function so it will only work when a single epoch is
 % chosen. Will not work on the mean_emg_line
 
@@ -21,21 +21,38 @@ warning('off', 'MATLAB:chckxy:IgnoreNaN')
 y_spline = spline(app.h_emg_line.XData, app.h_emg_line.YData, x_spline);
 warning('on', 'MATLAB:chckxy:IgnoreNaN')
 
-% 2022-12-14: new method looking at when the MEP exceeds the std dev interval lines
+% =====================================================
+% old method of looking at the derivative of the mean line
+% look at derivative (diff) of YData 
+% find when derivative is 0
+y_diff = diff(y_spline);
 
-% examine mean mep line, find first time after the current mep begin line when mean mep exceeds
-% the std dev window
-std_dev_value = app.h_pre_stim_emg_pos_std_line.YData(1);
-mep_beg_ind = find(x_spline > mep_beg_time & abs(y_spline) >= std_dev_value, 1, 'first');
-mep_begin = x_spline(mep_beg_ind);
+% index of the current mep_beg_time
+mep_beg_ind = find(x_spline >= mep_beg_time, 1, 'first');
+
+% is the derivative at current mep_beg_time > or < 0
+while y_diff(mep_beg_ind) == 0 % ensure the deriv is not exactly 0
+	mep_beg_ind = mep_beg_ind - 1;
+end
+if y_diff(mep_beg_ind) < 0
+	localmin_maxfcn = 'islocalmax';
+else
+	localmin_maxfcn = 'islocalmin';
+end
+
+% find the local min or max before mep_beg_ind
+% vec = islocalmin(h_mean_mep_line.YData);
+min_max_vec = feval(localmin_maxfcn, y_spline); %#ok<FVAL> 
+peak_ind = find(min_max_vec(1:mep_beg_ind) == true, 1, 'last');
+mep_begin = x_spline(peak_ind);
+
 
 % change the mep start line
 if mep_begin ~= mep_beg_time
 % 	fprintf('  MEP beg changed from %f to %f\n', mep_beg_time, mep_begin)
 	app.h_t_min_line.XData = [mep_begin mep_begin];
-% 	mep_line_drag_endfcn(app.h_t_min_line)
 	latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
-	% get selected row in the table
+	%  get selected row in the table
 	selected_row = str2double(app.h_edit_epoch.String);
 	% update latency
 	app.h_uitable.Data(selected_row, latency_col) = {mep_begin};
@@ -46,7 +63,7 @@ if mep_begin ~= mep_beg_time
 end
 % if the value has changed from the one stored in the app (most likely from
 % being read in from the info file)
-% if abs(app.mep_info.mep_beg_t - mep_begin) > 0.01 
+% if abs(app.mep_info.mep_beg_t - mep_begin) > 0.05 
 % 	% update info and flag it to be saved
 % 	% update the analysis date
 % 	app.h_edit_mep_done_when.String = datestr(now, 'yyyy-mm-dd HH:MM:SS'); %#ok<DATST,TNOW1> 
