@@ -6,7 +6,7 @@ if app.CheckBoxSici.Value == true % doing sici
 	% if ISI > 0, shift the data by ISI ms
 	isi_ms = app.h_uitable.Data{row, isi_col};
 	st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
-	stim_type = h_tbl.Data{row, st_col}; %#ok<FNDSB>
+	stim_type = app.h_uitable.Data{row, st_col}; %#ok<FNDSB>
 
 	isi_shift_pts = 0;
 	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
