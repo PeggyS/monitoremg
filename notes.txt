@@ -44,6 +44,11 @@ review_emg_rc - first looks in the analysis hierarchy for *_datapoints.csv. If i
 	- sici datapoints are read in, as they are added to the figure, the mean and confidence interval lines are computed and updated in the sici figure. If an existing sici_info.txt file is found and read in, then read in values are compared to what is in the sici fig. If the figure mean values are not the same as the ones in the file, then info is sent to the command window and beeps.
 
 
+info_to_db - start in the tms analysis hierarchy. (If you don't, you will be given a dialog box to locate it.) Info from _rc_datapoints_analysis_info.txt and _rc_datapoints.csv is used to fill in the table with the MEP Max Info. The mean of latencies is computed from the datapoints table.
+
+
+
+
 ============================================
 magstim, bistim, and simulataneous discharge
 --------------------------------------------
@@ -61,7 +66,7 @@ sici_info.txt - ts and cs values are the numbers on the bistim setup of stimulat
 MEP latency and MEP-max amplitude
 ---------------------------------
 2022-12-12: Discussion between S Pundik & P Skelly: decided to use methods from Cerins 2022 to determine active MEP latency. We will extract the MEP latency and the mean MEP-max amplitude of the highest stimulator output recorded for the recruitment curve.
-	- ref: Cerins et al, “Assessment of cortical inhibition depends on inter individual differences in the excitatory neural populations activated by transcranial magnetic stimulation”, Nature Scientific Reports, 2022
+	- ref: Cerins et al, “Assessment of cortical inhibition depends on inter individual differences in the excitatory neural populations activated by transcranial magnetic stimulation”, Nature Scientific Reports, 2022, which in turn references Hamada 2013.
 	- examine each epoch/trial/trace and roughly define MEP window. Only use trials where the EMG spike in the window is consistent with other probable MEPs. If the spike in the window seems like spontaneous activity (often also seen in the pre-stim EMG time period), then exclude that trial from latency calculation.
 	- select the multiple trials to average. Each individual trace should have some activity that exceeds the std dev lines in the approximate MEP window.
 	- Using 3 std dev (of the prestim emg). The # of std dev can be changed. Cerins used 5. Hamada 2013 used 2 std dev.
@@ -72,8 +77,12 @@ MEP latency and MEP-max amplitude
 	- A trace is determined to be an MEP if EMG exceeds +/- 3 Std dev of prestim emg. 
 	- Generally 2 clicks in the Matlab app. First click moves line to EMG crossing the intersection with the prestim 3 std dev. Second click moves the line back the other direction to the previous peak in the opposite direction.
 
+
+2023-03-09: set up tables in the database 
+2023-03-09: send data from datapoint tables to the database. Include error checking.
+
+
 ++++++++++
 TODO
 ++++++++++
-2023-02-22: set up tables in the database 
-2023-02-22: send data from datapoint tables to the database. Include error checking.
+
