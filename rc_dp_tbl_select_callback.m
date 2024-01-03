@@ -76,6 +76,13 @@ app.h_edit_mep_end.String = num2str(mep_end, '%.2f');
 t_dur = mep_end - latency;
 app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
+% update the latency adjust check boxes from the uitable values
+adj_latency_col = contains(app.h_uitable.ColumnName, '>Latency<');
+adj_mep_end_col = contains(app.h_uitable.ColumnName, '>End<');
+
+app.h_chkbx_adjust_mep_beg.Value = app.h_uitable.Data{new_row_to_show, adj_latency_col};
+app.h_chkbx_adjust_mep_end.Value = app.h_uitable.Data{new_row_to_show, adj_mep_end_col};
+
 % update emg data
 update_review_emg_data_line(app, h_tbl, new_row_to_show)
 

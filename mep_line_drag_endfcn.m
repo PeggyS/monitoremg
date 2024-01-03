@@ -12,14 +12,14 @@ app.h_edit_mep_end.String = num2str(mep_end_time, '%.2f');
 t_dur = mep_end_time - mep_start_time;
 app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
-% update the check box that it was manaully adjusted
+% update the check box that it was manually adjusted
 switch h_line.Tag
 	case 'mep_min_line'
 		app.h_chkbx_adjust_mep_beg.Value = 1;
-		mep_manual_adjust(app.h_chkbox_adjust_mep_beg, [], app, 'begin')
+		mep_manual_adjust(app.h_chkbx_adjust_mep_beg, [], app, 'begin')
 	case 'mep_max_line'
 		app.h_chkbx_adjust_mep_end.Value = 1;
-		mep_manual_adjust(app.h_chkbox_adjust_mep_beg, [], app, 'end')
+		mep_manual_adjust(app.h_chkbx_adjust_mep_beg, [], app, 'end')
 end
 
 % get the selected rows, so if values change and cells become unselected,

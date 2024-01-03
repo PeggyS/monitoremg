@@ -13,6 +13,8 @@ switch beg_or_end
 		mep_adj_col = find(contains(app.h_uitable.ColumnName, '>End<'));
 end
 
-app.h_uitable.Data{row, mep_adj_col} = logical(src.Value);
+if row > 0
+	app.h_uitable.Data{row, mep_adj_col} = logical(src.Value);
+end
 
 end % function
