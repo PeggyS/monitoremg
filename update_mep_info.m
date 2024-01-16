@@ -42,7 +42,19 @@ for r_cnt = 1:height(unq_tbl)
 	unq_tbl.num_samples(r_cnt) = height(stim_tbl);
 	unq_tbl.num_mep(r_cnt) = sum(stim_tbl.Is_MEP);
 	unq_tbl.mean_latency(r_cnt) = mean(stim_tbl.MEP_latency);
+	if any(contains(stim_tbl.Properties.VariableNames, 'latency_adjusted'))
+		unq_tbl.num_latency_manual_adjust(r_cnt) = sum(stim_tbl.latency_adjusted);
+	else
+		unq_tbl.num_latency_manual_adjust(r_cnt) = NaN;
+% 		unq_tbl = movevars(unq_tbl, 'num_latency_manual_adjust', 'After', 'mean_latency');
+	end
 	unq_tbl.mean_end(r_cnt) = mean(stim_tbl.MEP_end);
+	if any(contains(stim_tbl.Properties.VariableNames, 'end_adjusted'))
+		unq_tbl.num_end_manual_adjust(r_cnt) = sum(stim_tbl.end_adjusted);
+	else
+		unq_tbl.num_end_manual_adjust(r_cnt) = NaN;
+% 		unq_tbl = movevars(unq_tbl, 'num_end_manual_adjust', 'After', 'mean_end');
+	end
 	unq_tbl.mean_mep_ampl(r_cnt) = mean(stim_tbl.MEPAmpl_uVPp);
 	if isnumeric(stim_tbl.comments)
 		% comments are numeric, therefore there are no comments
