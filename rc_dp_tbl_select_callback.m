@@ -32,6 +32,7 @@ new_row_to_show = most_recent_selected;
 % fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
 
 if ~isempty(cell_select_data.Indices)
+	app.h_uitable.UserData.Selection = cell_select_data.Indices;
 	selected_rows = cell_select_data.Indices(:,1);
 % 	fprintf('rc_dp_tbl_select_callback: Indices = %s\n', mat2str(selected_rows))
 else

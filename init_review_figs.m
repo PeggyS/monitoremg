@@ -24,7 +24,7 @@ end
 	
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.emg_data_fig = figure('Position', [0,0,1650,960], 'Name', 'EMG Data', ...
-		'NumberTitle', 'off', 'CreateFcn',@movegui);
+		'NumberTitle', 'off', 'CreateFcn',@movegui, 'KeyPressFcn', {@data_fig_keypress, app});
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', axes_fontsize);
 	ylabel('EMG (\muV)')
 	xlabel('Time (msec)')
@@ -74,7 +74,8 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 	app.h_chkbx_adjust_mep_beg = uicontrol('Style', 'checkbox', 'Units', 'normalized', ...
 		'Position', [0.738484848484849,0.48,0.034848484848485,0.02], 'FontSize', analysis_edit_fontsize, ...
 		'String', 'Begin', ...
-		'Callback', {@mep_manual_adjust, app, 'begin'});
+		'Callback', {@mep_manual_adjust, app, 'begin'}, ...
+		'KeyPressFcn', {@data_fig_keypress, app});
 	app.h_chkbx_adjust_mep_end = uicontrol('Style', 'checkbox', 'Units', 'normalized', ...
 		'Position', [0.778,0.48,0.034848484848485,0.02], 'FontSize', analysis_edit_fontsize, ...
 		'String', 'End', ...
@@ -316,6 +317,8 @@ else % figure already exist, reset to defaults
 	app.h_pre_stim_emg_neg_std_line.YData = [-1000 -1000];
 	app.h_emg_auc_patch.Vertices = [];
 	app.h_emg_auc_patch.Faces = [];
+
+	app.h_mep_analysis_comments.String = '';
 end
 
 title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
