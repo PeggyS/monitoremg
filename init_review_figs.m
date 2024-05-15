@@ -324,6 +324,8 @@ else % figure already exist, reset to defaults
 	app.h_emg_auc_patch.Faces = [];
 
 	app.h_mep_analysis_comments.String = '';
+	app.h_edit_mep_done_by.String = '';
+	app.h_edit_mep_done_when.String = '';
 end
 
 title(app.h_disp_emg_axes, strrep(app.MuscleEditField.Value, '_', ' '))
