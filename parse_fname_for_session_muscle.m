@@ -6,7 +6,7 @@ function [session, muscle] = parse_fname_for_session_muscle(fname)
 session = '';
 muscle = '';
 
-tmp = regexpi(fname, '(pre)|(post)|(mid)|(followup)|(week\d+)', 'match');
+tmp = regexpi(fname, '(pre)|(post)|(mid)|(followup\d*)|(week\d+)', 'match');
 if ~isempty(tmp)
 	session = tmp{1};
 end
