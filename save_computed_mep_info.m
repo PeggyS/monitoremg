@@ -28,6 +28,21 @@ datapoint_fname = fullfile(save_loc, [save_f save_ext]);
 tbl_to_save = cell2table(app.h_uitable.Data, 'VariableNames', ...
 			col_name_html_to_var_name(app.h_uitable.ColumnName));
 
+% confirm that the subject in the save_loc is the same as the subject in the m_max file
+confirm_subj_match = test_subject_match(save_loc, app.MMaxFileEditField.Value);
+if ~confirm_subj_match
+	subj_1 = regexp(save_loc, '([sc][\d]+\w+)', 'match');
+	subj_1	= subj_1{1};
+	subj_2 = regexp(app.MMaxFileEditField.Value, '([sc][\d]+\w+)', 'match');
+	subj_2	= subj_2{1};
+
+	msg = sprintf( 'Subject in emg data (%s) does not match the m-max subject (%s).', ...
+		subj_1, subj_2);
+	beep
+	uialert(app.ReviewEMGRCUIFigure, msg, 'Subject Mismatch', 'Icon','error')
+	return
+end
+
 % save the datapoint table
 [confirm_saving, datapoint_fname] = confirm_savename(datapoint_fname);
 if confirm_saving
