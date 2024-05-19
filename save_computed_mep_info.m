@@ -34,10 +34,13 @@ if ~confirm_subj_match
 	subj_1 = regexp(save_loc, '([sc][\d]+\w+)', 'match');
 	subj_1	= subj_1{1};
 	subj_2 = regexp(app.MMaxFileEditField.Value, '([sc][\d]+\w+)', 'match');
-	subj_2	= subj_2{1};
-
-	msg = sprintf( 'Subject in emg data (%s) does not match the m-max subject (%s).', ...
+	if isempty(subj_2)
+		msg = sprintf( 'M-max field does not contain a valid subject.\nData Table is not being saved.');
+	else
+		subj_2	= subj_2{1};
+		msg = sprintf( 'Subject in emg data (%s) does not match the m-max subject (%s).\nData Table is not being saved.', ...
 		subj_1, subj_2);
+	end
 	beep
 	uialert(app.ReviewEMGRCUIFigure, msg, 'Subject Mismatch', 'Icon','error')
 	return
