@@ -40,10 +40,10 @@ else
 	localmin_maxfcn = 'islocalmin';
 end
 
-% find the local min or max before mep_beg_ind
+% find the local min or max before mep_beg_ind (not including mep_beg_ind)
 % vec = islocalmin(h_mean_mep_line.YData);
 min_max_vec = feval(localmin_maxfcn, y_spline); %#ok<FVAL> 
-peak_ind = find(min_max_vec(1:mep_beg_ind) == true, 1, 'last');
+peak_ind = find(min_max_vec(1:mep_beg_ind-1) == true, 1, 'last');
 mep_begin = x_spline(peak_ind);
 
 
