@@ -29,7 +29,8 @@ jUIScrollPane = findjobj(app.h_uitable);
 jUITable = jUIScrollPane.getViewport.getView;
 j_original_selected_rows = jUITable.getSelectedRows;
 if isempty(j_original_selected_rows)
-	return
+	j_original_selected_rows = str2double(app.h_edit_epoch.String)-1;
+% 	return
 end
 % if ~isempty(j_original_selected_rows)
 % 	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
