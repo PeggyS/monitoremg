@@ -18,7 +18,9 @@ else
 end
 
 % if sici/icf and ISI > 0, shift the data by ISI ms
-if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
+%if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
+% line above assumes test stim is the magstim, but we changed to using the bistim
+if app.CheckBoxSici.Value == 1 && isi_ms > 0
 	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 else
 	isi_shift_pts = 0;
