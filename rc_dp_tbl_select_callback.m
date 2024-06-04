@@ -118,7 +118,7 @@ if length(all_selected) > 1
 			% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
 			% and the data needs to be shifted
 			bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
-			if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB>
+			if app.h_uitable.Data{row, bistim_col} > 0 %#ok<FNDSB>
 				% test stim in the lower/bistim stimulator
 				isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 			else

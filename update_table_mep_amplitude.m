@@ -15,7 +15,7 @@ if app.CheckBoxSici.Value == true % doing sici
 	elseif isi_ms > 0 && strcmp(stim_type, 'Test Stim')
 		% test stim: check which stimulator has the test stim
 		bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
-		if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB> 
+		if app.h_uitable.Data{row, bistim_col} > 0 %#ok<FNDSB> 
 			% TS is in the bistim. Use the isi delay
 			isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
 		end

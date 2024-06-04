@@ -59,13 +59,13 @@ mep_rows = [];
 isi_shift_pts = 0;
 if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
-elseif app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+elseif app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
 	% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
 	% and the data needs to be shifted
 	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
-	if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB> 
+	if app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col} > 0 %#ok<FNDSB> 
 		% test stim in the lower/bistim stimulator
-		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+		isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
 	else
 		% test stim with 0 in the lower/bistim stimulator
 		isi_shift_pts = 0;
