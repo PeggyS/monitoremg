@@ -67,9 +67,20 @@ if app.CheckBoxSici.Value == true % doing sici
 	isi_shift_pts = 0;
 	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+	elseif isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+			% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+		% and the data needs to be shifted
+		bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+		if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB>
+			% test stim in the lower/bistim stimulator
+			isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+		else
+			% test stim with 0 in the lower/bistim stimulator
+			isi_shift_pts = 0;
+		end
 	end
 elseif app.CheckBoxRc.Value == true % doing rc
-% 	row_indices = 1:length(app.h_uitable.Data);
+	% 	row_indices = 1:length(app.h_uitable.Data);
 	% change 2023-02-08: update the current epoch only
 	row_indices = str2double(app.h_edit_epoch.String);
 	isi_shift_pts = 0;

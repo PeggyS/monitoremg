@@ -99,7 +99,7 @@ if length(all_selected) > 1
 	ymin = 0;
 	ymax = 0;
 	y_data_matrix = [];
-	
+
 	% add a line for each selected row
 	for l_cnt = 1:length(all_selected)
 		row = all_selected(l_cnt);
@@ -107,19 +107,31 @@ if length(all_selected) > 1
 		% shift the data by the ISI (time between conditioning stim and test stim)
 		isi_ms = h_tbl.Data{row, isi_col}; %#ok<FNDSB>
 		if ~isempty(st_col)
-			stim_type = h_tbl.Data{row, st_col}; %#ok<FNDSB>
+			stim_type = h_tbl.Data{row, st_col};
 		else
 			stim_type = '';
 		end
 		% if sici/icf and ISI > 0, shift the data by ISI ms
 		if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 			isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+		elseif app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+			% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+			% and the data needs to be shifted
+			bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+			if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB>
+				% test stim in the lower/bistim stimulator
+				isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+			else
+				% test stim with 0 in the lower/bistim stimulator
+				isi_shift_pts = 0;
+			end
+
 		else
 			isi_shift_pts = 0;
 		end
 		tmp_data = app.emg_data(row, app.emg_data_num_vals_ignore+1:end);
 		y = [tmp_data(isi_shift_pts+1:end) tmp_data(end)*ones(1,isi_shift_pts)];
-		
+
 		h_lines(l_cnt) = line(app.h_disp_emg_axes, x, y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line'); %#ok<AGROW>
 		ymin = min([ymin min(y)]);
 		ymax = max([ymax max(y)]);
