@@ -169,8 +169,9 @@ end % each stim type
 conn.dbClose()
 
 % update the in database checkbox, last update time, and database matches checkbox
-app.InDatabaseCheckBox_sici.Value = true;
-app.dbLastupdatedEditField_sici.Value = check_tbl.last_update{1};
-app.DatabaseinfomatchesCheckBox_sici.Value = true;
+is_sici_info_in_db(app)
+% app.InDatabaseCheckBox_sici.Value = true;
+% app.dbLastupdatedEditField_sici.Value = check_tbl.last_update{1};
+% app.DatabaseinfomatchesCheckBox_sici.Value = true;
 return
 end
