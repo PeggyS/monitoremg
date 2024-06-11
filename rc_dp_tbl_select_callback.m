@@ -146,7 +146,10 @@ if length(all_selected) > 1
 	% if rows with different ISI are selected, this could be wrong FIXME
 	% increase the resolution on the mean line using spline interpolation
 	fine_res_x = min(x) : diff(x(1:2))/10 : max(x);
+	warn_id = 'MATLAB:chckxy:IgnoreNaN';
+	warning('off', warn_id)
 	fine_res_mean_emg = spline(x, mean_emg, fine_res_x);
+	warning('on', warn_id)
 	h_mean_emg_line = line(app.h_disp_emg_axes, fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 4, ...
 		'Tag', 'mean_mep_line');
 	h_lines(l_cnt+1) = h_mean_emg_line; %#ok<NASGU> 

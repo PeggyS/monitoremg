@@ -41,20 +41,7 @@ else
 	isi_ms = 0;
 end
 tmp_data = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
-if length(tmp_data) ~= length(app.h_emg_line.YData)
-	% for s2737 sici data, only 299 data points were saved, not the usual 300
-	% detect this condition and add an extra nan at the end of the data to dislay
-	fprintf('saved emg data is %d points; anticipated length is %d\n', ...
-		length(tmp_data), length(app.h_emg_line.YData))
-	fprintf('   adding a NaN to the end of the emg data\n')
 
-	if length(tmp_data) < length(app.h_emg_line.YData)
-		add_pts = length(app.h_emg_line.YData) - length(tmp_data);
-		tmp_data = [tmp_data nan(1,add_pts)];
-	else
-		tmp_data = tmp_data(1:length(app.h_emg_line.YData));
-	end
-end
 app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 
 % update conditioning stim line h_cs_line
