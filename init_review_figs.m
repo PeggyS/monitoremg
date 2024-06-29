@@ -21,15 +21,26 @@ else
     analysis_edit_fontsize = 10;
     analysis_label_fontsize = 12;
 end
+
+% screensize
+scr_size = get(0, 'screensize');
+fig_size = scr_size;
+fig_size(3) = fig_size(3)*0.98;
+fig_size(4) = fig_size(4)*0.98;
 	
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', [0,0,1650,960], 'Name', 'EMG Data', ...
+	app.emg_data_fig = figure('Position', scr_size, 'Name', 'EMG Data', ...
 		'NumberTitle', 'off', 'CreateFcn',@movegui, 'KeyPressFcn', {@data_fig_keypress, app});
+% 	app.emg_data_fig = figure('Position', [0,0,1650,960], 'Name', 'EMG Data', ...
+% 		'NumberTitle', 'off', 'CreateFcn',@movegui, 'KeyPressFcn', {@data_fig_keypress, app});
 	app.h_disp_emg_axes = axes('Position', [0.6, 0.55,0.37,0.37], 'FontSize', axes_fontsize);
 	ylabel('EMG (\muV)')
 	xlabel('Time (msec)')
 	
 	app.h_uitable = uitable('Position', [5,24,876,865], 'RowName', [], 'Tag', 'review_emg_uitable');
+   app.h_uitable.Units = 'normalized';
+   app.h_uitable.Position(3) = 0.52;
+   app.h_uitable.Position(4) = 0.9;
 	
 	% radiobuttons to choose how to compute MEP 
 	app.h_radio_mep = uibuttongroup('Position', [0.1 0.92 0.125 0.065], ...
