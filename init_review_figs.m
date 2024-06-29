@@ -24,12 +24,16 @@ end
 
 % screensize
 scr_size = get(0, 'screensize');
-fig_size = scr_size;
-fig_size(3) = fig_size(3)*0.98;
-fig_size(4) = fig_size(4)*0.98;
+if scr_size(3) < 2000
+	fig_size = scr_size;
+	fig_size(3) = fig_size(3)*0.98;
+	fig_size(4) = fig_size(4)*0.98;
+else
+	fig_size = [0,0,1650,960];
+end
 	
 if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
-	app.emg_data_fig = figure('Position', scr_size, 'Name', 'EMG Data', ...
+	app.emg_data_fig = figure('Position', fig_size, 'Name', 'EMG Data', ...
 		'NumberTitle', 'off', 'CreateFcn',@movegui, 'KeyPressFcn', {@data_fig_keypress, app});
 % 	app.emg_data_fig = figure('Position', [0,0,1650,960], 'Name', 'EMG Data', ...
 % 		'NumberTitle', 'off', 'CreateFcn',@movegui, 'KeyPressFcn', {@data_fig_keypress, app});
