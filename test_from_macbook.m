@@ -1,4 +1,4 @@
-function add_point2rc(h_ax, table_row_num, magstim_val, mep_val)
+XXXXXfunction add_point2rc(h_ax, table_row_num, magstim_val, mep_val)
 
 % make sure recruit curve window is in front, so context menu gets
 % created in the correct figure
