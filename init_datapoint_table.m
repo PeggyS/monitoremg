@@ -169,18 +169,27 @@ if any(isnan(tbl.ISI_ms))
 	else
 		% not sici icf, check stim_mode
 		if ~exist('stim_mode', 'var')
-			beep
-			disp('init_datapoint_table: stim_mode should have been created!')
-			disp('setting all ISI to zero')
-			tbl.ISI_ms = zeros(height(tbl), 1);
-		else
-			switch stim_mode
-				case 'Single Pulse'
-					tbl.ISI_ms = ones(height(tbl), 1);
-				case 'Simultaneous Discharge'
-					tbl.ISI_ms = zeros(height(tbl), 1);
-			end
+% 			beep
+% 			disp('init_datapoint_table: stim_mode should have been created!')
+% 			disp('setting all ISI to zero')
+% 			tbl.ISI_ms = zeros(height(tbl), 1);
+			% ask the user if this was simultaneous discharge or not
+			q_str = 'Was this single pulse, Simultaneous Discharge of the stimulator, or SICI/ICF?';
+			tlt = 'Stimulator Mode';
+			app.ReviewEMGRCUIFigure.WindowStyle = 'alwaysontop';
+			stim_mode = uiconfirm(app.ReviewEMGRCUIFigure, q_str, tlt, ...
+				'Options', {'Single Pulse', 'Simultaneous Discharge'}, ...
+				'DefaultOption', 2);
+			app.ReviewEMGRCUIFigure.WindowStyle = 'normal';
 		end
+% 		else
+		switch stim_mode
+			case 'Single Pulse'
+				tbl.ISI_ms = ones(height(tbl), 1);
+			case 'Simultaneous Discharge'
+				tbl.ISI_ms = zeros(height(tbl), 1);
+		end
+% 		end
 	end
 end
 
