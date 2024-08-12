@@ -1,14 +1,5 @@
-function add_point2rc(h_ax, table_row_num, magstim_val, mep_val)
+XXXXXfunction add_point2rc(h_ax, table_row_num, magstim_val, mep_val)
 
-% make sure recruit curve window is in front, so context menu gets
-% created in the correct figure
-figure(h_ax.Parent.Number)
-
-h_line = line(h_ax, magstim_val, mep_val, ...
-	'Marker', '.', 'MarkerSize', 40);
-h_line.UserData.table_row_num = table_row_num;
-
-drawnow
 
 % context menu to disable/enable points
 cmenu = uicontextmenu;

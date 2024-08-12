@@ -44,6 +44,11 @@ review_emg_rc - first looks in the analysis hierarchy for *_datapoints.csv. If i
 	- sici datapoints are read in, as they are added to the figure, the mean and confidence interval lines are computed and updated in the sici figure. If an existing sici_info.txt file is found and read in, then read in values are compared to what is in the sici fig. If the figure mean values are not the same as the ones in the file, then info is sent to the command window and beeps.
 
 
+info_to_db - start in the tms analysis hierarchy. (If you don't, you will be given a dialog box to locate it.) Info from _rc_datapoints_analysis_info.txt and _rc_datapoints.csv is used to fill in the table with the MEP Max Info. The mean of latencies is computed from the datapoints table.
+
+
+
+
 ============================================
 magstim, bistim, and simulataneous discharge
 --------------------------------------------
@@ -61,7 +66,7 @@ sici_info.txt - ts and cs values are the numbers on the bistim setup of stimulat
 MEP latency and MEP-max amplitude
 ---------------------------------
 2022-12-12: Discussion between S Pundik & P Skelly: decided to use methods from Cerins 2022 to determine active MEP latency. We will extract the MEP latency and the mean MEP-max amplitude of the highest stimulator output recorded for the recruitment curve.
-	- ref: Cerins et al, “Assessment of cortical inhibition depends on inter individual differences in the excitatory neural populations activated by transcranial magnetic stimulation”, Nature Scientific Reports, 2022
+	- ref: Cerins et al, “Assessment of cortical inhibition depends on inter individual differences in the excitatory neural populations activated by transcranial magnetic stimulation”, Nature Scientific Reports, 2022, which in turn references Hamada 2013.
 	- examine each epoch/trial/trace and roughly define MEP window. Only use trials where the EMG spike in the window is consistent with other probable MEPs. If the spike in the window seems like spontaneous activity (often also seen in the pre-stim EMG time period), then exclude that trial from latency calculation.
 	- select the multiple trials to average. Each individual trace should have some activity that exceeds the std dev lines in the approximate MEP window.
 	- Using 3 std dev (of the prestim emg). The # of std dev can be changed. Cerins used 5. Hamada 2013 used 2 std dev.
@@ -72,8 +77,90 @@ MEP latency and MEP-max amplitude
 	- A trace is determined to be an MEP if EMG exceeds +/- 3 Std dev of prestim emg. 
 	- Generally 2 clicks in the Matlab app. First click moves line to EMG crossing the intersection with the prestim 3 std dev. Second click moves the line back the other direction to the previous peak in the opposite direction.
 
+
+2023-03-09: set up tables in the database 
+2023-03-09: send data from datapoint tables to the database. Include error checking.
+
+=================================
+File & toolbox dependencies
+---------------------------------
+emg_activity_mvc_goal.mlapp
+	{'/Users/peggy/Documents/MATLAB/monitoremg/drawGoal.m'                      }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/emg_activity_mvc_goal.mlapp'     }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/emg_data_start_stop.m'           }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_emg_act_monitor_parameters.m'}
+    {'/Users/peggy/Documents/MATLAB/monitoremg/magstim_val.data'                }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/removeGoal.m'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/run_emg.m'                       }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/setup_memmap.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/updateDisplay.m'                 }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/readparamfile.m'             }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/readtextfile.m'              }
+    'Signal Processing Toolbox'
+    'Instrument Control Toolbox'
+
+emg_rc.mlapp
+	{'/Users/peggy/Documents/MATLAB/monitoremg/activate_deactivate_sample.m'    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/add_point2rc.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/add_point2sici.m'                }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/close_mep_fig.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/compute_patch.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/compute_pre_stim_emg_std_value.m'}
+    {'/Users/peggy/Documents/MATLAB/monitoremg/compute_pre_stim_emg_value.m'    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/confidence_intervals.m'          }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/confirm_savename.m'              }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/data_point_menu_callback.m'      }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/display_average_emg.m'           }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/display_mep.m'                   }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/display_rc.m'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/display_sici.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/draw_emg_data.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/edit_epoch.m'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/edit_xlims.m'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/emg_rc.mlapp'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/find_rc_datapoint.m'             }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/find_selected_radio_button.m'    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/find_uitable_column.m'           }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_data_var_mep_method.m'       }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_emg_data.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_emg_rc_parameters.m'         }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_emgdata_sample.m'            }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/get_rc_fit_info_file_name.m'     }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/init_avg_emg_fig.m'              }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/init_disp_axes.m'                }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/init_rc_fig.m'                   }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/init_sici_fig.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/load_stim_emg_data.m'            }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/print_avg_emg.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/print_rc.m'                      }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/print_sici.m'                    }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/rc_boltzman_fit.m'               }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/rc_change_mep_val.m'             }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/rc_change_norm_factor.m'         }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/rc_change_stim_val.m'            }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/recalc_sici.m'                   }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/save_and_close_avg_emg.m'        }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/save_and_close_rc.m'             }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/save_and_close_sici.m'           }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/save_rc_table.m'                 }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/setup_memmap.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/sici_edit_ts.m'                  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/update_avg_emg.m'                }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/update_review_emg_data_line.m'   }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/update_sici_mean_sc_ci_lines.m'  }
+    {'/Users/peggy/Documents/MATLAB/monitoremg/write_fit_info.m'                }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/draggable.m'                 }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/findwind.m'                  }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/readparamfile.m'             }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/readtextfile.m'              }
+    'Statistics and Machine Learning Toolbox'
+
+magspy.mlapp
+	{'/Users/peggy/Documents/MATLAB/magspy.mlapp'                  }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/ML_W_switch.m'  }
+    {'/Users/peggy/Documents/MATLAB/utils_for_apps/findUSBserial.m'}
+
 ++++++++++
 TODO
 ++++++++++
-2023-02-22: set up tables in the database 
-2023-02-22: send data from datapoint tables to the database. Include error checking.
+

@@ -15,12 +15,13 @@ end
 keywords = {'ip address' 'sampling frequency (Hz)' 'average time period (sec)' 'emg channel' ...
 	'activation goal' 'emg pre trigger time (msec)' 'emg post trigger time (msec)' ...
 	'baseline_emg_begin' 'baseline_emg_end' 'baseline_emg_method' ...
-	'mep_p2p_method' 'mep_thresh'};
-defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'abs', 200};
+	'mep_p2p_method' 'mep_thresh' 'brainvision event label'};
+defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'abs', 200, 'R128'};
 paramscell = readparamfile(parameter_file, keywords, defaults);
 %            app.params.ipAddr    = paramscell{1};
 app.params.sampFreq  = paramscell{2};
-app.EMGSamplingFreqLabel.Text = ['EMG Sampling Freq: ' num2str(app.params.sampFreq) ' Hz'];
+app.SamplingFreqHzEditField.Value = app.params.sampFreq;
+% app.EMGSamplingFreqLabel.Text = ['EMG Sampling Freq: ' num2str(app.params.sampFreq) ' Hz'];
 %            app.params.avgPeriod = paramscell{3};
 %            app.params.dispChan  = paramscell{4};
 app.params.goalPct   = paramscell{5};
@@ -31,6 +32,7 @@ app.params.postTriggerTime = paramscell{7};
 app.PostTriggerLabel.Text = ['Post Trigger: ' num2str(app.params.postTriggerTime) ' ms'];
 app.preEmgMinEditField.Value = paramscell{8};
 app.preEmgMaxEditField.Value = paramscell{9};
+
 switch paramscell{10} % baseline_emg_method
 	case 'mean_rect'
 		app.MeanRectifiedValueButton.Value = 1;
@@ -49,6 +51,8 @@ switch paramscell{11} % mep_p2p_method
 end
 app.MEPThresholdEditField.Value = paramscell{12};
 
+app.params.bvlabel = paramscell{13};
+app.EventLabelEditField.Value = app.params.bvlabel;
 % 
 % seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 % seg_num_points = round(app.params.sampFreq*seg_time);

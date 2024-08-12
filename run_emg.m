@@ -126,7 +126,7 @@ while app.StartButton.Value
 				% disp(markInfo.desc')
 				% disp(markInfo.label)
 				val = 1;
-				if strncmp(markInfo(1).label', 'R128', 4)
+				if strncmp(markInfo(1).label', app.params.bvlabel, length(app.params.bvlabel))
 					% markInfo.pos is zero-based relative position in the block 
 					if isnan(triggerPos)
 % 						disp(size(app.emgTriggerDataMat,2))

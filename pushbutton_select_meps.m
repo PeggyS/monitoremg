@@ -1,4 +1,4 @@
-function pushbutton_select_meps(source, event, app)
+function pushbutton_select_meps(~, ~, app)
 % for the selected row in the table, select all rows with the same
 % stimulator settings that have mep data within the begin/end window
 % exceeding their std dev lines
@@ -30,15 +30,15 @@ bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
 isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
 is_mep_col = find(contains(app.h_uitable.ColumnName, '>Is<'));
-latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
-mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
+% latency_col = find(contains(app.h_uitable.ColumnName, '>latency<'));
+% mep_end_col = find(contains(app.h_uitable.ColumnName, '>end<'));
 
 % get stimulator settings
 magstim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, magstim_col};
 bistim_val = app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col};
 isi_val = app.h_uitable.Data{j_now_selected_rows(1)+1, isi_col};
 if ~isempty(st_col)
-	stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col}; %#ok<FNDSB> 
+	stim_type = app.h_uitable.Data{j_now_selected_rows(1)+1, st_col};  
 else
 	stim_type = '';
 end
@@ -59,6 +59,17 @@ mep_rows = [];
 isi_shift_pts = 0;
 if app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 	isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
+elseif app.CheckBoxSici.Value == 1 && isi_val > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+	% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+	% and the data needs to be shifted
+	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+	if app.h_uitable.Data{j_now_selected_rows(1)+1, bistim_col} > 0 %#ok<FNDSB> 
+		% test stim in the lower/bistim stimulator
+		isi_shift_pts = round(app.params.sampFreq * isi_val / 1000);
+	else
+		% test stim with 0 in the lower/bistim stimulator
+		isi_shift_pts = 0;
+	end
 end
 % update conditioning stim line h_cs_line
 app.h_cs_line.XData = -isi_val*[1 1];

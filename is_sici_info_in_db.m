@@ -19,7 +19,9 @@ if ~isempty(db_tbl)
 	app_tbl.Properties.VariableNames = lower(app_tbl.Properties.VariableNames);
 	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'num_mep', 'num_meps');
 	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'mean_latency', 'mep_latency_mean');
+	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'num_latency_manual_adjust', 'num_mep_latencies_manually_adjusted');
 	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'mean_end', 'mep_end_time_mean');
+	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'num_end_manual_adjust', 'num_mep_end_times_manually_adjusted');
 	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'mean_mep_ampl', 'mep_amplitude_mean');
 	app_tbl.Properties.VariableNames = strrep(app_tbl.Properties.VariableNames, 'num_comments', 'num_samples_with_comments');
 	app_tbl = sortrows(app_tbl, 'stim_type');
@@ -37,9 +39,11 @@ if ~isempty(db_tbl)
 	end
 	if match == true
 		% check float/double vars that may not exactly match
-		var_list = {'mep_latency_mean' 'mep_end_time_mean' 'mep_amplitude_mean'};
+		var_list = {'mep_latency_mean' 'mep_end_time_mean' 'mep_amplitude_mean' ...
+			'num_mep_latencies_manually_adjusted' 'num_mep_end_times_manually_adjusted'};
 		for v_cnt = 1:length(var_list)
-			if max(abs(app_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-2
+			if max(abs(app_tbl.(var_list{v_cnt}) - db_tbl.(var_list{v_cnt}))) < 1e-2 || ...
+					(all(isnan(app_tbl.(var_list{v_cnt}))) && all(isnan(db_tbl.(var_list{v_cnt}))))
 				match = true;
 			else
 				match = false;

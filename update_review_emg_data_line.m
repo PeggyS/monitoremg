@@ -12,20 +12,38 @@ isi_col = find(contains(app.h_uitable.ColumnName, '>ISI<'));
 isi_ms = h_tbl.Data{new_row, isi_col}; %#ok<FNDSB>
 st_col = find(contains(app.h_uitable.ColumnName, '>Type<'));
 if ~isempty(st_col)
-	stim_type = h_tbl.Data{new_row, st_col}; %#ok<FNDSB>
+	stim_type = h_tbl.Data{new_row, st_col}; 
 else
 	stim_type = '';
 end
 
 % if sici/icf and ISI > 0, shift the data by ISI ms
-if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
+%if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
+% line above assumes test stim is the magstim, but we changed to using the bistim
+if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmpi(stim_type, 'Test Stim')
+	% sici & icf
 	isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+elseif app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+	% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+	% and the data needs to be shifted
+	bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+	if h_tbl.Data{new_row, bistim_col} > 0 %#ok<FNDSB> 
+		% test stim in the lower/bistim stimulator
+		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+	else
+		% test stim with 0 in the lower/bistim stimulator
+		isi_shift_pts = 0;
+		isi_ms = 0;
+	end
 else
+	% bistim
 	isi_shift_pts = 0;
 	isi_ms = 0;
 end
 tmp_data = app.emg_data(new_row, app.emg_data_num_vals_ignore+1:end);
+
 app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
+
 % update conditioning stim line h_cs_line
 app.h_cs_line.XData = -isi_ms*[1 1];
 

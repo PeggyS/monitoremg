@@ -42,7 +42,17 @@ for r_cnt = 1:height(unq_tbl)
 	unq_tbl.num_samples(r_cnt) = height(stim_tbl);
 	unq_tbl.num_mep(r_cnt) = sum(stim_tbl.Is_MEP);
 	unq_tbl.mean_latency(r_cnt) = mean(stim_tbl.MEP_latency);
+	if any(contains(stim_tbl.Properties.VariableNames, 'latency_adjusted'))
+		unq_tbl.num_latency_manual_adjust(r_cnt) = sum(stim_tbl.latency_adjusted);
+	else
+		unq_tbl.num_latency_manual_adjust(r_cnt) = NaN;
+	end
 	unq_tbl.mean_end(r_cnt) = mean(stim_tbl.MEP_end);
+	if any(contains(stim_tbl.Properties.VariableNames, 'end_adjusted'))
+		unq_tbl.num_end_manual_adjust(r_cnt) = sum(stim_tbl.end_adjusted);
+	else
+		unq_tbl.num_end_manual_adjust(r_cnt) = NaN;
+	end
 	unq_tbl.mean_mep_ampl(r_cnt) = mean(stim_tbl.MEPAmpl_uVPp);
 	if isnumeric(stim_tbl.comments)
 		% comments are numeric, therefore there are no comments
@@ -64,7 +74,9 @@ app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effectiv
 app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
 app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
 app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
+app.UITable_Unique_Stims.UserData.num_latency_manual_adjust = unq_tbl.num_latency_manual_adjust(max_row);
 app.UITable_Unique_Stims.UserData.mean_end = unq_tbl.mean_end(max_row);
+app.UITable_Unique_Stims.UserData.num_end_manual_adjust = unq_tbl.num_end_manual_adjust(max_row);
 app.UITable_Unique_Stims.UserData.mep_max = max_val;
 app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
 

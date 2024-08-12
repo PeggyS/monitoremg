@@ -169,18 +169,27 @@ if any(isnan(tbl.ISI_ms))
 	else
 		% not sici icf, check stim_mode
 		if ~exist('stim_mode', 'var')
-			beep
-			disp('init_datapoint_table: stim_mode should have been created!')
-			disp('setting all ISI to zero')
-			tbl.ISI_ms = zeros(height(tbl), 1);
-		else
-			switch stim_mode
-				case 'Single Pulse'
-					tbl.ISI_ms = ones(height(tbl), 1);
-				case 'Simultaneous Discharge'
-					tbl.ISI_ms = zeros(height(tbl), 1);
-			end
+% 			beep
+% 			disp('init_datapoint_table: stim_mode should have been created!')
+% 			disp('setting all ISI to zero')
+% 			tbl.ISI_ms = zeros(height(tbl), 1);
+			% ask the user if this was simultaneous discharge or not
+			q_str = 'Was this single pulse, Simultaneous Discharge of the stimulator, or SICI/ICF?';
+			tlt = 'Stimulator Mode';
+			app.ReviewEMGRCUIFigure.WindowStyle = 'alwaysontop';
+			stim_mode = uiconfirm(app.ReviewEMGRCUIFigure, q_str, tlt, ...
+				'Options', {'Single Pulse', 'Simultaneous Discharge'}, ...
+				'DefaultOption', 2);
+			app.ReviewEMGRCUIFigure.WindowStyle = 'normal';
 		end
+% 		else
+		switch stim_mode
+			case 'Single Pulse'
+				tbl.ISI_ms = ones(height(tbl), 1);
+			case 'Simultaneous Discharge'
+				tbl.ISI_ms = zeros(height(tbl), 1);
+		end
+% 		end
 	end
 end
 
@@ -302,20 +311,33 @@ if ~any(contains(tbl.Properties.VariableNames, 'GoalEMGmax') | ...
 	tbl.GoalEMGmax = nan(height(tbl), 1);
 end
 
-% ======== add 3 new columns: is_mep, mep_latency, mep_end
+% ======== add 5 new columns: is_mep, mep_latency, latency_manual_adj, mep_end, end_manual_adj
 % if columns are not already there
 if ~any(contains(tbl.Properties.VariableNames, 'Is_MEP'))
 	tbl.Is_MEP = false(height(tbl),1);
 else
 	tbl.Is_MEP = logical(tbl.Is_MEP);
 end
+
 if ~any(contains(tbl.Properties.VariableNames, 'MEP_latency'))
 	tbl.MEP_latency = 10*ones(height(tbl), 1);
 end
+if ~any(contains(tbl.Properties.VariableNames, 'latency_adjusted'))
+	tbl.latency_adjusted = false(height(tbl),1);
+else
+	tbl.latency_adjusted = logical(tbl.latency_adjusted);
+end
+
 if ~any(contains(tbl.Properties.VariableNames, 'MEP_end'))
 	tbl.MEP_end = 90*ones(height(tbl), 1);
 end
-tbl = movevars(tbl, {'Is_MEP','MEP_latency','MEP_end'}, 'After', 'MEPAmpl_uVPp');
+if ~any(contains(tbl.Properties.VariableNames, 'end_adjusted'))
+	tbl.end_adjusted = false(height(tbl),1);
+else
+	tbl.end_adjusted = logical(tbl.end_adjusted);
+end
+tbl = movevars(tbl, {'Is_MEP','MEP_latency', 'latency_adjusted', 'MEP_end', 'end_adjusted'}, ...
+	'After', 'MEPAmpl_uVPp');
 
 % ======== add comment column
 if ~any(contains(tbl.Properties.VariableNames, 'comments'))
@@ -331,6 +353,8 @@ else
 		tbl.comments = cell_array;
 	end
 end
+% move comments after MEPAUC
+tbl = movevars(tbl, {'comments'}, 'After','MEPAUC_uV_ms');
 
 % ======= rc or sici fig ===========
 if app.CheckBoxSici.Value == 1
@@ -342,16 +366,18 @@ if app.CheckBoxSici.Value == 1
 		'<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		'<html><center>Is<br />MEP</center></html>', ...
 		'<html><center>MEP<br />latency</center></html>', ...
+		'<html><center>Latency<br />adjusted</center></html>', ...
 		'<html><center>MEP<br />end</center></html>', ...
+		'<html><center>End<br />adjusted</center></html>', ...
 		'<html><center>MEPAUC<br />uV*ms</center></html>', ...
+		'<html><center>Comments</center></html>', ...
 		'<html><center>PreStimEmg<br />100ms</center></html>', ...
 		'<html><center>MonitorEMG<br />val</center></html>', ...
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
-		'<html><center>Goal<br />Max</center></html>', ...
-		'<html><center>Comments</center></html>'};
-	colwidths = {40,   30,   50,  50,   30,   55,    50,    30,   48,    40,    50,   'auto', 'auto', 60,    50,    50,  'auto'};
-	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false,  false, false, false, true];
+		'<html><center>Goal<br />Max</center></html>'};
+	colwidths = {40,   30,   50,  50,   30,   55,    50,    30,   48,   48,    40,    48,   50,     80, 'auto', 'auto', 60,    45,    45};
+	coledit = [false, true, true, true, true, false, false, true, false, true, false, true, false, true, false,  false, false, false, true];
 
 	% send the test stim to the sici icf window
 	if ~exist('test_stim_val', 'var')
@@ -373,16 +399,18 @@ else % rc or data only / average
 		'<html><center>MEPAmpl<br />uVPp</center></html>', ...
 		'<html><center>Is<br />MEP</center></html>', ...
 		'<html><center>MEP<br />latency</center></html>', ...
+		'<html><center>Latency<br />adjusted</center></html>', ...
 		'<html><center>MEP<br />end</center></html>', ...
+		'<html><center>End<br />adjusted</center></html>', ...
 		'<html><center>MEPAUC<br />uV*ms</center></html>', ...
+		'<html><center>Comments</center></html>', ...
 		'<html><center>PreStimEmg<br />100ms</center></html>', ...
 		'<html><center>MonitorEMG<br />val</center></html>', ...
 		'<html><center>Goal<br />EMG</center></html>', ...
 		'<html><center>Goal<br />Min</center></html>', ...
-		'<html><center>Goal<br />Max</center></html>', ...
-		'<html><center>Comments</center></html>'};
-	colwidths = {40,  30,   50,   50,   30,   50,    60,    30,    48,    40,    50,   'auto', 'auto', 60,    50,    50, 'auto'};
-	coledit = [false, true, true, true, true, false, false, true, false, false, false, false, false,  false, false, false, true];
+		'<html><center>Goal<br />Max</center></html>'};
+	colwidths = {40,  30,   50,   50,   30,   50,    60,    30,    48,    48,  40,    48,   50,     80,  'auto', 'auto', 60,    45,    45};
+	coledit = [false, true, true, true, true, false, false, true, false, true, false, true, false, true, false,  false, false, false, false];
 end
 
 

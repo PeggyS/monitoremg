@@ -35,7 +35,9 @@ conn.dbClose()
 % num_samples
 % num_meps
 % mep_mean_latency
+% num_mep_latencies_manually_adjusted
 % mep_mean_end_time
+% num_mep_end_times_manually_adjusted
 % mep_mean_amplitude
 % num_samples_with_comments
 % num_sd
@@ -59,18 +61,20 @@ if ~isempty(qry_data_cell_array)
 	db_info.num_samples = qry_data_cell_array{8};
 	db_info.num_meps = qry_data_cell_array{9};
 	db_info.mep_mean_latency = qry_data_cell_array{10};
-	db_info.mep_mean_end_time = qry_data_cell_array{11};
-	db_info.mep_mean_amplitude = qry_data_cell_array{12};
-	db_info.num_samples_with_comments = qry_data_cell_array{13};
-	db_info.num_sd = qry_data_cell_array{14};
-	db_info.e_stim_m_max = qry_data_cell_array{15};
-	db_info.did_rc_plateau = qry_data_cell_array{16};
-	db_info.analyzed_by = qry_data_cell_array{17};
-	db_info.analyzed_when = qry_data_cell_array{18};
-	db_info.verified_by = qry_data_cell_array{19};
-	db_info.verified_when = qry_data_cell_array{20};
-	db_info.comments = qry_data_cell_array{21};
-	db_info.last_update = qry_data_cell_array{22};
+	db_info.num_mep_latencies_manually_adjusted = qry_data_cell_array{11};
+	db_info.mep_mean_end_time = qry_data_cell_array{12};
+	db_info.num_mep_end_times_manually_adjusted = qry_data_cell_array{13};
+	db_info.mep_mean_amplitude = qry_data_cell_array{14};
+	db_info.num_samples_with_comments = qry_data_cell_array{15};
+	db_info.num_sd = qry_data_cell_array{16};
+	db_info.e_stim_m_max = qry_data_cell_array{17};
+	db_info.did_rc_plateau = qry_data_cell_array{18};
+	db_info.analyzed_by = qry_data_cell_array{19};
+	db_info.analyzed_when = qry_data_cell_array{20};
+	db_info.verified_by = qry_data_cell_array{21};
+	db_info.verified_when = qry_data_cell_array{22};
+	db_info.comments = qry_data_cell_array{23};
+	db_info.last_update = qry_data_cell_array{24};
 else
 	db_info = [];
 end

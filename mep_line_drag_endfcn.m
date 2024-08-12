@@ -12,6 +12,16 @@ app.h_edit_mep_end.String = num2str(mep_end_time, '%.2f');
 t_dur = mep_end_time - mep_start_time;
 app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
+% update the check box that it was manually adjusted
+switch h_line.Tag
+	case 'mep_min_line'
+		app.h_chkbx_adjust_mep_beg.Value = 1;
+		mep_manual_adjust(app.h_chkbx_adjust_mep_beg, [], app, 'begin')
+	case 'mep_max_line'
+		app.h_chkbx_adjust_mep_end.Value = 1;
+		mep_manual_adjust(app.h_chkbx_adjust_mep_beg, [], app, 'end')
+end
+
 % get the selected rows, so if values change and cells become unselected,
 % they can be reselected
 % reselect the cells (if needed)
@@ -19,7 +29,8 @@ jUIScrollPane = findjobj(app.h_uitable);
 jUITable = jUIScrollPane.getViewport.getView;
 j_original_selected_rows = jUITable.getSelectedRows;
 if isempty(j_original_selected_rows)
-	return
+	j_original_selected_rows = str2double(app.h_edit_epoch.String)-1;
+% 	return
 end
 % if ~isempty(j_original_selected_rows)
 % 	fprintf('mep_line_drag_endfcn: original table cells selected: %s\n', mat2str(j_original_selected_rows))
@@ -56,9 +67,20 @@ if app.CheckBoxSici.Value == true % doing sici
 	isi_shift_pts = 0;
 	if isi_ms > 0 && ~strcmp(stim_type, 'Test Stim')
 		isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+	elseif isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+			% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+		% and the data needs to be shifted
+		bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+		if app.h_uitable.Data{j_original_selected_rows(1)+1, bistim_col} > 0 %#ok<FNDSB>
+			% test stim in the lower/bistim stimulator
+			isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+		else
+			% test stim with 0 in the lower/bistim stimulator
+			isi_shift_pts = 0;
+		end
 	end
 elseif app.CheckBoxRc.Value == true % doing rc
-% 	row_indices = 1:length(app.h_uitable.Data);
+	% 	row_indices = 1:length(app.h_uitable.Data);
 	% change 2023-02-08: update the current epoch only
 	row_indices = str2double(app.h_edit_epoch.String);
 	isi_shift_pts = 0;

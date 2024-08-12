@@ -32,6 +32,7 @@ new_row_to_show = most_recent_selected;
 % fprintf('rc_dp_tbl_select_callback: start: most_recent: %d, all_selected: %s\n', most_recent_selected, mat2str(all_selected))
 
 if ~isempty(cell_select_data.Indices)
+	app.h_uitable.UserData.Selection = cell_select_data.Indices;
 	selected_rows = cell_select_data.Indices(:,1);
 % 	fprintf('rc_dp_tbl_select_callback: Indices = %s\n', mat2str(selected_rows))
 else
@@ -76,6 +77,13 @@ app.h_edit_mep_end.String = num2str(mep_end, '%.2f');
 t_dur = mep_end - latency;
 app.h_edit_mep_dur.String = num2str(t_dur, '%.2f');
 
+% update the latency adjust check boxes from the uitable values
+adj_latency_col = contains(app.h_uitable.ColumnName, '>Latency<');
+adj_mep_end_col = contains(app.h_uitable.ColumnName, '>End<');
+
+app.h_chkbx_adjust_mep_beg.Value = app.h_uitable.Data{new_row_to_show, adj_latency_col};
+app.h_chkbx_adjust_mep_end.Value = app.h_uitable.Data{new_row_to_show, adj_mep_end_col};
+
 % update emg data
 update_review_emg_data_line(app, h_tbl, new_row_to_show)
 
@@ -91,7 +99,7 @@ if length(all_selected) > 1
 	ymin = 0;
 	ymax = 0;
 	y_data_matrix = [];
-	
+
 	% add a line for each selected row
 	for l_cnt = 1:length(all_selected)
 		row = all_selected(l_cnt);
@@ -99,19 +107,31 @@ if length(all_selected) > 1
 		% shift the data by the ISI (time between conditioning stim and test stim)
 		isi_ms = h_tbl.Data{row, isi_col}; %#ok<FNDSB>
 		if ~isempty(st_col)
-			stim_type = h_tbl.Data{row, st_col}; %#ok<FNDSB>
+			stim_type = h_tbl.Data{row, st_col};
 		else
 			stim_type = '';
 		end
 		% if sici/icf and ISI > 0, shift the data by ISI ms
 		if app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && ~strcmp(stim_type, 'Test Stim')
 			isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+		elseif app.CheckBoxSici.Value == 1 && isi_ms > 0 && ~isempty(stim_type) && strcmpi(stim_type, 'Test Stim') ...
+			% test stim: check bistim col. If it has a non-zero value, then it was used for the test stim
+			% and the data needs to be shifted
+			bistim_col = find(contains(app.h_uitable.ColumnName, '>BiStim<'));
+			if app.h_uitable.Data{row, bistim_col} > 0 %#ok<FNDSB>
+				% test stim in the lower/bistim stimulator
+				isi_shift_pts = round(app.params.sampFreq * isi_ms / 1000);
+			else
+				% test stim with 0 in the lower/bistim stimulator
+				isi_shift_pts = 0;
+			end
+
 		else
 			isi_shift_pts = 0;
 		end
 		tmp_data = app.emg_data(row, app.emg_data_num_vals_ignore+1:end);
 		y = [tmp_data(isi_shift_pts+1:end) tmp_data(end)*ones(1,isi_shift_pts)];
-		
+
 		h_lines(l_cnt) = line(app.h_disp_emg_axes, x, y, 'Color', [0.8 0.8 0.8], 'Tag', 'emg_select_line'); %#ok<AGROW>
 		ymin = min([ymin min(y)]);
 		ymax = max([ymax max(y)]);
@@ -126,8 +146,11 @@ if length(all_selected) > 1
 	% if rows with different ISI are selected, this could be wrong FIXME
 	% increase the resolution on the mean line using spline interpolation
 	fine_res_x = min(x) : diff(x(1:2))/10 : max(x);
+	warn_id = 'MATLAB:chckxy:IgnoreNaN';
+	warning('off', warn_id)
 	fine_res_mean_emg = spline(x, mean_emg, fine_res_x);
-	h_mean_emg_line = line(app.h_disp_emg_axes, fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 1.5, ...
+	warning('on', warn_id)
+	h_mean_emg_line = line(app.h_disp_emg_axes, fine_res_x, fine_res_mean_emg, 'Color', 'k', 'LineWidth', 4, ...
 		'Tag', 'mean_mep_line');
 	h_lines(l_cnt+1) = h_mean_emg_line; %#ok<NASGU> 
 	% compute mean prestim value for mean line

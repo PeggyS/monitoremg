@@ -48,7 +48,7 @@ else
 	app.rc_fig = figure('Position', [1544 483 506 505], ...
 		'NumberTitle', 'off', 'Name', 'Recruitment Curve', ...
 		'Tag', 'rc_fig', ...
-		'ToolBar', 'none', 'MenuBar', 'none');
+		'ToolBar', 'none'); %% 'MenuBar', 'none');
 	% if not on brainsight, move the window to be on the screen
 	[~, computer_name] = system('hostname');
 	if ~contains(computer_name, 'Brainsight')
@@ -60,8 +60,8 @@ else
 	app.rc_axes = axes(app.rc_fig, 'Position', [0.16 0.3 0.775 0.6], ...
 		'Fontsize', 20);
 	app.rc_axes.Toolbar.Visible = 'on';
-	ylabel('MEP Vp-p (\muV)')
-	xlabel('Magstim Power')
+	ylabel(app.rc_axes, 'MEP Vp-p (\muV)')
+	xlabel(app.rc_axes, 'Magstim Power')
 
 	% userdata is a table with the data
 	app.rc_axes.UserData = cell2table(cell(0,3), ...

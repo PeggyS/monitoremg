@@ -19,8 +19,12 @@ for col_cnt = 1:length(col_names)
 			var = 'Is_MEP';
 		case '<html><center>MEP<br />latency</center></html>'
 			var = 'MEP_latency';
+		case '<html><center>Latency<br />adjusted</center></html>'
+			var = 'latency_adjusted';
 		case '<html><center>MEP<br />end</center></html>'
 			var = 'MEP_end';
+		case '<html><center>End<br />adjusted</center></html>'
+			var = 'end_adjusted';
 		case '<html><center>MEPAUC<br />uV*ms</center></html>'
 			var = 'MEPAUC_uV_ms';
 		case '<html><center>PreStimEmg<br />100ms</center></html>'

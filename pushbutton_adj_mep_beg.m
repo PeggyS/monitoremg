@@ -5,7 +5,8 @@ function pushbutton_adj_mep_beg(src, evt, app) %#ok<INUSL>
 % 2023-02-08: change function so it will only work when a single epoch is
 % chosen. Will not work on the mean_emg_line
 
-% disp('pushbutton_adj_mep_beg')
+
+%disp('pushbutton_adj_mep_beg')
 mep_beg_time = app.h_t_min_line.XData(1);
 
 % mean_emg_data line

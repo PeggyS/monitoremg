@@ -77,7 +77,7 @@ func = @(p,x) p(4) + (p(3)-p(4))./(1+exp(p(1)*(p(2)-x)));
 % p = parameter vector: [slope m, S50, MEP-max, MEP-min]
 
 % change initial parameter for MEPmax depending on the axis limits
-if isempty(app.rc_fit_ui.edMEPmax.String)
+if isempty(app.rc_fit_ui.edMEPmax.String) || contains(app.rc_fit_ui.edMEPmax.String, 'nan', 'IgnoreCase',true)
 	ax_ymax = max(app.rc_axes.YLim);
 	app.rc_fit_ui.edMEPmax.String = num2str(0.75*ax_ymax);
 end
