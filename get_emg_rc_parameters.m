@@ -20,6 +20,9 @@ defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'a
 paramscell = readparamfile(parameter_file, keywords, defaults);
 %            app.params.ipAddr    = paramscell{1};
 app.params.sampFreq  = paramscell{2};
+% HERE %
+% remove saving info in app fields - These parameters cannot be edited in emg_rc.mlapp. They must 
+% match the parameters read in and used by emg_activity_mvc_goal.mlapp.
 app.SamplingFreqHzEditField.Value = app.params.sampFreq;
 % app.EMGSamplingFreqLabel.Text = ['EMG Sampling Freq: ' num2str(app.params.sampFreq) ' Hz'];
 %            app.params.avgPeriod = paramscell{3};
