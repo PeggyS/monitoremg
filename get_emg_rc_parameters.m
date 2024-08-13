@@ -20,11 +20,12 @@ defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'a
 paramscell = readparamfile(parameter_file, keywords, defaults);
 %            app.params.ipAddr    = paramscell{1};
 app.params.sampFreq  = paramscell{2};
-% HERE %
-% remove saving info in app fields - These parameters cannot be edited in emg_rc.mlapp. They must 
-% match the parameters read in and used by emg_activity_mvc_goal.mlapp.
-app.SamplingFreqHzEditField.Value = app.params.sampFreq;
-% app.EMGSamplingFreqLabel.Text = ['EMG Sampling Freq: ' num2str(app.params.sampFreq) ' Hz'];
+
+% cannot save info in app fields because emg_rc.mlapp cannot edit them. They must match the values
+% used by emg_activity_mvc_goal.mlapp. I'd have to set up a new memory map
+% to share the values between the apps.
+
+app.EMGSamplingFreqLabel.Text = ['EMG Sampling Freq: ' num2str(app.params.sampFreq) ' Hz'];
 %            app.params.avgPeriod = paramscell{3};
 %            app.params.dispChan  = paramscell{4};
 app.params.goalPct   = paramscell{5};
@@ -55,7 +56,7 @@ end
 app.MEPThresholdEditField.Value = paramscell{12};
 
 app.params.bvlabel = paramscell{13};
-app.EventLabelEditField.Value = app.params.bvlabel;
+app.BVEventLabel.Text = ['BrainVision Event Label: ' app.params.bvlabel];
 % 
 % seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 % seg_num_points = round(app.params.sampFreq*seg_time);
