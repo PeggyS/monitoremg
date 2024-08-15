@@ -29,6 +29,10 @@ if isprop(app, 'EMGDisplayRCUIFigure')
 
 	y_data = (app.rc_axes.UserData.(data_var)(logical(app.rc_axes.UserData.Use))) / norm_factor;
 
+	% mep_begin & end times - do we need these?
+	% HERE %
+	% mep_begin = 
+
 else
 	% running in review_emg_rc.mlapp
 	use_ind = find(contains(app.h_uitable.ColumnName, 'use', 'IgnoreCase', true));
