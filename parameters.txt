@@ -1,6 +1,6 @@
 ip address : 10.83.111.6
 sampling frequency (Hz) : 1000
-brainvision event label : S  5
+brainvision event label : R128
 average time period (sec) : 0.5
 emg channel : 1
 activation goal : 0.2
@@ -11,3 +11,6 @@ baseline_emg_end : -1
 baseline_emg_method : mean_rect
 mep_p2p_method : abs
 mep_thresh : 200
+lp_filt : 500
+hp_filt : 10
+notch_filt : 60

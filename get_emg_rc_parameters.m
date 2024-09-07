@@ -15,8 +15,10 @@ end
 keywords = {'ip address' 'sampling frequency (Hz)' 'average time period (sec)' 'emg channel' ...
 	'activation goal' 'emg pre trigger time (msec)' 'emg post trigger time (msec)' ...
 	'baseline_emg_begin' 'baseline_emg_end' 'baseline_emg_method' ...
-	'mep_p2p_method' 'mep_thresh' 'brainvision event label'};
-defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'abs', 200, 'R128'};
+	'mep_p2p_method' 'mep_thresh' 'brainvision event label', ...
+	'lp_filt' 'hp_filt' 'notch_filt'};
+defaults = {'192.168.1.102', 2500, 0.5, 1, 0.2, 50, 100, -50, 0, 'mean_rect', 'abs', 200, 'R128', ...
+	500, 10, 60};
 paramscell = readparamfile(parameter_file, keywords, defaults);
 %            app.params.ipAddr    = paramscell{1};
 app.params.sampFreq  = paramscell{2};
@@ -55,8 +57,15 @@ switch paramscell{11} % mep_p2p_method
 end
 app.MEPThresholdEditField.Value = paramscell{12};
 
+% brainvision trigger label
 app.params.bvlabel = paramscell{13};
 app.BVEventLabel.Text = ['BrainVision Event Label: ' app.params.bvlabel];
+
+% display filters
+app.LPEditField.Value = paramscell{14};
+app.HPEditField.Value = paramscell{15};
+app.NotchEditField.Value = paramscell{16};
+
 % 
 % seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 % seg_num_points = round(app.params.sampFreq*seg_time);
