@@ -32,7 +32,10 @@ datapoint table
 
 dragging lines in real-time display mep does not have an endfcn, so dragging the lines does not update previous rc or sici datapoint values.
 
-*_emg_dat.txt each row has stim info and emg data before and after the stimulus
+*_emg_data.txt each row has stim info and emg data before and after the stimulus
+    - the raw (unfiltered) data sent from BrainVision is saved as emg data
+        - filter to display the data around the most recent trigger sent by Brainvision in emg_rc.mlapp is in get_emg_data.m right before the call to draw_emg_data().
+        
 	- info listed before the emg data depends on when the file was created
 	- before 2019-06-01
 	- between 2019-06-01 and 2022-07-15

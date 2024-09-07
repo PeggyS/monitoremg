@@ -103,6 +103,8 @@ while app.StartButton.Value
 			 
 	         if triggerPos == triggerInd
 				 % data to emg display app
+				 % edit for addition of display filters: don't filter the
+				 % data here, send the raw data to emg_rc.mlapp. 
 				 for c_cnt = 1:num_channels
 					app.emg_data_mmap.Data(c_cnt).emg_data = filtfilt(app.hpFilt.b, app.hpFilt.a, app.emgTriggerDataMat(c_cnt,:));
 				 end
