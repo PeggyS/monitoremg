@@ -130,7 +130,7 @@ while app.CheckBoxDisplayMEP.Value
 			monitor_emg_val = app.emg_data_mmap.Data(live_chan_num).monitor_emg_val;
 
 			% filter the data to display
-			filt_data = filtfilt(app.display_filter.b, app.display_filter.a, emg_data);
+			filt_data = filtfilt(app.display_filter, emg_data);
 % 			% display the data
 			[mep_val, pre_stim_val] = draw_emg_data(app, filt_data, monitor_emg_val, ...
 				app.emg_data_mmap.Data(live_chan_num).goal_min, ...
