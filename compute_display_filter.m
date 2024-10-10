@@ -3,7 +3,7 @@ function compute_display_filter(app)
 % % parameters to high pass filter at 10 Hz
 % [b, a] = butter(4, 10/(app.params.sampFreq/2), 'high');
 
-if app.HPFilterCheckBox/Value == 1
+if app.HPFilterCheckBox.Value == 1
 	cutoff = app.HPEditField.Value;
 	[hp_b, hp_a] = butter(4, cutoff/(app.params.sampFreq/2), 'high');
 	hp_dig_filt = dfilt.df2t(hp_b, hp_a);
@@ -13,7 +13,7 @@ else
 	% transposed filter, Hd, with b=1 and a=1. This filter passes the input 
 	% through to the output unchanged.
 end
-if app.LPFilterCheckBox/Value == 1
+if app.LPFilterCheckBox.Value == 1
 	cutoff = app.LPEditField.Value;
 	[lp_b, lp_a] = butter(4, cutoff/(app.params.sampFreq/2), 'low');
 	lp_dig_filt = dfilt.df2t(lp_b, lp_a);
