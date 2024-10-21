@@ -1,6 +1,6 @@
 function is_mep_info_in_db(app)
 
-% is the data in the database?
+% is the data in the mep max & latency table?
 subject = app.SubjectEditField_muscP.Value;
 session = app.SessionEditField_muscP.Value;
 side_muscle = app.MuscleEditField_muscP.Value;
@@ -36,16 +36,28 @@ if ~isempty(db_info)
 		contains(db_info.comments, app.CommentsEditField.Value)  
 		match = true;
 	end
-	if match == true
-		app.DatabaseinfomatchesCheckBox.Value = true;
-	else
-		app.DatabaseinfomatchesCheckBox.Value = false;
-	end
+
+	app.DatabaseinfomatchesCheckBox.Value = match;
 else
 	app.InDatabaseCheckBox.Value = false;
 	app.dbLastupdatedEditField.Value = '';
 	app.DatabaseinfomatchesCheckBox.Value = false;
 end % info in the database
+
+% check for info in the rc table
+rc_info_norm = get_rc_data_from_db(subject, session, side, muscle, 'p2p', 'norm');
+if ~isempty(rc_info_norm)
+	app.InDatabaseCheckBox_2.Value = true;
+	app.dbLastupdatedEditField_2.Value = rc_info_norm.last_update{:};
+	% does the database info match what's shown here?
+	match = compare_rc_info(app.UITable_Unique_Stims.UserData.rc_info.norm, rc_info_norm);
+	app.DatabaseinfomatchesCheckBox_2.Value = match;
+	
+else
+	app.InDatabaseCheckBox_2.Value = false;
+	app.dbLastupdatedEditField_2.Value = '';
+	app.DatabaseinfomatchesCheckBox_2.Value = false;
+end
 
 return
 end

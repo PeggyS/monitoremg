@@ -132,9 +132,26 @@ end
 app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
 app.CommentsEditField.Value = info.comments;
 
+% read in the rc fit info
+rc_fname = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_not_norm.txt');
+% remove date at beginning of file name, if it is there
+rc_fname = regexprep(rc_fname, '\d{8}_', '');
+app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
+if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
+	msg = sprintf('RC p2p fit info not norm.txt file missing');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+end
+
+rc_fname = strrep(rc_fname, '_info_not_norm', '_info_norm');
+app.UITable_Unique_Stims.UserData.rc_info.norm = read_fit_info(rc_fname);
+if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
+	msg = sprintf('RC p2p fit info norm.txt file missing');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+end
+
+
 % is the data in the database?
 is_mep_info_in_db(app)
-
 
 return
 end
