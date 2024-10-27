@@ -36,7 +36,7 @@ catch
 	return
 end
 
-var_list = {'norm_factor', 'mep_beg_t', 'mep_end_t', 'slope', 's50', ...
+var_list = {'id', 'norm_factor', 'mep_beg_t', 'mep_end_t', 'slope', 's50', ...
 				'mep_min', 'mep_max', 'slope_ci_1', 'slope_ci_2', 's50_ci_1', 's50_ci_2', ...
 				'mep_min_ci_1', 'mep_min_ci_2', 'mep_max_ci_1', 'mep_max_ci_2', 'r_sq', ...
 				'auc', 'auc_mean_values', 'auc_stim_levels', 'stimulator_mode', ...
@@ -51,7 +51,7 @@ if isempty(db_data_cell_array)
 	return
 end
 
-norm_data = cell2mat(db_data_cell_array(:,1));
+norm_data = cell2mat(db_data_cell_array(:,2));
 switch normed_or_not
 	case 'norm'
 		row = find(norm_data(:,1)>1);
@@ -61,7 +61,9 @@ switch normed_or_not
 		error('unknown normed_or_not value: %s', normed_or_not)
 end
 if length(row) < 1
-	error('data not found in database')
+% 	error('data not found in database')
+	data_tbl = [];
+	return
 elseif length(row) > 1
 	error('multiple rows of data found in database')
 end

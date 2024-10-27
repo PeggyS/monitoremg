@@ -1,5 +1,10 @@
 function send_mep_max_to_db(app)
 
+% no need to update if database already matches
+if app.DatabaseinfomatchesCheckBox.Value
+	return
+end
+
 % open connection to database
 dbparams = get_db_login_params(app.db_str);
 

@@ -44,19 +44,38 @@ else
 	app.DatabaseinfomatchesCheckBox.Value = false;
 end % info in the database
 
+
 % check for info in the rc table
+app.InDatabaseCheckBox_2.Value = false;
+app.dbLastupdatedEditField_2.Value = '';
+app.DatabaseinfomatchesCheckBox_2.Value = false;
+
 rc_info_norm = get_rc_data_from_db(subject, session, side, muscle, 'p2p', 'norm');
 if ~isempty(rc_info_norm)
-	app.InDatabaseCheckBox_2.Value = true;
-	app.dbLastupdatedEditField_2.Value = rc_info_norm.last_update{:};
 	% does the database info match what's shown here?
 	match = compare_rc_info(app.UITable_Unique_Stims.UserData.rc_info.norm, rc_info_norm);
-	app.DatabaseinfomatchesCheckBox_2.Value = match;
-	
+	rc_info_norm.matches_db = match;
 else
-	app.InDatabaseCheckBox_2.Value = false;
+	rc_info_norm.matches_db = false;
+end
+
+rc_info_not_norm = get_rc_data_from_db(subject, session, side, muscle, 'p2p', 'not_norm');
+if ~isempty(rc_info_not_norm)
+	% does the database info match what's shown here?
+	match = compare_rc_info(app.UITable_Unique_Stims.UserData.rc_info.not_norm, rc_info_not_norm);
+	rc_info_not_norm.matches_db = match;
+else
+	rc_info_not_norm.matches_db = false;
+end
+
+% if both norm & not norm match and are in the database
+app.InDatabaseCheckBox_2.Value = rc_info_norm.matches_db & rc_info_not_norm.matches_db;
+app.DatabaseinfomatchesCheckBox_2.Value = rc_info_norm.matches_db & rc_info_not_norm.matches_db;
+if rc_info_norm.matches_db && rc_info_not_norm.matches_db
+	max_update_date = max([datetime(rc_info_norm.last_update{:}) datetime(rc_info_not_norm.last_update{:})]);
+	app.dbLastupdatedEditField_2.Value = string(max_update_date, 'yyyy-MM-dd HH:mm:ss');
+else
 	app.dbLastupdatedEditField_2.Value = '';
-	app.DatabaseinfomatchesCheckBox_2.Value = false;
 end
 
 return
