@@ -106,15 +106,19 @@ img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_n
 if exist(img_file, 'file')
 	app.Image_rc.ImageSource = img_file;
 else
-	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_active_p2p_fit_info_not_norm.png');
 	if exist(img_file, 'file')
 		app.Image_rc.ImageSource = img_file;
 	else
-		app.Image_rc.ImageSource = '';
+		img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+		if exist(img_file, 'file')
+			app.Image_rc.ImageSource = img_file;
+		else
+			app.Image_rc.ImageSource = '';
+		end
 	end
 end
-
-% read in the info file
+	% read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
 
 % put info into the mepmax info panel

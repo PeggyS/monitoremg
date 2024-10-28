@@ -51,6 +51,10 @@ end
 %	r_sq
 
 info = app.UITable_Unique_Stims.UserData.rc_info.(normed_or_not);
+if ~isfield(info, 'aucMeanVals')
+	% there is no rc_info to add to database
+	return
+end
 auc_vals_str = num2str(info.aucMeanVals);
 		assert(length(auc_vals_str)<=256, ...
 			'aucMeanVals converts to a string with %d chars -> longer than allowed by the database', ...
