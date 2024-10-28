@@ -29,7 +29,7 @@ if        abs(rc_info_from_file.norm_factor - rc_info_from_db.norm_factor) < 1e-
 
 	match = true;
 else
-	keyboard
+% 	keyboard
 end
 
 return

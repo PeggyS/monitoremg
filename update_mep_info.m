@@ -140,6 +140,12 @@ app.CommentsEditField.Value = info.comments;
 rc_fname = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_not_norm.txt');
 % remove date at beginning of file name, if it is there
 rc_fname = regexprep(rc_fname, '\d{8}_', '');
+if contains(rc_fname, '15_')
+	rc_fname = regexprep(rc_fname, '\d{2}_', ''); % and another 2 digits for s2706 followup inv gastroc
+end
+if contains(rc_fname, '20190311magstim') % remove this prefix for s2711 followup
+	rc_fname = strrep(rc_fname, '20190311magstim_', '');
+end
 app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
 if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
 	msg = sprintf('RC p2p fit info not norm.txt file missing');

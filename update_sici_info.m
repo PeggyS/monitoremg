@@ -84,6 +84,11 @@ app.UITable_Unique_Stims_sici.UserData.more_info_tbl = more_info_tbl;
 % add the sici curve image
 % get(app.Image_rc)
 img_file = strrep(datapoint_csv_filename, '_sici_datapoints.csv', '_p2p_sici_info_not_norm.png');
+% remove date at beginning of file name, if it is there
+img_file = regexprep(img_file, '\d{8}_', '');
+if contains(img_file, 'post_hoc_') % remove this prefix for s2711 mid
+	img_file = strrep(img_file, 'post_hoc_', '');
+end
 if exist(img_file, 'file')
 	app.Image_sici.ImageSource = img_file;
 else
