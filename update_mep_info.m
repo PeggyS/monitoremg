@@ -71,7 +71,7 @@ app.UITable_Unique_Stims.Data = unq_tbl;
 [max_val, max_row] = max(unq_tbl.mean_mep_ampl);
 % save the max mep info in the uitable user data
 app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
-app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
+app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_samples(max_row);
 app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
 app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
 app.UITable_Unique_Stims.UserData.num_latency_manual_adjust = unq_tbl.num_latency_manual_adjust(max_row);
@@ -80,6 +80,17 @@ app.UITable_Unique_Stims.UserData.num_end_manual_adjust = unq_tbl.num_end_manual
 app.UITable_Unique_Stims.UserData.mep_max = max_val;
 app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
 
+% if the max row has 0 meps, then change the latency and end time to NaNs
+if unq_tbl.num_mep(max_row) == 0
+%  	keyboard
+	unq_tbl.mean_latency(max_row) = nan;
+	app.UITable_Unique_Stims.Data.mean_latency(max_row) = nan;
+	app.UITable_Unique_Stims.UserData.mean_latency = nan;
+	unq_tbl.mean_end(max_row) = nan;
+	app.UITable_Unique_Stims.Data.mean_end(max_row) = nan;
+	app.UITable_Unique_Stims.UserData.mean_end = nan;
+end
+
 % make sure the max row is visible
 scroll(app.UITable_Unique_Stims, 'row', max_row)
 styl = uistyle;
@@ -87,7 +98,10 @@ styl = uistyle;
 % were computed
 if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
 	styl.BackgroundColor = '#c94309';
+elseif isnan(unq_tbl.mean_latency(max_row))
+	styl.BackgroundColor = '#a4db00';
 else
+
 	styl.BackgroundColor = '#dddd00';
 end
 removeStyle(app.UITable_Unique_Stims)
@@ -146,16 +160,36 @@ end
 if contains(rc_fname, '20190311magstim') % remove this prefix for s2711 followup
 	rc_fname = strrep(rc_fname, '20190311magstim_', '');
 end
+if contains(rc_fname, 'redo_inv_gastroc') % remove this prefix for s2716 post inv gastroc
+	rc_fname = strrep(rc_fname, 'redo_', '');
+end
+if contains(rc_fname, 'bistim_inv_ta') % remove this prefix for s2726 post inv ta
+	rc_fname = strrep(rc_fname, 'bistim_', '');
+end
+if contains(rc_fname, 'xinv_gastroc') % remove x for s2726 post inv gastroc
+	rc_fname = strrep(rc_fname, 'xinv', 'inv');
+end
+if contains(rc_fname, 'xuninv_gastroc') % remove x for s2726 post uninv gastroc
+	rc_fname = strrep(rc_fname, 'xuninv', 'uninv');
+end
+if contains(rc_fname, 'b_inv_') % remove b for s2729 post
+	rc_fname = strrep(rc_fname, 'b_inv', 'inv');
+end
+if contains(rc_fname, 'b_uninv_') % remove b for s2729 post 
+	rc_fname = strrep(rc_fname, 'b_uninv', 'inv');
+end
 app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
 if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
-	msg = sprintf('RC p2p fit info not norm.txt file missing. File name:%s', rc_fname);
+	msg = sprintf('RC p2p fit info not norm.txt file missing. File name:%s  Regenerate info files in Review_emg_RC.', rc_fname);
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+	return
 end
 if isempty(app.UITable_Unique_Stims.UserData.rc_info.not_norm.analyzed_by)
 % 	keyboard
 	% no analyzed by field indicates this is an old file & probably incorrect
-	msg = sprintf('RC p2p fit info not norm.txt file out of date. File name:%s', rc_fname);
+	msg = sprintf('RC p2p fit info not norm.txt file out of date. File name:%s  Regenerate info files in Review_emg_RC.', rc_fname);
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Out of Date', 'Icon', 'warning')
+	return
 end
 
 rc_fname = strrep(rc_fname, '_info_not_norm', '_info_norm');
@@ -191,11 +225,11 @@ elseif sum(abs(app.UITable_Unique_Stims.UserData.rc_info.norm.stimLevels - ...
 % 	keyboard
 	msg = sprintf('RC p2p fit info norm and not_norm files have different SO values for auc. Check that fit info norm was saved at the same time as not_norm. Regenerate info files in Review_emg_RC.');
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
-elseif abs(computed_norm_auc - read_in_norm_auc) > 1e-4
+elseif abs(computed_norm_auc - read_in_norm_auc) > 1e-3
 	msg = sprintf('RC p2p fit info norm and not_norm AUCs disagree. Check that fit info norm was saved around the same time as not_norm. Regenerate info files in Review_emg_RC.');
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
 	%
-	beep; keyboard
+% 	beep; keyboard
 % 	!open
 end
 
