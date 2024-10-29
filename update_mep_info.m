@@ -148,17 +148,56 @@ if contains(rc_fname, '20190311magstim') % remove this prefix for s2711 followup
 end
 app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
 if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
-	msg = sprintf('RC p2p fit info not norm.txt file missing');
+	msg = sprintf('RC p2p fit info not norm.txt file missing. File name:%s', rc_fname);
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+end
+if isempty(app.UITable_Unique_Stims.UserData.rc_info.not_norm.analyzed_by)
+% 	keyboard
+	% no analyzed by field indicates this is an old file & probably incorrect
+	msg = sprintf('RC p2p fit info not norm.txt file out of date. File name:%s', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Out of Date', 'Icon', 'warning')
 end
 
 rc_fname = strrep(rc_fname, '_info_not_norm', '_info_norm');
 app.UITable_Unique_Stims.UserData.rc_info.norm = read_fit_info(rc_fname);
-if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
-	msg = sprintf('RC p2p fit info norm.txt file missing');
+if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.norm, 'mepMethod')
+	msg = sprintf('RC p2p fit info norm.txt file missing. File name:%s', rc_fname);
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+	return
 end
 
+if isempty(app.UITable_Unique_Stims.UserData.rc_info.norm.analyzed_by)
+% 	keyboard
+	% no analyzed by field indicates this is an old file & probably incorrect
+	msg = sprintf('RC p2p fit info norm.txt file out of date. File name:%s.  Regenerate info files in Review_emg_RC.', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Out of Date', 'Icon', 'warning')
+	return
+end
+% compare norm & not_norm
+% keyboard
+% not_norm_date = datetime(app.UITable_Unique_Stims.UserData.rc_info.not_norm.file_date);
+% norm_date = datetime(app.UITable_Unique_Stims.UserData.rc_info.norm.file_date);
+computed_norm_auc = app.UITable_Unique_Stims.UserData.rc_info.not_norm.auc/app.UITable_Unique_Stims.UserData.rc_info.norm.norm_factor;
+read_in_norm_auc = app.UITable_Unique_Stims.UserData.rc_info.norm.auc;
+
+if length(app.UITable_Unique_Stims.UserData.rc_info.norm.stimLevels) ~= ...
+		length(app.UITable_Unique_Stims.UserData.rc_info.not_norm.stimLevels)
+	% norm & not norm have different number of points in AUC
+	msg = sprintf('RC p2p fit info norm and not_norm files have different number of values for auc. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+elseif sum(abs(app.UITable_Unique_Stims.UserData.rc_info.norm.stimLevels - ...
+		app.UITable_Unique_Stims.UserData.rc_info.not_norm.stimLevels)) > 0.001
+	% auc values are not the same
+% 	keyboard
+	msg = sprintf('RC p2p fit info norm and not_norm files have different SO values for auc. Check that fit info norm was saved at the same time as not_norm. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+elseif abs(computed_norm_auc - read_in_norm_auc) > 1e-4
+	msg = sprintf('RC p2p fit info norm and not_norm AUCs disagree. Check that fit info norm was saved around the same time as not_norm. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+	%
+	beep; keyboard
+% 	!open
+end
 
 % is the data in the database?
 is_mep_info_in_db(app)
