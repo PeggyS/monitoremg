@@ -2,8 +2,8 @@ function data_tbl = get_rc_data_from_db(subject, session, side, muscle, mep_meth
 % extract the rc data for the specified subject
 % data_tbl columns: 
 %	norm_factor
-%	mep_begin_t
-%	mep_end_t
+%	mep_begin_t - not accurate, for mep times used the tms_mep_max_latency table
+%	mep_end_t - not accurate, for mep times used the tms_mep_max_latency table
 %	slope
 %	s50
 %	mep_min
