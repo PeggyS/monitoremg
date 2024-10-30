@@ -38,13 +38,30 @@ tbl = tbl(tbl.Use == true, :);
 more_info_tbl = table();
 more_info_tbl.stim_type = unq_tbl.Stim_Type;
 
+% % if replacing latency with nan, highlight the row
+% styl = uistyle;
+% removeStyle(app.UITable_Unique_Stims)
+
 % each unique combo, compute the mean mep ampl and other stuff
 for r_cnt = 1:height(unq_tbl)
 	stim_tbl = tbl(tbl_ind==r_cnt, :);
 
 	unq_tbl.num_samples(r_cnt) = height(stim_tbl);
 	unq_tbl.num_mep(r_cnt) = sum(stim_tbl.Is_MEP);
-	unq_tbl.mean_latency(r_cnt) = mean(stim_tbl.MEP_latency);
+	% if no meps, then make latency end and time nan
+	if unq_tbl.num_mep(r_cnt) == 0
+		unq_tbl.mean_latency(r_cnt) = nan;
+		unq_tbl.mean_end(r_cnt) = nan;
+		more_info_tbl.sd_latency(r_cnt) = nan;
+		more_info_tbl.sd_end(r_cnt) = nan;
+% 		styl.BackgroundColor = '#a4db00';
+% 		addStyle(app.UITable_Unique_Stims, styl, 'row', r_cnt)
+	else
+		unq_tbl.mean_latency(r_cnt) = mean(stim_tbl.MEP_latency);
+		unq_tbl.mean_end(r_cnt) = mean(stim_tbl.MEP_end);
+		more_info_tbl.sd_latency(r_cnt) = std(stim_tbl.MEP_latency);
+		more_info_tbl.sd_end(r_cnt) = std(stim_tbl.MEP_end);
+	end
 	if any(contains(stim_tbl.Properties.VariableNames, 'latency_adjusted'))
 		unq_tbl.num_latency_manual_adjust(r_cnt) = sum(stim_tbl.latency_adjusted);
 	else
@@ -56,6 +73,7 @@ for r_cnt = 1:height(unq_tbl)
 	else
 		unq_tbl.num_end_manual_adjust(r_cnt) = NaN;
 	end
+	
 	unq_tbl.mean_mep_ampl(r_cnt) = mean(stim_tbl.MEPAmpl_uVPp);
 	if isnumeric(stim_tbl.comments)
 		% comments are numeric, therefore there are no comments
@@ -65,8 +83,6 @@ for r_cnt = 1:height(unq_tbl)
 	end
 	unq_tbl.num_comments(r_cnt) = num_com;
 
-	more_info_tbl.sd_latency(r_cnt) = std(stim_tbl.MEP_latency);
-	more_info_tbl.sd_end(r_cnt) = std(stim_tbl.MEP_end);
 	more_info_tbl.sd_mep_ampl(r_cnt) = std(stim_tbl.MEPAmpl_uVPp);
 	ci = confidence_intervals(stim_tbl.MEPAmpl_uVPp, 98);
 	more_info_tbl.ci1_mep_ampl(r_cnt) = ci(1);
@@ -84,6 +100,11 @@ app.UITable_Unique_Stims_sici.UserData.more_info_tbl = more_info_tbl;
 % add the sici curve image
 % get(app.Image_rc)
 img_file = strrep(datapoint_csv_filename, '_sici_datapoints.csv', '_p2p_sici_info_not_norm.png');
+% remove date at beginning of file name, if it is there
+img_file = regexprep(img_file, '\d{8}_', '');
+if contains(img_file, 'post_hoc_') % remove this prefix for s2711 mid
+	img_file = strrep(img_file, 'post_hoc_', '');
+end
 if exist(img_file, 'file')
 	app.Image_sici.ImageSource = img_file;
 else

@@ -71,7 +71,7 @@ app.UITable_Unique_Stims.Data = unq_tbl;
 [max_val, max_row] = max(unq_tbl.mean_mep_ampl);
 % save the max mep info in the uitable user data
 app.UITable_Unique_Stims.UserData.effective_stimulator_output = unq_tbl.Effective_SO(max_row);
-app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_mep(max_row);
+app.UITable_Unique_Stims.UserData.num_samples = unq_tbl.num_samples(max_row);
 app.UITable_Unique_Stims.UserData.num_meps = unq_tbl.num_mep(max_row);
 app.UITable_Unique_Stims.UserData.mean_latency = unq_tbl.mean_latency(max_row);
 app.UITable_Unique_Stims.UserData.num_latency_manual_adjust = unq_tbl.num_latency_manual_adjust(max_row);
@@ -80,6 +80,17 @@ app.UITable_Unique_Stims.UserData.num_end_manual_adjust = unq_tbl.num_end_manual
 app.UITable_Unique_Stims.UserData.mep_max = max_val;
 app.UITable_Unique_Stims.UserData.num_comments = unq_tbl.num_comments(max_row);
 
+% if the max row has 0 meps, then change the latency and end time to NaNs
+if unq_tbl.num_mep(max_row) == 0
+%  	keyboard
+	unq_tbl.mean_latency(max_row) = nan;
+	app.UITable_Unique_Stims.Data.mean_latency(max_row) = nan;
+	app.UITable_Unique_Stims.UserData.mean_latency = nan;
+	unq_tbl.mean_end(max_row) = nan;
+	app.UITable_Unique_Stims.Data.mean_end(max_row) = nan;
+	app.UITable_Unique_Stims.UserData.mean_end = nan;
+end
+
 % make sure the max row is visible
 scroll(app.UITable_Unique_Stims, 'row', max_row)
 styl = uistyle;
@@ -87,7 +98,10 @@ styl = uistyle;
 % were computed
 if abs(unq_tbl.mean_latency(max_row) - 10) < eps % 10 is the default latency value
 	styl.BackgroundColor = '#c94309';
+elseif isnan(unq_tbl.mean_latency(max_row))
+	styl.BackgroundColor = '#a4db00';
 else
+
 	styl.BackgroundColor = '#dddd00';
 end
 removeStyle(app.UITable_Unique_Stims)
@@ -106,15 +120,19 @@ img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_n
 if exist(img_file, 'file')
 	app.Image_rc.ImageSource = img_file;
 else
-	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+	img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_active_p2p_fit_info_not_norm.png');
 	if exist(img_file, 'file')
 		app.Image_rc.ImageSource = img_file;
 	else
-		app.Image_rc.ImageSource = '';
+		img_file = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_norm.png');
+		if exist(img_file, 'file')
+			app.Image_rc.ImageSource = img_file;
+		else
+			app.Image_rc.ImageSource = '';
+		end
 	end
 end
-
-% read in the info file
+	% read in the info file
 info = get_dp_analysis_info(datapoint_csv_filename);
 
 % put info into the mepmax info panel
@@ -132,9 +150,94 @@ end
 app.RecruitmentCurvePlateauedCheckBox.Value = info.rc_plateau;
 app.CommentsEditField.Value = info.comments;
 
+% read in the rc fit info
+rc_fname = strrep(datapoint_csv_filename, '_rc_datapoints.csv', '_p2p_fit_info_not_norm.txt');
+% remove date at beginning of file name, if it is there
+rc_fname = regexprep(rc_fname, '\d{8}_', '');
+if contains(rc_fname, '15_')
+	rc_fname = regexprep(rc_fname, '\d{2}_', ''); % and another 2 digits for s2706 followup inv gastroc
+end
+if contains(rc_fname, '20190311magstim') % remove this prefix for s2711 followup
+	rc_fname = strrep(rc_fname, '20190311magstim_', '');
+end
+if contains(rc_fname, 'redo_inv_gastroc') % remove this prefix for s2716 post inv gastroc
+	rc_fname = strrep(rc_fname, 'redo_', '');
+end
+if contains(rc_fname, 'bistim_inv_ta') % remove this prefix for s2726 post inv ta
+	rc_fname = strrep(rc_fname, 'bistim_', '');
+end
+if contains(rc_fname, 'xinv_gastroc') % remove x for s2726 post inv gastroc
+	rc_fname = strrep(rc_fname, 'xinv', 'inv');
+end
+if contains(rc_fname, 'xuninv_gastroc') % remove x for s2726 post uninv gastroc
+	rc_fname = strrep(rc_fname, 'xuninv', 'uninv');
+end
+if contains(rc_fname, 'b_inv_') % remove b for s2729 post
+	rc_fname = strrep(rc_fname, 'b_inv', 'inv');
+end
+if contains(rc_fname, 'b_uninv_') % remove b for s2729 post 
+	rc_fname = strrep(rc_fname, 'b_uninv', 'inv');
+end
+if contains(rc_fname, 'redo_inv_') % remove redo for 2745 pre
+	rc_fname = strrep(rc_fname, 'redo_inv', 'inv');
+end
+app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
+if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
+	msg = sprintf('RC p2p fit info not norm.txt file missing. File name:%s  Regenerate info files in Review_emg_RC.', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+	return
+end
+if isempty(app.UITable_Unique_Stims.UserData.rc_info.not_norm.analyzed_by)
+% 	keyboard
+	% no analyzed by field indicates this is an old file & probably incorrect
+	msg = sprintf('RC p2p fit info not norm.txt file out of date. File name:%s  Regenerate info files in Review_emg_RC.', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Out of Date', 'Icon', 'warning')
+	return
+end
+
+rc_fname = strrep(rc_fname, '_info_not_norm', '_info_norm');
+app.UITable_Unique_Stims.UserData.rc_info.norm = read_fit_info(rc_fname);
+if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.norm, 'mepMethod')
+	msg = sprintf('RC p2p fit info norm.txt file missing. File name:%s', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Missing', 'Icon', 'warning')
+	return
+end
+
+if isempty(app.UITable_Unique_Stims.UserData.rc_info.norm.analyzed_by)
+% 	keyboard
+	% no analyzed by field indicates this is an old file & probably incorrect
+	msg = sprintf('RC p2p fit info norm.txt file out of date. File name:%s.  Regenerate info files in Review_emg_RC.', rc_fname);
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info Out of Date', 'Icon', 'warning')
+	return
+end
+% compare norm & not_norm
+% keyboard
+% not_norm_date = datetime(app.UITable_Unique_Stims.UserData.rc_info.not_norm.file_date);
+% norm_date = datetime(app.UITable_Unique_Stims.UserData.rc_info.norm.file_date);
+computed_norm_auc = app.UITable_Unique_Stims.UserData.rc_info.not_norm.auc/app.UITable_Unique_Stims.UserData.rc_info.norm.norm_factor;
+read_in_norm_auc = app.UITable_Unique_Stims.UserData.rc_info.norm.auc;
+
+if length(app.UITable_Unique_Stims.UserData.rc_info.norm.stimLevels) ~= ...
+		length(app.UITable_Unique_Stims.UserData.rc_info.not_norm.stimLevels)
+	% norm & not norm have different number of points in AUC
+	msg = sprintf('RC p2p fit info norm and not_norm files have different number of values for auc. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+elseif sum(abs(app.UITable_Unique_Stims.UserData.rc_info.norm.stimLevels - ...
+		app.UITable_Unique_Stims.UserData.rc_info.not_norm.stimLevels)) > 0.001
+	% auc values are not the same
+% 	keyboard
+	msg = sprintf('RC p2p fit info norm and not_norm files have different SO values for auc. Check that fit info norm was saved at the same time as not_norm. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+elseif abs(computed_norm_auc - read_in_norm_auc) > 1e-3
+	msg = sprintf('RC p2p fit info norm and not_norm AUCs disagree. Check that fit info norm was saved around the same time as not_norm. Regenerate info files in Review_emg_RC.');
+	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
+	%
+% 	beep; keyboard
+% 	!open
+end
+
 % is the data in the database?
 is_mep_info_in_db(app)
-
 
 return
 end

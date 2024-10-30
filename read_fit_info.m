@@ -42,6 +42,11 @@ info.analyzed_by     = paramscell{18};
 info.analyzed_when   = paramscell{19};
 info.verified_by     = paramscell{20};
 info.verified_when   = paramscell{21};
+% keyboard
+% save the file date
+file_info = dir(file_name);
+info.file_date = file_info.date;
+info.file_datenum = file_info.datenum;
 
 return
 end % read_fit_info
