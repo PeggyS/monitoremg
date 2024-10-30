@@ -178,6 +178,9 @@ end
 if contains(rc_fname, 'b_uninv_') % remove b for s2729 post 
 	rc_fname = strrep(rc_fname, 'b_uninv', 'inv');
 end
+if contains(rc_fname, 'redo_inv_') % remove redo for 2745 pre
+	rc_fname = strrep(rc_fname, 'redo_inv', 'inv');
+end
 app.UITable_Unique_Stims.UserData.rc_info.not_norm = read_fit_info(rc_fname);
 if ~isfield(app.UITable_Unique_Stims.UserData.rc_info.not_norm, 'mepMethod')
 	msg = sprintf('RC p2p fit info not norm.txt file missing. File name:%s  Regenerate info files in Review_emg_RC.', rc_fname);
