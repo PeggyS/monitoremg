@@ -232,7 +232,7 @@ elseif abs(computed_norm_auc - read_in_norm_auc) > 1e-3
 	msg = sprintf('RC p2p fit info norm and not_norm AUCs disagree. Check that fit info norm was saved around the same time as not_norm. Regenerate info files in Review_emg_RC.');
 	uialert(app.TMSInfotoDatabaseUIFigure, msg, 'RC Info norm/not norm differences', 'Icon', 'warning')
 	%
-% 	beep; keyboard
+ 	beep; keyboard
 % 	!open
 end
 

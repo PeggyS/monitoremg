@@ -53,6 +53,8 @@ app.dbLastupdatedEditField_2.Value = '';
 app.DatabaseinfomatchesCheckBox_2.Value = false;
 
 rc_info_norm = get_rc_data_from_db(subject, session, side, muscle, 'p2p', 'norm');
+% assert(height(rc_info_norm)==1, 'is_mep_info_in_db error: found more than 1 row in db for norm data')
+
 if ~isempty(rc_info_norm)
 	% does the database info match what's shown here?
 	match = compare_rc_info(app.UITable_Unique_Stims.UserData.rc_info.norm, rc_info_norm);
@@ -62,6 +64,7 @@ else
 end
 
 rc_info_not_norm = get_rc_data_from_db(subject, session, side, muscle, 'p2p', 'not_norm');
+% assert(height(rc_info_not_norm)==1, 'is_mep_info_in_db error: found more than 1 row in db for not norm data')
 if ~isempty(rc_info_not_norm)
 	% does the database info match what's shown here?
 	match = compare_rc_info(app.UITable_Unique_Stims.UserData.rc_info.not_norm, rc_info_not_norm);
