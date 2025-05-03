@@ -6,7 +6,9 @@ function [session, muscle] = parse_fname_for_session_muscle(fname)
 session = '';
 muscle = '';
 
-tmp = regexpi(fname, '(pre\d*)|(post)|(mid\d*)|(followup\d*)|(week\d+)', 'match');
+% 2025-05-03 edit: add (session\d+) for the tms-treadmill-tms data sessions
+tmp = regexpi(fname, '(session\d+)|(pre\d*)|(post)|(mid\d*)|(followup\d*)|(week\d+)', 'match');
+
 if ~isempty(tmp)
 	session = tmp{1};
 end
