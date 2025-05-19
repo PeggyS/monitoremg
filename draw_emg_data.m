@@ -22,6 +22,11 @@ end
 % compute the pre-stim emg
 % pre_stim_val = compute_pre_stim_emg_value(app, emg_data);
 pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
+% update std line
+std_val = compute_pre_stim_emg_std_value(app, app.h_emg_line) * 3;
+app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
+app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
+
 
 set(app.pre_emg_text, 'String', [num2str(monitor_emg_val) ' (' num2str(round(pre_stim_val)) ')'])
 % change the color depending on the proximity to the goal
