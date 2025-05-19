@@ -17,6 +17,9 @@ app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), ...
 % lines at x,y = 0,0
 line(app.h_disp_emg_axes, app.h_disp_emg_axes.XLim, [0 0]);
 line(app.h_disp_emg_axes, [0 0], [-1e6 1e6]);
+% line at conditioning stim stim (when ISI > 0)
+app.h_cs_line = line(app.h_disp_emg_axes, [0 0], [-1e6 1e6], 'Color', 'red', 'Visible', 'off');
+
 
 % min & max vertical lines - draggable
 app.h_t_min_line = line(app.h_disp_emg_axes, [15 15], [-1e6 1e6], ...

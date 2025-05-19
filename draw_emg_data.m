@@ -10,6 +10,8 @@ else
 end
 tmp_data = emg_data;
 app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
+% update conditioning stim line h_cs_line
+app.h_cs_line.XData = -stim_info.isi_ms*[1 1];
 
 
 % adjust y limits
