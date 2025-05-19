@@ -14,13 +14,6 @@ app.h_emg_line.YData = [tmp_data(isi_shift_pts+1:end) nan(1,isi_shift_pts)];
 app.h_cs_line.XData = -stim_info.isi_ms*[1 1];
 
 
-% adjust y limits
-min_y = min(emg_data);
-max_y = max(emg_data);
-if max_y-min_y > eps
-	app.h_disp_emg_axes.YLim = [min_y max_y];
-end
-
 % compute the pre-stim emg
 % pre_stim_val = compute_pre_stim_emg_value(app, emg_data);
 pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
@@ -28,6 +21,15 @@ pre_stim_val = compute_pre_stim_emg_value(app, app.h_emg_line);
 std_val = compute_pre_stim_emg_std_value(app, app.h_emg_line) * 3;
 app.h_pre_stim_emg_pos_std_line.YData = [std_val std_val];
 app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
+
+% adjust y limits
+min_y = min(emg_data);
+min_y = min([min_y -std_val]);
+max_y = max(emg_data);
+max_y = min([max_y  std_val]);
+if max_y-min_y > eps
+	app.h_disp_emg_axes.YLim = [min_y max_y];
+end
 
 
 set(app.pre_emg_text, 'String', [num2str(monitor_emg_val) ' (' num2str(round(pre_stim_val)) ')'])
