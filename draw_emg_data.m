@@ -26,7 +26,7 @@ app.h_pre_stim_emg_neg_std_line.YData = [-std_val -std_val];
 min_y = min(emg_data);
 min_y = min([min_y -std_val]);
 max_y = max(emg_data);
-max_y = min([max_y  std_val]);
+max_y = max([max_y  std_val]);
 if max_y-min_y > eps
 	app.h_disp_emg_axes.YLim = [min_y max_y];
 end
