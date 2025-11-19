@@ -24,7 +24,7 @@ if app.StartButton.Value
 %    app.params.postTriggerTime = paramscell{7};
 %    
    % create tcpip object
-   app.tcp_port = tcpip(app.params.ipAddr, 51234);	%% local machine & 16-bit port (32-bit port: 51244)
+   app.tcp_port = tcpclient(app.params.ipAddr, 51234);	%% local machine & 16-bit port (32-bit port: 51244)
    
    % configure object -- InputBufferSize
    get(app.tcp_port, 'InputBufferSize');
@@ -32,7 +32,8 @@ if app.StartButton.Value
   set(app.tcp_port, 'InputBufferSize', 27000); % increase buffer size for eeg system
    
    % configure object -- byteOrder
-   set(app.tcp_port, 'ByteOrder', 'littleEndian');
+%    set(app.tcp_port, 'ByteOrder', 'littleEndian');
+   set(app.tcp_port, 'ByteOrder', 'little-endian');
    
    % connect
    % === DEBUG - comment out to run without communicating with Recorder
@@ -82,7 +83,8 @@ if app.StartButton.Value
 else
    %app.quitFlg = true;
    app.StartButton.Text = 'Run';
-   fclose(app.tcp_port);
+   % fclose(app.tcp_port);
+   clear app.tcp_port;
 end
 
 return

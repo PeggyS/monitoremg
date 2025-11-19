@@ -30,11 +30,11 @@ delete(app.avg_emg_axes.Children) %% remove existing lines
 axes(app.avg_emg_axes)
 
 for cnt = 1:size(data,1)
-	line(app.avg_emg_axes.UserData.t, data(cnt,3:end), 'Color', [0.8 0.8 0.8])
+	line(app.avg_emg_axes.UserData.t, data(cnt,6:end), 'Color', [0.8 0.8 0.8])
 end
 
 % the mean line
-line(app.avg_emg_axes.UserData.t, mean(data(:,3:end)), 'LineWidth', 5)
+line(app.avg_emg_axes.UserData.t, mean(data(:,6:end)), 'LineWidth', 5)
 
 % update display of number of trials being averaged
 app.avg_num_lines.String = ['Num trials = ' num2str(sum(row_msk))];

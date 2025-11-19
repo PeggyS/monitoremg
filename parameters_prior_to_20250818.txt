@@ -4,9 +4,9 @@ brainvision event label : R128
 average time period (sec) : 0.5
 emg channel : 1
 activation goal : 0.2
-emg pre trigger time (msec) : 250
-emg post trigger time (msec) : 300
-baseline_emg_begin : -250
+emg pre trigger time (msec) : 100
+emg post trigger time (msec) : 200
+baseline_emg_begin : -101
 baseline_emg_end : -1
 baseline_emg_method : mean_rect
 mep_p2p_method : abs

@@ -4,6 +4,9 @@ if strcmp(source.Tag, 'pushbutton')  % don't delete if the save pushbutton calle
 	return
 end
 
+% print
+print_avg_emg([],[],app)
+
 % delete the figure
 delete(source)
 
