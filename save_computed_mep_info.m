@@ -42,8 +42,8 @@ if ~confirm_subj_match
 		subj_1, subj_2);
 	end
 	beep
-	uialert(app.ReviewEMGRCUIFigure, msg, 'Subject Mismatch', 'Icon','error')
-	return
+	% uialert(app.ReviewEMGRCUIFigure, msg, 'Subject Mismatch', 'Icon','error')
+	% return
 end
 
 % save the datapoint table
