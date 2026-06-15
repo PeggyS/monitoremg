@@ -76,12 +76,13 @@ app.dp_analysis_info.num_std_dev = str2double(app.h_num_std.String);
 
 % m-max from electrical stim for normalization
 if app.MmaxEditField.Value == 1
-	msg = '\fontsize{14}Electrical stimulation M-max value for normalization is 1. Are you want to save MEP info?';
+	msg = '\fontsize{14}Electrical stimulation M-max value for normalization is 1. Are you want sure to save MEP info?';
 	btn1 = 'Yes';
 	btn2 = 'No';
 	opts.Interpreter = 'tex';
 	opts.Default = btn2;
 	sel = questdlg(msg, 'Confirm Save', btn1, btn2, opts);
+	% sel = 'Yes';
 	if isempty(sel) || strcmp(sel, 'No')
 		disp('Not saving MEP info.')
 		return
