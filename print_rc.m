@@ -56,3 +56,4 @@ if isprop(app,'DatapointsCSVEditField')
 end
 
 print(app.rc_fig, '-dpng', fname);
+saveas(app.rc_fig, strrep(fname, '.png', '.fig'), 'fig')
