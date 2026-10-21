@@ -1,0 +1,86 @@
+BrainVision Core Data Exchange Marker File Version 1.0
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=20221011_inv_tricep_rc_epochs.seg
+
+[Marker Infos]
+; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,
+; <Size in data points>, <Channel number (0 = marker is related to all channels)>
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in type or description text are coded as "\1".
+Mk1=New Segment,,1,1,0,20221011162548290903
+Mk2=Time 0,,101,1,0
+Mk3=Response,R128,101,1,0
+Mk4=New Segment,,401,1,0,20221011162553596975
+Mk5=Time 0,,501,1,0
+Mk6=Response,R128,501,1,0
+Mk7=New Segment,,801,1,0,20221011162600152063
+Mk8=Time 0,,901,1,0
+Mk9=Response,R128,901,1,0
+Mk10=New Segment,,1201,1,0,20221011162606063142
+Mk11=Time 0,,1301,1,0
+Mk12=Response,R128,1301,1,0
+Mk13=New Segment,,1601,1,0,20221011162612077223
+Mk14=Time 0,,1701,1,0
+Mk15=Response,R128,1701,1,0
+Mk16=New Segment,,2001,1,0,20221011162620133331
+Mk17=Time 0,,2101,1,0
+Mk18=Response,R128,2101,1,0
+Mk19=New Segment,,2401,1,0,20221011162626057411
+Mk20=Time 0,,2501,1,0
+Mk21=Response,R128,2501,1,0
+Mk22=New Segment,,2801,1,0,20221011162632541498
+Mk23=Time 0,,2901,1,0
+Mk24=Response,R128,2901,1,0
+Mk25=New Segment,,3201,1,0,20221011162638433577
+Mk26=Time 0,,3301,1,0
+Mk27=Response,R128,3301,1,0
+Mk28=New Segment,,3601,1,0,20221011162644155654
+Mk29=Time 0,,3701,1,0
+Mk30=Response,R128,3701,1,0
+Mk31=New Segment,,4001,1,0,20221011162649665728
+Mk32=Time 0,,4101,1,0
+Mk33=Response,R128,4101,1,0
+Mk34=New Segment,,4401,1,0,20221011162654757797
+Mk35=Time 0,,4501,1,0
+Mk36=Response,R128,4501,1,0
+Mk37=New Segment,,4801,1,0,20221011162659977867
+Mk38=Time 0,,4901,1,0
+Mk39=Response,R128,4901,1,0
+Mk40=New Segment,,5201,1,0,20221011162705078935
+Mk41=Time 0,,5301,1,0
+Mk42=Response,R128,5301,1,0
+Mk43=New Segment,,5601,1,0,20221011162710040002
+Mk44=Time 0,,5701,1,0
+Mk45=Response,R128,5701,1,0
+Mk46=New Segment,,6001,1,0,20221011162715962082
+Mk47=Time 0,,6101,1,0
+Mk48=Response,R128,6101,1,0
+Mk49=New Segment,,6401,1,0,20221011162720423141
+Mk50=Time 0,,6501,1,0
+Mk51=Response,R128,6501,1,0
+Mk52=New Segment,,6801,1,0,20221011162724570197
+Mk53=Time 0,,6901,1,0
+Mk54=Response,R128,6901,1,0
+Mk55=New Segment,,7201,1,0,20221011162728941255
+Mk56=Time 0,,7301,1,0
+Mk57=Response,R128,7301,1,0
+Mk58=New Segment,,7601,1,0,20221011162733840321
+Mk59=Time 0,,7701,1,0
+Mk60=Response,R128,7701,1,0
+Mk61=New Segment,,8001,1,0,20221011162739373396
+Mk62=Time 0,,8101,1,0
+Mk63=Response,R128,8101,1,0
+Mk64=New Segment,,8401,1,0,20221011162743612453
+Mk65=Time 0,,8501,1,0
+Mk66=Response,R128,8501,1,0
+Mk67=New Segment,,8801,1,0,20221011162748803522
+Mk68=Time 0,,8901,1,0
+Mk69=Response,R128,8901,1,0
+Mk70=New Segment,,9201,1,0,20221011162753582587
+Mk71=Time 0,,9301,1,0
+Mk72=Response,R128,9301,1,0
+Mk73=New Segment,,9601,1,0,20221011162758392652
+Mk74=Time 0,,9701,1,0
+Mk75=Response,R128,9701,1,0
