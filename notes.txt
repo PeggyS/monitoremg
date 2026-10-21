@@ -42,7 +42,8 @@ dragging lines in real-time display mep does not have an endfcn, so dragging the
 review_emg_rc - first looks in the analysis hierarchy for *_datapoints.csv. If it's not found there, then it looks in the data hierarchy.
 	- rc datapoints are read in and put in rc fig then previous rc_fit_info.txt is looked for and if exists, read in and then info is updated in the figure. display_rc_fit_info_on_axes.m is called from get_previous_rc_or_sici_info.m
 	- sici datapoints are read in, as they are added to the figure, the mean and confidence interval lines are computed and updated in the sici figure. If an existing sici_info.txt file is found and read in, then read in values are compared to what is in the sici fig. If the figure mean values are not the same as the ones in the file, then info is sent to the command window and beeps.
-
+    - emg_data.txt file: old data, emg_data file date may not trigger the correct emg_data_num_vals_ignore. If there is a text file ('emg_data_num_vals_ignore.txt') in the folder with the data, then read in the value from that
+           
 
 info_to_db - start in the tms analysis hierarchy. (If you don't, you will be given a dialog box to locate it.) Info from _rc_datapoints_analysis_info.txt and _rc_datapoints.csv is used to fill in the table with the MEP Max Info. The mean of latencies is computed from the datapoints table.
 

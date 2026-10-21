@@ -20,7 +20,7 @@ if ~isempty(tmp)
 end
 
 musc = '';
-tmp = regexpi(fname, '(_ta)|(_gastroc)|(_flexors)|(_extensors)', 'match');
+tmp = regexpi(fname, '(_ta)|(_gastroc)|(_flexors)|(_extensors)|(_biceps)|(_triceps)', 'match');
 if ~isempty(tmp)
 	musc = strrep(tmp{1}, '_', '');
 end
