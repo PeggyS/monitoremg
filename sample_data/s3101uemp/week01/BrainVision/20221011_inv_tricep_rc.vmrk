@@ -1,0 +1,37 @@
+BrainVision Core Data Exchange Marker File Version 1.0
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=20221011_inv_tricep_rc.eeg
+
+[Marker Infos]
+; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,
+; <Size in data points>, <Channel number (0 = marker is related to all channels)>
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in type or description text are coded as "\1".
+Mk1=New Segment,,1,1,0,20221011162535107725
+Mk2=Response,R128,13284,1,0
+Mk3=Response,R128,18590,1,0
+Mk4=Response,R128,25145,1,0
+Mk5=Response,R128,31056,1,0
+Mk6=Response,R128,37070,1,0
+Mk7=Response,R128,45126,1,0
+Mk8=Response,R128,51050,1,0
+Mk9=Response,R128,57534,1,0
+Mk10=Response,R128,63426,1,0
+Mk11=Response,R128,69148,1,0
+Mk12=Response,R128,74658,1,0
+Mk13=Response,R128,79750,1,0
+Mk14=Response,R128,84970,1,0
+Mk15=Response,R128,90071,1,0
+Mk16=Response,R128,95032,1,0
+Mk17=Response,R128,100954,1,0
+Mk18=Response,R128,105415,1,0
+Mk19=Response,R128,109562,1,0
+Mk20=Response,R128,113933,1,0
+Mk21=Response,R128,118832,1,0
+Mk22=Response,R128,124365,1,0
+Mk23=Response,R128,128604,1,0
+Mk24=Response,R128,133795,1,0
+Mk25=Response,R128,138574,1,0
+Mk26=Response,R128,143384,1,0

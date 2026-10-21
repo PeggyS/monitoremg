@@ -1,0 +1,17 @@
+mepMethod : p2p
+norm_factor : 1 
+mep_beg_t : 8.87755 
+mep_end_t : 74.6939 
+slope : 0.158639 
+s50 : 58.2422 
+mepMin : 265.378 
+mepMax : 2162.75 
+slopeCi : 0.0943764 0.222902 
+s50Ci : 55.5 60.9844 
+mepMinCi : 57.4348 473.321 
+mepMaxCi : 1974.77 2350.73 
+Rsq : 0.89568 
+auc : 76376.8 
+aucMeanVals : 230.571 419.088 467.039 689.235 1021.98 1208.93 1744.82 1947.8 2135.77 2090.9 
+stimLevels : 30 40 45 50 55 60 65 70 80 90 
+stimulator_mode : simultaneous_discharge
