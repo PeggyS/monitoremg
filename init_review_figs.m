@@ -328,7 +328,10 @@ else % figure already exist, reset to defaults
 	% reset the data line
 	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
-	app.h_emg_line.YData = zeros(1, seg_num_points);
+	% app.h_emg_line.YData = zeros(1, seg_num_points);
+	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
+	delete(app.h_emg_line)
+	app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), 'LineWidth', 3) ;
 
 	% reset the mep min max lines
 	app.h_t_min_line.XData = [mep_beg_t mep_beg_t];

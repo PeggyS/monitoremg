@@ -32,6 +32,7 @@ app.params.goalPct   = paramscell{5};
 app.ActivationGoalLabel.Text = ['Activation Goal: ' num2str(app.params.goalPct*100) '% mvc'];
 app.params.preTriggerTime  = paramscell{6};
 app.PreTriggerLabel.Text = ['Pre Trigger: ' num2str(app.params.preTriggerTime) ' ms'];
+app.preTriggerTimeEdit.Value = app.params.preTriggerTime;
 app.params.postTriggerTime = paramscell{7};
 app.PostTriggerLabel.Text = ['Post Trigger: ' num2str(app.params.postTriggerTime) ' ms'];
 app.preEmgMinEditField.Value = paramscell{8};
