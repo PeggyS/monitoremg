@@ -285,9 +285,9 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 		'String', '', 'fontsize', analysis_edit_fontsize);
 
 
-	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+	seg_time = (app.params.postTriggerTime + app.displayPreTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
-	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
+	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.displayPreTriggerTime;
 
 	% data line
 	app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), ...
@@ -326,10 +326,10 @@ if isempty(app.emg_data_fig) || ~isgraphics(app.emg_data_fig)
 
 else % figure already exist, reset to defaults
 	% reset the data line
-	seg_time = (app.params.postTriggerTime + app.params.preTriggerTime) / 1000;
+	seg_time = (app.params.postTriggerTime + app.displayPreTriggerTime) / 1000;
 	seg_num_points = round(app.params.sampFreq*seg_time);
 	% app.h_emg_line.YData = zeros(1, seg_num_points);
-	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.params.preTriggerTime;
+	t = (0:1/app.params.sampFreq:(seg_time-1/app.params.sampFreq))*1000 - app.displayPreTriggerTime;
 	delete(app.h_emg_line)
 	app.h_emg_line = line(app.h_disp_emg_axes, t, zeros(1, seg_num_points), 'LineWidth', 3) ;
 
