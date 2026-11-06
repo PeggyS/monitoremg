@@ -14,7 +14,11 @@ function tms_tdcs_tms_rc_data()
 % <inv|uninv>icf_pct_ts
 
 
+<<<<<<< Updated upstream
 subj_list = {'s2754tdvg', 's2755tdvg'};
+=======
+subj_list = {'s2754tdvg' 's2755tdvg' 's2756tdvg'};
+>>>>>>> Stashed changes
 muscle_list = {'inv_ta', 'uninv_ta', 'inv_gastroc', 'uninv_gastroc'};
 norm_list = {'norm' 'not_norm'};
 

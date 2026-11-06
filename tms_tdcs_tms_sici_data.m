@@ -11,7 +11,11 @@ function tms_tdcs_tms_sici_data()
 % <inv|uninv>icf_pct_ts
 
 
+<<<<<<< Updated upstream
 subj_list = {'s2754tdvg', 's2755tdvg'};
+=======
+subj_list = {'s2754tdvg' 's2755tdvg' 's2756tdvg'};
+>>>>>>> Stashed changes
 muscle_list = {'inv_ta', 'uninv_ta'};
 
 

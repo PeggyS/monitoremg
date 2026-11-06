@@ -31,10 +31,17 @@ end
 tbl.Use = logical(tbl.Use);
 
 % magstim setting & use value if it's in the emg_data
-% Depending upon when the data was recorded, there will be either 1 or 2
-% values to ignore at the beginning of each row of emg data. If there is 1
-% value to ignore, then that is the magstim value. If there are 2 values to
-% ignore, then the 1st is the Use value & second is magstim value.
+% Depending upon when the data was recorded, there will be either 1, 2, or 5
+% values to ignore at the beginning of each row of emg data. 
+%    If there is 1 value to ignore, then that is the magstim value. 
+%    If there are 2 values to ignore, then the 1st is the Use value & second is magstim value.
+%    If there are 5 values to ignore, then the 1st value is Use, 2nd is magstim, 3rd is bistim,
+%         4th is ISI, 5th is ESO
+if app.emg_data_num_vals_ignore == 5
+	% if no datapoint table was read in, then the stim setup was 'Unknown', change it here to the
+	% default stimulatore setup 'Bistim'
+	app.h_stim_setup_text.String = 'Bistim';
+end
 if any(isnan(tbl.Use))
 	% use the first col in emg_data as the use value
 	if app.emg_data_num_vals_ignore > 1
@@ -42,9 +49,18 @@ if any(isnan(tbl.Use))
 	end
 end
 if any(isnan(tbl.MagStim_Setting))
-	magstim_col = app.emg_data_num_vals_ignore;
+	magstim_col = 2;
 	tbl.MagStim_Setting = app.emg_data(:, magstim_col);
 end
+if any(isnan(tbl.BiStim_Setting))
+	bistim_col = 3;
+	tbl.BiStim_Setting = app.emg_data(:, bistim_col);
+end
+if any(isnan(tbl.ISI_ms))
+	isi_col = 4;
+	tbl.ISI_ms = app.emg_data(:, isi_col);
+end
+
 
 next_col_num = 4; % column where to add additional variables
 
