@@ -1,0 +1,72 @@
+BrainVision Core Data Exchange Marker File Version 1.0
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=20221011_inv_bicep_sici.eeg
+
+[Marker Infos]
+; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,
+; <Size in data points>, <Channel number (0 = marker is related to all channels)>
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in type or description text are coded as "\1".
+Mk1=New Segment,,1,1,0,20221011164241382236
+Mk2=Response,R128,16142,1,0
+Mk3=Response,R128,20703,1,0
+Mk4=Response,R128,25452,1,0
+Mk5=Response,R128,29882,1,0
+Mk6=Response,R128,35674,1,0
+Mk7=Response,R128,41206,1,0
+Mk8=Response,R128,59624,1,0
+Mk9=Response,R128,65607,1,0
+Mk10=Response,R128,76181,1,0
+Mk11=Response,R128,80991,1,0
+Mk12=Response,R128,85169,1,0
+Mk13=Response,R128,89688,1,0
+Mk14=Response,R128,96593,1,0
+Mk15=Response,R128,101844,1,0
+Mk16=Response,R128,107537,1,0
+Mk17=Response,R128,112697,1,0
+Mk18=Response,R128,118048,1,0
+Mk19=Response,R128,122258,1,0
+Mk20=Response,R128,128461,1,0
+Mk21=Response,R128,133933,1,0
+Mk22=Response,R128,170230,1,0
+Mk23=Response,R128,174849,1,0
+Mk24=Response,R128,181685,1,0
+Mk25=Response,R128,187796,1,0
+Mk26=Response,R128,193049,1,0
+Mk27=Response,R128,199501,1,0
+Mk28=Response,R128,306761,1,0
+Mk29=Response,R128,312104,1,0
+Mk30=Response,R128,317265,1,0
+Mk31=Response,R128,322426,1,0
+Mk32=Response,R128,327807,1,0
+Mk33=Response,R128,333818,1,0
+Mk34=Response,R128,340332,1,0
+Mk35=Response,R128,345906,1,0
+Mk36=Response,R128,350553,1,0
+Mk37=Response,R128,355995,1,0
+Mk38=Response,R128,361408,1,0
+Mk39=Response,R128,368021,1,0
+Mk40=Response,R128,372991,1,0
+Mk41=Response,R128,380116,1,0
+Mk42=Response,R128,402955,1,0
+Mk43=Response,R128,408648,1,0
+Mk44=Response,R128,413367,1,0
+Mk45=Response,R128,418458,1,0
+Mk46=Response,R128,423238,1,0
+Mk47=Response,R128,428399,1,0
+Mk48=Response,R128,432889,1,0
+Mk49=Response,R128,436899,1,0
+Mk50=Response,R128,441026,1,0
+Mk51=Response,R128,450165,1,0
+Mk52=Response,R128,454176,1,0
+Mk53=Response,R128,460678,1,0
+Mk54=Response,R128,465298,1,0
+Mk55=Response,R128,469917,1,0
+Mk56=Response,R128,474947,1,0
+Mk57=Response,R128,479979,1,0
+Mk58=Response,R128,485831,1,0
+Mk59=Response,R128,490933,1,0
+Mk60=Response,R128,495742,1,0
+Mk61=Response,R128,501375,1,0

@@ -1,0 +1,29 @@
+BrainVision Core Data Exchange Marker File Version 1.0
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=20221011_mvcs.eeg
+
+[Marker Infos]
+; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,
+; <Size in data points>, <Channel number (0 = marker is related to all channels)>
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in type or description text are coded as "\1".
+Mk1=New Segment,,1,1,0,20221011152250996903
+Mk2=Response,R128,28335,1,0
+Mk3=Response,R128,39526,1,0
+Mk4=Response,R128,40049,1,0
+Mk5=Response,R128,49980,1,0
+Mk6=Response,R128,62708,1,0
+Mk7=Response,R128,76565,1,0
+Mk8=Response,R128,87098,1,0
+Mk9=Response,R128,93592,1,0
+Mk10=Response,R128,124158,1,0
+Mk11=Response,R128,129540,1,0
+Mk12=Response,R128,136254,1,0
+Mk13=Response,R128,209558,1,0
+Mk14=Response,R128,212344,1,0
+Mk15=Response,R128,215229,1,0
+Mk16=Response,R128,235294,1,0
+Mk17=Response,R128,238080,1,0
+Mk18=Response,R128,241496,1,0

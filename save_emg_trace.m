@@ -31,7 +31,10 @@ suffix = '';
 if app.h_save_fig_suffix_chcbx.Value
 	suffix = sprintf('_%s', app.h_save_fig_suffix_edit.String);
 end
-fname = strrep(starting_f_name, '_datapoints',  ['_epoch_' epoch_num_str suffix '.png']);
+% edit 2026-07-28 change to save as a .fig, so it can be edited later (for
+% paper purposes)
+% fname = strrep(starting_f_name, '_datapoints',  ['_epoch_' epoch_num_str suffix '.png']);
+fname = strrep(starting_f_name, '_datapoints',  ['_epoch_' epoch_num_str suffix ]);
 
 % save the emg data axes
 fignew = figure('Position', [936   912   768   425], 'Visible', 'off'); % Invisible figure
@@ -40,8 +43,10 @@ set(newAxes, 'Position', get(groot,'DefaultAxesPosition')); % The original posit
 set(fignew, 'CreateFcn', 'set(gcbf,''Visible'',''on'')'); % Make it visible upon loading
 
 
-
-print(fignew, '-dpng', fullfile(save_loc, fname));
+% edit 2026-07-28 change to save as a .fig, so it can be edited later (for
+% paper purposes)
+print(fignew, '-dpng', fullfile(save_loc, [fname '.png']));
+savefig(fignew, fullfile(save_loc, [fname '.fig']));
 
 delete(fignew);
 

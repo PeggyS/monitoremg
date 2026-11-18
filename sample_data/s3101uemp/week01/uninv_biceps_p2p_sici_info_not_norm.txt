@@ -1,0 +1,18 @@
+ts_n : 21
+ts_mean : 1621.83 
+ts_ci : 1460.42 1783.24 
+sici_n : 20
+sici_mean : 1401.31 
+sici_ci : 1131.19 1671.43 
+icf_n : 20
+icf_mean : 1881.54 
+icf_ci : 1685.28 2077.81 
+ts_value : 73 
+cs_value : 55 
+icf_isi : 10 
+sici_isi : 2 
+test_stim_isi : 2 
+mepMethod : p2p
+mep_norm_factor : 1 
+mep_beg_t : 8.87755 
+mep_end_t : 74.6939 

@@ -1,0 +1,89 @@
+BrainVision Core Data Exchange Header File Version 1.0
+; Data created by the BrainVision Recorder
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=20221011_inv_bicep_sici_epochs.seg
+MarkerFile=20221011_inv_bicep_sici_epochs.vmrk
+DataFormat=BINARY
+; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...
+DataOrientation=MULTIPLEXED
+NumberOfChannels=4
+; Sampling interval in microseconds
+SamplingInterval=1000
+SegmentationType=MARKERBASED
+SegmentDataPoints=400
+
+[Binary Infos]
+BinaryFormat=INT_16
+
+[Channel Infos]
+; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,
+; <Resolution in "Unit">,<Unit>, Future extensions..
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in channel names are coded as "\1".
+Ch1=inv_biceps,,0.5,µV
+Ch2=inv_triceps,,0.5,µV
+Ch3=uninv_biceps,,0.5,µV
+Ch4=uninv_triceps,,0.5,µV
+
+[Comment]
+
+BrainVision Recorder Professional   -   V. 1.22.0101
+
+
+A m p l i f i e r  S e t u p
+============================
+Number of channels: 4
+Sampling Rate [Hz]: 1000
+Sampling Interval [µS]: 1000
+
+Channels
+--------
+#     Name      Phys. Chn.    Resolution / Unit   Low Cutoff [s]   High Cutoff [Hz]   Notch [Hz]    Series Res. [kOhm] Gradient         Offset
+1     inv_biceps  1                0.5 µV             10              250              Off                0                 
+2     inv_triceps 2                0.5 µV             10              250              Off                0                 
+3     uninv_biceps3                0.5 µV             10              250              Off                0                 
+4     uninv_triceps4                0.5 µV             10              250              Off                0                 
+
+S o f t w a r e  F i l t e r s
+==============================
+#     Low Cutoff [s]   High Cutoff [Hz]   Notch [Hz]
+1      0.0159155        Off                Off
+2      0.0159155        Off                Off
+3      0.0159155        Off                Off
+4      0.0159155        Off                Off
+
+
+
+S e g m e n t a t i o n  /  A v e r a g i n g
+=============================================
+Use all markers
+
+Interval
+--------
+Prestimulus [ms]: 100
+Poststimulus [ms]: 300
+
+Artifact Rejection
+------------------
+	Gradient:        Disabled
+	Max. Difference: 200 µV
+	Amplitude:       Disabled
+	Low Activity:    Disabled
+	Test Interval:   30 ms to 90 ms
+	Untested Channels:
+		biceps, inv_biceps, inv_gastroc, inv_ham, inv_ta, inv_triceps, inv_wrist_extensors, inv_wrist_flexors, uninv_biceps, uninv_gastroc, uninv_ham, uninv_quad, uninv_ta, uninv_triceps, uninv_wrist_extensors, 
+		wrist_extensors, wrist_flexors
+
+Averaging
+---------
+	Averaging is Off, Segmentation Only
+	Baseline Correction based on prestimulus is On
+
+Miscellaneous
+-------------
+	Max. Segments: unlimited
+
+
+No impedance values available at 16:42:41!
