@@ -56,7 +56,8 @@ for i = 1:count
 	switch db_str
 		case 'tdcs_vgait'
 		% pre, mid, post or followup session
-		session_str = lower(regexp(pathname, '(pre|mid|post|followup\*)', 'match'));
+% 		session_str = lower(regexp(pathname, '(pre|mid|post|followup\*)', 'match'));
+		session_str = lower(regexp(pathname, '(pre|mid|post|followup)', 'match')); % 2026-11-18 edit to match 'followup'
 		
 		case 'myomo'
 			% sessions named week#
